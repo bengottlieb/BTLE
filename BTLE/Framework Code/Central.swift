@@ -97,7 +97,13 @@ public class Central: NSObject, CBCentralManagerDelegate {
 			}
 		}
 		
-		var per = Peripheral(peripheral: peripheral, RSSI: RSSI, advertisementData: advertisementData)
+		let per: Peripheral
+		
+		if let perClass = BTLE.registeredClasses.peripheralClass {
+			per = perClass(peripheral: peripheral, RSSI: RSSI, advertisementData: advertisementData)
+		} else {
+			per = Peripheral(peripheral: peripheral, RSSI: RSSI, advertisementData: advertisementData)
+		}
 		BTLE.manager.peripherals.append(per)
 		
 		NSNotification.postNotification(BTLE.notifications.didDiscoverPeripheral, object: per)

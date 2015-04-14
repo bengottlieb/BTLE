@@ -9,14 +9,31 @@
 import Foundation
 import CoreBluetooth
 
-public class Service: NSObject, Printable {
-	public let cbService: CBService
-	let peripheral: Peripheral
+protocol ServiceProtocol {
+	init();
+	init(service svc: CBService, onPeriperhal: Peripheral);
+}
+
+public class Service: NSObject, Printable, ServiceProtocol {
+	public var cbService: CBService!
+	var peripheral: Peripheral!
 	var loading = false
 	public var characteristics: [Characteristic] = []
 	var pendingCharacteristics: [Characteristic] = []
 	
-	init(service svc: CBService, onPeriperhal: Peripheral) {
+	class func createService(service svc: CBService, onPeriperhal: Peripheral) -> Service {
+		if let serviceClass: Service.Type = BTLE.registeredClasses.services[svc.UUID] {
+			return serviceClass(service: svc, onPeriperhal: onPeriperhal)
+		} else {
+			return Service(service: svc, onPeriperhal: onPeriperhal)
+		}
+	}
+	
+	public override required init() {
+		super.init()
+	}
+	
+	public required init(service svc: CBService, onPeriperhal: Peripheral) {
 		cbService = svc
 		peripheral = onPeriperhal
 		super.init()
@@ -40,6 +57,11 @@ public class Service: NSObject, Printable {
 		}
 	}
 	
+	public func didFinishLoading() {
+		self.loading = false
+		self.peripheral.didFinishLoadingService(self)
+	}
+	
 	func findCharacteristicMatching(chr: CBCharacteristic) -> Characteristic? {
 		return filter(self.characteristics, { $0.cbCharacteristic == chr }).last
 	}
@@ -58,8 +80,7 @@ public class Service: NSObject, Printable {
 		if let char = self.findCharacteristicMatching(chr) {
 			char.didLoad()
 			if self.numberOfPendingCharacteristics == 0 {
-				self.loading = false
-				self.peripheral.didFinishLoadingService(self)
+				self.didFinishLoading()
 			}
 			NSNotification.postNotification(BTLE.notifications.characteristicDidUpdate, object: char, userInfo: nil)
 		}
@@ -67,6 +88,6 @@ public class Service: NSObject, Printable {
 	
 	public override var description: String { return "\(self.cbService): \(self.characteristics)" }
 	
-	func characteristicWithUUID(uuid: CBUUID) -> Characteristic? { return filter(self.characteristics, { $0.cbCharacteristic.UUID == uuid }).last }
+	public func characteristicWithUUID(uuid: CBUUID) -> Characteristic? { return filter(self.characteristics, { $0.cbCharacteristic.UUID == uuid }).last }
 	
 }

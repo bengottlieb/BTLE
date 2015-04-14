@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreBluetooth
 import BTLE
 
 @UIApplicationMain
@@ -17,6 +18,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 		// Override point for customization after application launch
+		
+		
+		BTLE.registerServiceClass(LockService.self, forServiceID: CBUUID(string: "FFF0"))
+		BTLE.registerPeripheralClass(LockPeripheral.self)
 		
 		return true
 	}
@@ -46,3 +51,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+class LockPeripheral: Peripheral {
+	required init(peripheral: CBPeripheral, RSSI: Int?, advertisementData adv: [NSObject: AnyObject]?) {
+		super.init(peripheral: peripheral, RSSI: RSSI, advertisementData: adv)
+	}
+	required init() { super.init() }
+}
+
+let LockStatusCharacteristic = CBUUID(string: "FFF3")
+
+class LockService: Service {
+	required init(service svc: CBService, onPeriperhal: Peripheral) {
+		super.init(service: svc, onPeriperhal: onPeriperhal)
+	}
+	
+	override func didFinishLoading() {
+		var lockStatus = self.characteristicWithUUID(LockStatusCharacteristic)
+		var data = lockStatus?.dataValue
+		lockStatus?.listenForUpdates = true
+		
+		
+		println("Service: \(lockStatus), Data: \(data)")
+	}
+	
+	required init() { super.init() }
+}

@@ -10,6 +10,12 @@ import Foundation
 import CoreBluetooth
 import SA_Swift
 
+protocol PeripheralProtocol {
+	init();
+	init(peripheral: CBPeripheral, RSSI: Int?, advertisementData adv: [NSObject: AnyObject]?);
+}
+
+
 let DeviceInfoServiceUUID = CBUUID(string: "0x180A")
 
 let SerialNumberCharacteristicUUID = CBUUID(string: "0x2A25")
@@ -25,10 +31,10 @@ let PnPIDCharacteristicUUID = CBUUID(string: "0x2A50")
 public class Peripheral: NSObject, CBPeripheralDelegate, Printable {
 	public enum State { case Discovered, Connecting, Connected, Disconnecting, Undiscovered, Unknown }
 	
-	public let cbPeripheral: CBPeripheral
-	public let uuid: NSUUID
-	public var name: String
-	public var lastCommunicatedAt: NSDate { didSet { self.updateVisibilityTimer() }}
+	public var cbPeripheral: CBPeripheral!
+	public var uuid: NSUUID!
+	public var name: String!
+	public var lastCommunicatedAt: NSDate! { didSet { self.updateVisibilityTimer() }}
 	public var loadingState = BTLE.LoadingState.NotLoaded {
 		didSet {
 			if self.loadingState == .Loaded { NSNotification.postNotification(BTLE.notifications.peripheralDidFinishLoading, object: self) }
@@ -36,7 +42,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	public var services: [Service] = []
 	public var advertisementData: [NSObject: AnyObject] = [:]
-	public var state: State { didSet {
+	public var state: State = .Discovered { didSet {
 		switch self.state {
 		case .Connected:
 			self.updateRSSI()
@@ -62,11 +68,14 @@ public class Peripheral: NSObject, CBPeripheralDelegate, Printable {
 		NSNotification.postNotification(BTLE.notifications.peripheralDidUpdateRSSI, object: self)
 	}}
 	
-	init(peripheral: CBPeripheral, RSSI: Int?, advertisementData adv: [NSObject: AnyObject]?) {
+	public override required init() {
+		super.init()
+	}
+	
+	public required init(peripheral: CBPeripheral, RSSI: Int?, advertisementData adv: [NSObject: AnyObject]?) {
 		cbPeripheral = peripheral
 		uuid = peripheral.identifier
 		name = peripheral.name ?? "unknown"
-		state = .Discovered
 		lastCommunicatedAt = NSDate()
 		if let adv = adv { advertisementData = adv }
 		
@@ -142,7 +151,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate, Printable {
 			return service
 		}
 		
-		var service = Service(service: cbService, onPeriperhal: self)
+		var service = Service.createService(service: cbService, onPeriperhal: self)
 		self.services.append(service)
 		return service
 	}
@@ -158,7 +167,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate, Printable {
 		if self.state == .Discovered && BTLE.manager.deviceLifetime > 0 {
 			dispatch_async_main {
 				var timeSinceLastComms = abs(self.lastCommunicatedAt.timeIntervalSinceNow)
-				
+				var a = abs(timeSinceLastComms)
 				if BTLE.manager.deviceLifetime > timeSinceLastComms {
 					var timeoutInverval = (BTLE.manager.deviceLifetime - timeSinceLastComms)
 					

@@ -71,7 +71,18 @@ public class BTLE: NSObject {
 
 	}
 	
+	struct registeredClasses {
+		static var services: [CBUUID: Service.Type] = [:]
+		static var peripheralClass: Peripheral.Type?
+	}
 	
+	public class func registerServiceClass(serviceClass: Service.Type, forServiceID serviceID: CBUUID) {
+		BTLE.registeredClasses.services[serviceID] = serviceClass
+	}
+	
+	public class func registerPeripheralClass(peripheralClass: Peripheral.Type?) {
+		BTLE.registeredClasses.peripheralClass = peripheralClass
+	}
 
 	public lazy var central: Central = { return Central() }()
 }
