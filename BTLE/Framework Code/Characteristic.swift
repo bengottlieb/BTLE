@@ -1,5 +1,5 @@
 //
-//  Characteristic.swift
+//  BTLECharacteristic.swift
 //  BTLE
 //
 //  Created by Ben Gottlieb on 4/13/15.
@@ -9,20 +9,20 @@
 import Foundation
 import CoreBluetooth
 
-public class Characteristic: NSObject {
+public class BTLECharacteristic: NSObject {
 	public let cbCharacteristic: CBCharacteristic
-	public let service: Service
+	public let service: BTLEService
 	var loading = false
 	
-	var peripheral: Peripheral { return self.service.peripheral }
+	var peripheral: BTLEPeripheral { return self.service.peripheral }
 	
-	class func characteristic(chr: CBCharacteristic, ofService: Service) -> Characteristic {
+	class func characteristic(chr: CBCharacteristic, ofService: BTLEService) -> BTLECharacteristic {
 	//	if chr.UUID == LockStatusCharacteristic { return BTLELockStatusCharacteristic(characteristic: chr, ofService: ofService) }
 		
-		return Characteristic(characteristic: chr, ofService: ofService)
+		return BTLECharacteristic(characteristic: chr, ofService: ofService)
 	}
 	
-	init(characteristic chr: CBCharacteristic, ofService: Service) {
+	init(characteristic chr: CBCharacteristic, ofService: BTLEService) {
 		cbCharacteristic = chr
 		service = ofService
 		super.init()

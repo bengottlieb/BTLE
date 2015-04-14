@@ -1,5 +1,5 @@
 //
-//  Service.swift
+//  BTLEService.swift
 //  BTLE
 //
 //  Created by Ben Gottlieb on 4/13/15.
@@ -9,23 +9,23 @@
 import Foundation
 import CoreBluetooth
 
-protocol ServiceProtocol {
+protocol BTLEServiceProtocol {
 	init();
-	init(service svc: CBService, onPeriperhal: Peripheral);
+	init(service svc: CBService, onPeriperhal: BTLEPeripheral);
 }
 
-public class Service: NSObject, Printable, ServiceProtocol {
+public class BTLEService: NSObject, Printable, BTLEServiceProtocol {
 	public var cbService: CBService!
-	var peripheral: Peripheral!
+	var peripheral: BTLEPeripheral!
 	var loading = false
-	public var characteristics: [Characteristic] = []
-	var pendingCharacteristics: [Characteristic] = []
+	public var characteristics: [BTLECharacteristic] = []
+	var pendingCharacteristics: [BTLECharacteristic] = []
 	
-	class func createService(service svc: CBService, onPeriperhal: Peripheral) -> Service {
-		if let serviceClass: Service.Type = BTLE.registeredClasses.services[svc.UUID] {
+	class func createService(service svc: CBService, onPeriperhal: BTLEPeripheral) -> BTLEService {
+		if let serviceClass: BTLEService.Type = BTLE.registeredClasses.services[svc.UUID] {
 			return serviceClass(service: svc, onPeriperhal: onPeriperhal)
 		} else {
-			return Service(service: svc, onPeriperhal: onPeriperhal)
+			return BTLEService(service: svc, onPeriperhal: onPeriperhal)
 		}
 	}
 	
@@ -33,7 +33,7 @@ public class Service: NSObject, Printable, ServiceProtocol {
 		super.init()
 	}
 	
-	public required init(service svc: CBService, onPeriperhal: Peripheral) {
+	public required init(service svc: CBService, onPeriperhal: BTLEPeripheral) {
 		cbService = svc
 		peripheral = onPeriperhal
 		super.init()
@@ -52,7 +52,7 @@ public class Service: NSObject, Printable, ServiceProtocol {
 	func updateCharacteristics() {
 		for chr in self.cbService.characteristics as! [CBCharacteristic] {
 			if self.findCharacteristicMatching(chr) == nil {
-				self.characteristics.append(Characteristic.characteristic(chr, ofService: self))
+				self.characteristics.append(BTLECharacteristic.characteristic(chr, ofService: self))
 			}
 		}
 	}
@@ -62,7 +62,7 @@ public class Service: NSObject, Printable, ServiceProtocol {
 		self.peripheral.didFinishLoadingService(self)
 	}
 	
-	func findCharacteristicMatching(chr: CBCharacteristic) -> Characteristic? {
+	func findCharacteristicMatching(chr: CBCharacteristic) -> BTLECharacteristic? {
 		return filter(self.characteristics, { $0.cbCharacteristic == chr }).last
 	}
 	
@@ -88,6 +88,6 @@ public class Service: NSObject, Printable, ServiceProtocol {
 	
 	public override var description: String { return "\(self.cbService): \(self.characteristics)" }
 	
-	public func characteristicWithUUID(uuid: CBUUID) -> Characteristic? { return filter(self.characteristics, { $0.cbCharacteristic.UUID == uuid }).last }
+	public func characteristicWithUUID(uuid: CBUUID) -> BTLECharacteristic? { return filter(self.characteristics, { $0.cbCharacteristic.UUID == uuid }).last }
 	
 }

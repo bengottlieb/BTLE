@@ -15,7 +15,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	@IBOutlet var scanSwitch: UISwitch!
 	@IBOutlet var monitorRSSISwitch: UISwitch!
 
-	var devices: [Peripheral] = []
+	var devices: [BTLEPeripheral] = []
 	
 	func reload() {
 		self.devices = BTLE.manager.peripherals

@@ -1,5 +1,5 @@
 //
-//  Peripheral.swift
+//  BTLEPeripheral.swift
 //  BTLE
 //
 //  Created by Ben Gottlieb on 4/13/15.
@@ -10,7 +10,7 @@ import Foundation
 import CoreBluetooth
 import SA_Swift
 
-protocol PeripheralProtocol {
+protocol BTLEPeripheralProtocol {
 	init();
 	init(peripheral: CBPeripheral, RSSI: Int?, advertisementData adv: [NSObject: AnyObject]?);
 }
@@ -28,7 +28,7 @@ let RegulatoryCertificationDataCharacteristicUUID = CBUUID(string: "0x2A2A")
 let PnPIDCharacteristicUUID = CBUUID(string: "0x2A50")
 
 
-public class Peripheral: NSObject, CBPeripheralDelegate, Printable {
+public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	public enum State { case Discovered, Connecting, Connected, Disconnecting, Undiscovered, Unknown }
 	
 	public var cbPeripheral: CBPeripheral!
@@ -40,7 +40,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate, Printable {
 			if self.loadingState == .Loaded { NSNotification.postNotification(BTLE.notifications.peripheralDidFinishLoading, object: self) }
 		}
 	}
-	public var services: [Service] = []
+	public var services: [BTLEService] = []
 	public var advertisementData: [NSObject: AnyObject] = [:]
 	public var state: State = .Discovered { didSet {
 		switch self.state {
@@ -116,7 +116,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate, Printable {
 		self.cbPeripheral.readRSSI()
 	}
 	
-	public func serviceWithUUID(uuid: CBUUID) -> Service? { return filter(self.services, { $0.cbService.UUID == uuid }).last }
+	public func serviceWithUUID(uuid: CBUUID) -> BTLEService? { return filter(self.services, { $0.cbService.UUID == uuid }).last }
 
 	
 	//=============================================================================================
@@ -129,7 +129,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate, Printable {
 		self.cbPeripheral.discoverServices(nil)
 	}
 	
-	func didFinishLoadingService(service: Service) {
+	func didFinishLoadingService(service: BTLEService) {
 		if self.numberOfPendingServices == 0 {
 			self.loadingState = .Loaded
 		}
@@ -145,13 +145,13 @@ public class Peripheral: NSObject, CBPeripheralDelegate, Printable {
 		return count
 	}
 
-	func addService(cbService: CBService) -> Service {
+	func addService(cbService: CBService) -> BTLEService {
 		if let service = self.serviceWithUUID(cbService.UUID) {
 			if self.forceReload { service.load() }
 			return service
 		}
 		
-		var service = Service.createService(service: cbService, onPeriperhal: self)
+		var service = BTLEService.createService(service: cbService, onPeriperhal: self)
 		self.services.append(service)
 		return service
 	}

@@ -88,7 +88,7 @@ public class Central: NSObject, CBCentralManagerDelegate {
 		}
 	}
 	
-	func addPeripheral(peripheral: CBPeripheral, RSSI: Int? = nil, advertisementData: [NSObject: AnyObject]? = nil) -> Peripheral {
+	func addPeripheral(peripheral: CBPeripheral, RSSI: Int? = nil, advertisementData: [NSObject: AnyObject]? = nil) -> BTLEPeripheral {
 		for per in BTLE.manager.peripherals {
 			if per.uuid == peripheral.identifier {
 				if let rssi = RSSI { per.rssi = rssi }
@@ -97,12 +97,12 @@ public class Central: NSObject, CBCentralManagerDelegate {
 			}
 		}
 		
-		let per: Peripheral
+		let per: BTLEPeripheral
 		
 		if let perClass = BTLE.registeredClasses.peripheralClass {
 			per = perClass(peripheral: peripheral, RSSI: RSSI, advertisementData: advertisementData)
 		} else {
-			per = Peripheral(peripheral: peripheral, RSSI: RSSI, advertisementData: advertisementData)
+			per = BTLEPeripheral(peripheral: peripheral, RSSI: RSSI, advertisementData: advertisementData)
 		}
 		BTLE.manager.peripherals.append(per)
 		

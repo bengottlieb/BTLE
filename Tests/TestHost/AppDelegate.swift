@@ -51,7 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
-class LockPeripheral: Peripheral {
+class LockPeripheral: BTLEPeripheral {
 	required init(peripheral: CBPeripheral, RSSI: Int?, advertisementData adv: [NSObject: AnyObject]?) {
 		super.init(peripheral: peripheral, RSSI: RSSI, advertisementData: adv)
 	}
@@ -60,8 +60,8 @@ class LockPeripheral: Peripheral {
 
 let LockStatusCharacteristic = CBUUID(string: "FFF3")
 
-class LockService: Service {
-	required init(service svc: CBService, onPeriperhal: Peripheral) {
+class LockService: BTLEService {
+	required init(service svc: CBService, onPeriperhal: BTLEPeripheral) {
 		super.init(service: svc, onPeriperhal: onPeriperhal)
 	}
 	
@@ -71,7 +71,7 @@ class LockService: Service {
 		lockStatus?.listenForUpdates = true
 		
 		
-		println("Service: \(lockStatus), Data: \(data)")
+		println("BTLEService: \(lockStatus), Data: \(data)")
 	}
 	
 	required init() { super.init() }

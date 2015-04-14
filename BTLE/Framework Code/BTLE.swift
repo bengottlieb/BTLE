@@ -22,7 +22,7 @@ public class BTLE: NSObject {
 
 	public enum State { case Off, StartingUp, Scanning, Idle }
 	
-	public var peripherals: [Peripheral] = []
+	public var peripherals: [BTLEPeripheral] = []
 	public var state: State = .Off { didSet {
 		self.central.changingState = true
 		switch self.state {
@@ -72,15 +72,15 @@ public class BTLE: NSObject {
 	}
 	
 	struct registeredClasses {
-		static var services: [CBUUID: Service.Type] = [:]
-		static var peripheralClass: Peripheral.Type?
+		static var services: [CBUUID: BTLEService.Type] = [:]
+		static var peripheralClass: BTLEPeripheral.Type?
 	}
 	
-	public class func registerServiceClass(serviceClass: Service.Type, forServiceID serviceID: CBUUID) {
+	public class func registerServiceClass(serviceClass: BTLEService.Type, forServiceID serviceID: CBUUID) {
 		BTLE.registeredClasses.services[serviceID] = serviceClass
 	}
 	
-	public class func registerPeripheralClass(peripheralClass: Peripheral.Type?) {
+	public class func registerPeripheralClass(peripheralClass: BTLEPeripheral.Type?) {
 		BTLE.registeredClasses.peripheralClass = peripheralClass
 	}
 
