@@ -50,9 +50,11 @@ public class BTLEService: NSObject, Printable, BTLEServiceProtocol {
 	}
 	
 	func updateCharacteristics() {
-		for chr in self.cbService.characteristics as! [CBCharacteristic] {
-			if self.findCharacteristicMatching(chr) == nil {
-				self.characteristics.append(BTLECharacteristic.characteristic(chr, ofService: self))
+		if let characteristics = self.cbService.characteristics as? [CBCharacteristic] {
+			for chr in characteristics {
+				if self.findCharacteristicMatching(chr) == nil {
+					self.characteristics.append(BTLECharacteristic.characteristic(chr, ofService: self))
+				}
 			}
 		}
 	}

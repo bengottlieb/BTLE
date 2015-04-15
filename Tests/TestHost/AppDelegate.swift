@@ -20,6 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		// Override point for customization after application launch
 		
 		
+		BTLE.manager.services = [CBUUID(string: "FFF0")]
 		BTLE.registerServiceClass(LockService.self, forServiceID: CBUUID(string: "FFF0"))
 		BTLE.registerPeripheralClass(LockPeripheral.self)
 		
