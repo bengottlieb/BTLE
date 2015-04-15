@@ -208,12 +208,14 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	public func peripheral(peripheral: CBPeripheral!, didDiscoverServices error: NSError!) {
-		for svc in self.cbPeripheral.services as! [CBService] {
-			self.addService(svc)
-		}
-		
-		if self.numberOfPendingServices == 0 {
-			self.loadingState = .Loaded
+		if let services = self.cbPeripheral.services as? [CBService] {
+			for svc in services {
+				self.addService(svc)
+			}
+			
+			if self.numberOfPendingServices == 0 {
+				self.loadingState = .Loaded
+			}
 		}
 	}
 
