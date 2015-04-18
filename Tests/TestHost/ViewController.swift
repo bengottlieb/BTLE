@@ -27,9 +27,22 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	var timer: NSTimer?
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
+		
+		if true {
+			self.startAdvertising()
+		} else {
+			self.startScanning()
+		}
+	}
+	
+	func startAdvertising() {
+		BTLE.manager.peripheralState = .Active
+	}
+	
+	func startScanning() {
 		BTLE.manager.deviceLifetime = 20.0
-		BTLE.manager.state = .Scanning
-		self.scanSwitch.on = BTLE.manager.state == .Scanning || BTLE.manager.state == .StartingUp
+		BTLE.manager.centralState = .Active
+		self.scanSwitch.on = BTLE.manager.centralState == .Active || BTLE.manager.centralState == .StartingUp
 		self.monitorRSSISwitch.on = BTLE.manager.monitorRSSI
 		
 		self.addAsObserver(BTLE.notifications.peripheralDidDisconnect, selector: "reload", object: nil)
@@ -41,12 +54,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		self.addAsObserver(BTLE.notifications.peripheralDidUpdateName, selector: "reload", object: nil)
 		self.addAsObserver(BTLE.notifications.peripheralDidLoseComms, selector: "reload", object: nil)
 		self.addAsObserver(BTLE.notifications.peripheralDidRegainComms, selector: "reload", object: nil)
-
+		
 		self.timer = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: "reload", userInfo: nil, repeats: true)
 	}
 	
 	@IBAction func toggleScanning() {
-		BTLE.manager.state = self.scanSwitch.on ? .Scanning : .Idle
+		BTLE.manager.centralState = self.scanSwitch.on ? .Active : .Idle
 
 	}
 
@@ -80,7 +93,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		var cell = UITableViewCell(style: .Subtitle, reuseIdentifier: "cell")
 		var device = self.devices[indexPath.row]
 		
-		cell.textLabel?.text = "\(device)"
+		cell.textLabel?.text = "\(device.summaryDescription)"
 
 		var toggle = UISwitch(frame: CGRectZero)
 		toggle.on = device.state == .Connected || device.state == .Connecting
@@ -102,7 +115,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 		var device = self.devices[indexPath.row]
 		
-		device.updateRSSI()
+		println("\(device.fullDescription)")
 	}
 
 }

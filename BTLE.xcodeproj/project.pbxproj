@@ -25,6 +25,7 @@
 		B504E69D1A896E82001B414B /* BTLE_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B504E69C1A896E82001B414B /* BTLE_Tests.swift */; };
 		B504E6A41A897017001B414B /* BTLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B504E6461A8968DC001B414B /* BTLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B504E6A51A897087001B414B /* BTLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B504E6461A8968DC001B414B /* BTLE.framework */; };
+		B5345B3F1AE1F20F0074F337 /* PeripheralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5345B3E1AE1F20F0074F337 /* PeripheralManager.swift */; };
 		B582A2BB1ADDB1FB00736517 /* SA_Swift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B582A2BA1ADDB1FB00736517 /* SA_Swift.framework */; };
 		B58D64791A898F89005A0002 /* BTLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B58D64681A898F81005A0002 /* BTLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B58D647F1A898FBD005A0002 /* BTLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D64751A898F81005A0002 /* BTLE.swift */; };
@@ -35,8 +36,8 @@
 		B58D64931A899094005A0002 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B58D648D1A899094005A0002 /* Images.xcassets */; };
 		B58D64951A899094005A0002 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D648F1A899094005A0002 /* ViewController.swift */; };
 		B58D64961A899285005A0002 /* BTLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B58D646B1A898F81005A0002 /* BTLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B5D6083E1ADBF4F6004DC9AC /* Central.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6083D1ADBF4F6004DC9AC /* Central.swift */; };
-		B5D6083F1ADBF4F6004DC9AC /* Central.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6083D1ADBF4F6004DC9AC /* Central.swift */; };
+		B5D6083E1ADBF4F6004DC9AC /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */; };
+		B5D6083F1ADBF4F6004DC9AC /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */; };
 		B5D608411ADBFD4C004DC9AC /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D608401ADBFD4C004DC9AC /* Peripheral.swift */; };
 		B5D608421ADBFD4C004DC9AC /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D608401ADBFD4C004DC9AC /* Peripheral.swift */; };
 		B5D608451ADC097E004DC9AC /* SA_Swift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5D608441ADC097E004DC9AC /* SA_Swift.framework */; };
@@ -89,6 +90,7 @@
 		B504E69B1A896E82001B414B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B504E69C1A896E82001B414B /* BTLE_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTLE_Tests.swift; sourceTree = "<group>"; };
 		B504E6AF1A898110001B414B /* BTLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BTLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B5345B3E1AE1F20F0074F337 /* PeripheralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManager.swift; sourceTree = "<group>"; };
 		B582A2BA1ADDB1FB00736517 /* SA_Swift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SA_Swift.framework; sourceTree = "<group>"; };
 		B58D64671A898F81005A0002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B58D64681A898F81005A0002 /* BTLE.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BTLE.h; sourceTree = "<group>"; };
@@ -101,7 +103,7 @@
 		B58D648D1A899094005A0002 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		B58D648E1A899094005A0002 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B58D648F1A899094005A0002 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		B5D6083D1ADBF4F6004DC9AC /* Central.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Central.swift; sourceTree = "<group>"; };
+		B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManager.swift; sourceTree = "<group>"; };
 		B5D608401ADBFD4C004DC9AC /* Peripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
 		B5D608441ADC097E004DC9AC /* SA_Swift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SA_Swift.framework; sourceTree = "<group>"; };
 		B5D608491ADC4486004DC9AC /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
@@ -222,7 +224,8 @@
 			isa = PBXGroup;
 			children = (
 				B58D64751A898F81005A0002 /* BTLE.swift */,
-				B5D6083D1ADBF4F6004DC9AC /* Central.swift */,
+				B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */,
+				B5345B3E1AE1F20F0074F337 /* PeripheralManager.swift */,
 				B5D608401ADBFD4C004DC9AC /* Peripheral.swift */,
 				B5D608491ADC4486004DC9AC /* Service.swift */,
 				B5D6084C1ADC44A5004DC9AC /* Characteristic.swift */,
@@ -464,11 +467,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B58D647F1A898FBD005A0002 /* BTLE.swift in Sources */,
-				B5D6084A1ADC4486004DC9AC /* Service.swift in Sources */,
 				B5D6084D1ADC44A5004DC9AC /* Characteristic.swift in Sources */,
 				B5D608411ADBFD4C004DC9AC /* Peripheral.swift in Sources */,
-				B5D6083E1ADBF4F6004DC9AC /* Central.swift in Sources */,
+				B5D6083E1ADBF4F6004DC9AC /* CentralManager.swift in Sources */,
+				B5345B3F1AE1F20F0074F337 /* PeripheralManager.swift in Sources */,
+				B58D647F1A898FBD005A0002 /* BTLE.swift in Sources */,
+				B5D6084A1ADC4486004DC9AC /* Service.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -488,7 +492,7 @@
 				B5D6084B1ADC4486004DC9AC /* Service.swift in Sources */,
 				B5D6084E1ADC44A5004DC9AC /* Characteristic.swift in Sources */,
 				B5D608421ADBFD4C004DC9AC /* Peripheral.swift in Sources */,
-				B5D6083F1ADBF4F6004DC9AC /* Central.swift in Sources */,
+				B5D6083F1ADBF4F6004DC9AC /* CentralManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -544,6 +548,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Ben Gottlieb (JW8DK48L4U)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -586,6 +591,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Stand Alone, Inc. (YY6CWUX533)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -635,6 +641,7 @@
 		B504E6601A8968DC001B414B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer: Ben Gottlieb (JW8DK48L4U)";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -662,6 +669,7 @@
 		B504E6611A8968DC001B414B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Stand Alone, Inc. (YY6CWUX533)";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;

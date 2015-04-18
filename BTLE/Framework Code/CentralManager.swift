@@ -1,5 +1,5 @@
 //
-//  Central.swift
+//  BTLECentralManager.swift
 //  BTLE
 //
 //  Created by Ben Gottlieb on 4/13/15.
@@ -10,8 +10,8 @@ import Foundation
 import CoreBluetooth
 import SA_Swift
 
-public class Central: NSObject, CBCentralManagerDelegate {
-	var dispatchQueue = dispatch_queue_create("BTLE.Central queue", DISPATCH_QUEUE_SERIAL)
+public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
+	var dispatchQueue = dispatch_queue_create("BTLE.CentralManager queue", DISPATCH_QUEUE_SERIAL)
 	var cbCentral: CBCentralManager!
 	
 	//=============================================================================================
@@ -42,19 +42,19 @@ public class Central: NSObject, CBCentralManagerDelegate {
 	
 	func stopScanning() {
 		self.searchTimer?.invalidate()
-		if let central = self.cbCentral {
-			central.stopScan()
+		if let centralManager = self.cbCentral {
+			centralManager.stopScan()
 			NSNotification.postNotification(BTLE.notifications.didFinishScan, object: self)
-			if !self.changingState { BTLE.manager.state = .Off }
+			if !self.changingState { BTLE.manager.centralState = .Off }
 		}
 	}
 	
 	func turnOff() {
 		self.stopScanning()
 
-		if let central = self.cbCentral {
+		if let centralManager = self.cbCentral {
 			self.cbCentral = nil
-			if !self.changingState { BTLE.manager.state = .Off }
+			if !self.changingState { BTLE.manager.centralState = .Off }
 		}
 	}
 	
@@ -81,7 +81,7 @@ public class Central: NSObject, CBCentralManagerDelegate {
 		if self.cbCentral == nil || rebuild {
 			self.turnOff()
 			
-			var options: [NSObject: AnyObject] = [CBCentralManagerOptionShowPowerAlertKey: true, CBCentralManagerOptionRestoreIdentifierKey: Central.restoreIdentifier]
+			var options: [NSObject: AnyObject] = [CBCentralManagerOptionShowPowerAlertKey: true, CBCentralManagerOptionRestoreIdentifierKey: BTLECentralManager.restoreIdentifier]
 			
 			self.cbCentral = CBCentralManager(delegate: self, queue: self.dispatchQueue, options: options)
 			if self.cbCentral.state == .PoweredOn { self.fetchConnectedPeripherals() }
@@ -113,31 +113,31 @@ public class Central: NSObject, CBCentralManagerDelegate {
 
 	//=============================================================================================
 	//MARK: CBCentralManagerDelegate
-	public func centralManagerDidUpdateState(central: CBCentralManager!) {
-		switch central.state {
+	public func centralManagerDidUpdateState(centralManager: CBCentralManager!) {
+		switch centralManager.state {
 		case .PoweredOn: self.fetchConnectedPeripherals()
 		default: break
 		}
 
 	}
 	
-	public func centralManager(central: CBCentralManager!, didDiscoverPeripheral peripheral: CBPeripheral!, advertisementData: [NSObject : AnyObject]!, RSSI: NSNumber!) {
+	public func centralManager(centralManager: CBCentralManager!, didDiscoverPeripheral peripheral: CBPeripheral!, advertisementData: [NSObject : AnyObject]!, RSSI: NSNumber!) {
 		var per = self.addPeripheral(peripheral, RSSI: RSSI.integerValue, advertisementData: advertisementData)
 	}
 	
-	public func centralManager(central: CBCentralManager!, willRestoreState dict: [NSObject : AnyObject]!) {
-		self.cbCentral = central
-		central.delegate = self
+	public func centralManager(centralManager: CBCentralManager!, willRestoreState dict: [NSObject : AnyObject]!) {
+		self.cbCentral = centralManager
+		centralManager.delegate = self
 		if self.cbCentral.state == .PoweredOn { self.fetchConnectedPeripherals() }
 	}
 	
-	public func centralManager(central: CBCentralManager!, didConnectPeripheral peripheral: CBPeripheral!) {
+	public func centralManager(centralManager: CBCentralManager!, didConnectPeripheral peripheral: CBPeripheral!) {
 		var per = self.addPeripheral(peripheral)
 		per.state = .Connected
 		NSNotification.postNotification(BTLE.notifications.peripheralDidConnect, object: per)
 	}
 	
-	public func centralManager(central: CBCentralManager!, didDisconnectPeripheral peripheral: CBPeripheral!, error: NSError!) {
+	public func centralManager(centralManager: CBCentralManager!, didDisconnectPeripheral peripheral: CBPeripheral!, error: NSError!) {
 		var per = self.addPeripheral(peripheral)
 		per.state = .Discovered
 		NSNotification.postNotification(BTLE.notifications.peripheralDidDisconnect, object: per)
@@ -151,7 +151,7 @@ public class Central: NSObject, CBCentralManagerDelegate {
 		for peripheral in connected {
 			self.addPeripheral(peripheral)
 		}
-		BTLE.manager.state = .Scanning
+		BTLE.manager.centralState = .Active
 	}
 
 

@@ -37,11 +37,16 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	public var lastCommunicatedAt: NSDate! { didSet { self.updateVisibilityTimer() }}
 	public var loadingState = BTLE.LoadingState.NotLoaded {
 		didSet {
-			if self.loadingState == .Loaded { NSNotification.postNotification(BTLE.notifications.peripheralDidFinishLoading, object: self) }
+			if self.loadingState == .Loaded {
+				NSNotification.postNotification(BTLE.notifications.peripheralDidFinishLoading, object: self)
+				if BTLE.debugging { println("Loaded device: \(self.fullDescription)") }
+			}
 		}
 	}
 	public var services: [BTLEService] = []
-	public var advertisementData: [NSObject: AnyObject] = [:]
+	public var advertisementData: [NSObject: AnyObject] = [:] { didSet {
+		NSNotification.postNotification(BTLE.notifications.peripheralDidUpdateAdvertisementData, object: self)
+	}}
 	public var state: State = .Discovered { didSet {
 		switch self.state {
 		case .Connected:
@@ -88,16 +93,16 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	
 	public func connect() {
 		self.state = .Connecting
-		BTLE.manager.central.cbCentral.connectPeripheral(self.cbPeripheral, options: [CBConnectPeripheralOptionNotifyOnConnectionKey: true])
+		BTLE.manager.centralManager.cbCentral.connectPeripheral(self.cbPeripheral, options: [CBConnectPeripheralOptionNotifyOnConnectionKey: true])
 	}
 	
 	public func disconnect() {
 		if self.state == .Connected { self.state = .Disconnecting }
 		
-		BTLE.manager.central.cbCentral.cancelPeripheralConnection(self.cbPeripheral)
+		BTLE.manager.centralManager.cbCentral.cancelPeripheralConnection(self.cbPeripheral)
 	}
 	
-	public override var description: String {
+	public var summaryDescription: String {
 		var string = "(\(self.rssi ?? -127)) BT \(self.name) \(self.uuid.UUIDString)"
 		if self.state == .Connected { string = "Connected " + string }
 		if self.state == .Connecting { string = "Connecting " + string }
@@ -112,6 +117,16 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		return string
 	}
 
+	public var fullDescription: String {
+		var desc = "\(self.summaryDescription)\n\(self.advertisementData)"
+		
+		for svc in self.services {
+			desc = desc + "\n" + svc.description
+		}
+		
+		return desc
+	}
+	
 	public func updateRSSI() {
 		self.cbPeripheral.readRSSI()
 	}
@@ -223,7 +238,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	public func peripheralDidUpdateName(peripheral: CBPeripheral!) {
 		self.name = peripheral.name
 		NSNotification.postNotification(BTLE.notifications.peripheralDidUpdateName, object: self)
-	//	println("Updated name: \(self.name)")
+		if BTLE.debugging { println("Updated name for: \(self.name)") }
 	}
 
 	public func peripheral(peripheral: CBPeripheral!, didDiscoverCharacteristicsForService service: CBService!, error: NSError!) {
