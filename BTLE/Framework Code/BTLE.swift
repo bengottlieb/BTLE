@@ -76,8 +76,11 @@ public class BTLE: NSObject {
 	public struct notifications {
 		public static let willStartScan = "com.standalone.btle.willStartScan"
 		public static let didFinishScan = "com.standalone.btle.didFinishScan"
-		public static let didDiscoverPeripheral = "com.standalone.btle.didDiscoverPeripheral"
-		
+
+		public static let willStartAdvertising = "com.standalone.btle.willStartAdvertising"
+		public static let didFinishAdvertising = "com.standalone.btle.didFinishAdvertising"
+
+		public static let peripheralWasDiscovered = "com.standalone.btle.peripheralWasDiscovered"
 		public static let peripheralDidConnect = "com.standalone.btle.peripheralDidConnect"
 		public static let peripheralDidDisconnect = "com.standalone.btle.peripheralDidDisconnect"
 		public static let peripheralDidUpdateRSSI = "com.standalone.btle.peripheralDidUpdateRSSI"

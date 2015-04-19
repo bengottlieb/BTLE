@@ -50,22 +50,34 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		self.scanSwitch.on = BTLE.manager.scanningState == .Active || BTLE.manager.scanningState == .StartingUp
 		self.advertiseSwitch.on = BTLE.manager.advertisingState == .Active || BTLE.manager.advertisingState == .StartingUp
 		self.monitorRSSISwitch.on = BTLE.manager.monitorRSSI
+		
+		self.addAsObserver(BTLE.notifications.willStartScan, selector: "updateStatus", object: nil)
+		self.addAsObserver(BTLE.notifications.didFinishScan, selector: "updateStatus", object: nil)
 
-	
+		self.addAsObserver(BTLE.notifications.willStartAdvertising, selector: "updateStatus", object: nil)
+		self.addAsObserver(BTLE.notifications.didFinishAdvertising, selector: "updateStatus", object: nil)
+
 	
 		self.addAsObserver(BTLE.notifications.peripheralDidDisconnect, selector: "reload", object: nil)
 		self.addAsObserver(BTLE.notifications.peripheralDidConnect, selector: "reload", object: nil)
-		self.addAsObserver(BTLE.notifications.didDiscoverPeripheral, selector: "reload", object: nil)
+		self.addAsObserver(BTLE.notifications.peripheralWasDiscovered, selector: "reload", object: nil)
 		self.addAsObserver(BTLE.notifications.peripheralDidUpdateRSSI, selector: "reload", object: nil)
 		self.addAsObserver(BTLE.notifications.peripheralDidBeginLoading, selector: "reload", object: nil)
 		self.addAsObserver(BTLE.notifications.peripheralDidFinishLoading, selector: "reload", object: nil)
 		self.addAsObserver(BTLE.notifications.peripheralDidUpdateName, selector: "reload", object: nil)
 		self.addAsObserver(BTLE.notifications.peripheralDidLoseComms, selector: "reload", object: nil)
 		self.addAsObserver(BTLE.notifications.peripheralDidRegainComms, selector: "reload", object: nil)
-
-		if self.scanSwitch.on {
+	}
+	
+	func updateStatus() {
+		if BTLE.manager.scanningState == .Active {
 			self.timer = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: "reload", userInfo: nil, repeats: true)
+		} else {
+			self.timer?.invalidate()
+			self.timer = nil
 		}
+		
+		UIApplication.sharedApplication().idleTimerDisabled = (BTLE.manager.scanningState == .Active || BTLE.manager.advertisingState == .Active)
 	}
 	
 	var timer: NSTimer?
@@ -76,13 +88,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	
 	@IBAction func toggleScanning() {
 		BTLE.manager.scanningState = self.scanSwitch.on ? .Active : .Idle
-
-		if self.scanSwitch.on {
-			self.timer = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: "reload", userInfo: nil, repeats: true)
-		} else {
-			self.timer?.invalidate()
-			self.timer = nil
-		}
 		NSUserDefaults.setKeyedBool(self.scanSwitch.on, forKey: "scanning")
 	}
 

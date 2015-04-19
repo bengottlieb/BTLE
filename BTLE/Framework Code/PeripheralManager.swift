@@ -40,6 +40,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		self.cbPeripheralManager.stopAdvertising()
 
 		BTLE.manager.advertisingState == .Off
+		NSNotification.postNotification(BTLE.notifications.didFinishAdvertising)
 	}
 	
 	//=============================================================================================
@@ -79,6 +80,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	}
 	
 	func setupAdvertising() {
+		NSNotification.postNotification(BTLE.notifications.willStartAdvertising)
 		self.cbPeripheralManager.startAdvertising(self.advertisingData)
 	}
 

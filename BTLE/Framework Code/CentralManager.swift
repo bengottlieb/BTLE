@@ -106,7 +106,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		}
 		BTLE.manager.peripherals.append(per)
 		
-		NSNotification.postNotification(BTLE.notifications.didDiscoverPeripheral, object: per)
+		NSNotification.postNotification(BTLE.notifications.peripheralWasDiscovered, object: per)
 		return per
 	}
 

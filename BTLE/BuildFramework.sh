@@ -97,15 +97,15 @@ cp -R "${UNIVERSAL_OUTPUTFOLDER}/${FRAMEWORK_NAME}.framework" "${IOS_FRAMEWORKS}
 
 
 # Step 8. Copy the Mac framework to the /Mac_Builds folder
-if [ ! -d "${MAC_FRAMEWORKS}" ]; then
+#if [ ! -d "${MAC_FRAMEWORKS}" ]; then
 #mkdir "${MAC_FRAMEWORKS}"
-fi
+#fi
 
-if [ -d "${MAC_FRAMEWORKS}/${FRAMEWORK_NAME}.framework" ]; then
+#if [ -d "${MAC_FRAMEWORKS}/${FRAMEWORK_NAME}.framework" ]; then
 #rm -rf "${MAC_FRAMEWORKS}/${FRAMEWORK_NAME}.framework"
-fi
+#fi
 
-cp -R "${BASE_BUILD_DIR}/${CONFIG}/${FRAMEWORK_NAME}.framework" "${MAC_FRAMEWORKS}/${FRAMEWORK_NAME}.framework"
+#cp -R "${BASE_BUILD_DIR}/${CONFIG}/${FRAMEWORK_NAME}.framework" "${MAC_FRAMEWORKS}/${FRAMEWORK_NAME}.framework"
 
 
 $(/usr/libexec/PlistBuddy "${MAC_PLIST_PATH}" -c "Delete :branch" 2> /dev/null)
