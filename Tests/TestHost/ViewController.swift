@@ -44,7 +44,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		var characteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: nil)
 		var service = BTLEMutableService(uuid: CBUUID(string: "FFF3"), isPrimary: true, characteristics: [ characteristic ])
 		
-		BTLE.manager.peripheralManager.addService(service)
+		BTLE.manager.advertiser.addService(service)
 		BTLE.manager.advertisingState = (NSUserDefaults.keyedBool("advertising") ?? false) ? .Active : .Off
 		
 		self.scanSwitch.on = BTLE.manager.scanningState == .Active || BTLE.manager.scanningState == .StartingUp

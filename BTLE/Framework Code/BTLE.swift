@@ -31,43 +31,43 @@ public class BTLE: NSObject {
 	
 	public var peripherals: [BTLEPeripheral] = []
 	public var scanningState: State = .Off { didSet {
-		self.centralManager.changingState = true
+		self.scanner.changingState = true
 		switch self.scanningState {
 		case .Off: break
 		case .StartingUp:
 			break
 			
 		case .Active:
-			self.centralManager.startScanning()
+			self.scanner.startScanning()
 			
 		case .Idle:
-			self.centralManager.stopScanning()
+			self.scanner.stopScanning()
 			
 		}
-		self.centralManager.changingState = false
+		self.scanner.changingState = false
 	}}
 	
 	public var advertisingState: State = .Off { didSet {
-		self.peripheralManager.changingState = true
+		self.advertiser.changingState = true
 		
 		switch self.advertisingState {
 		case .Off: fallthrough
 		case .StartingUp: break
 			
 		case .Active:
-			self.peripheralManager.startAdvertising()
+			self.advertiser.startAdvertising()
 		case .Idle:
-			self.peripheralManager.stopAdvertising()
+			self.advertiser.stopAdvertising()
 		}
 		
-		self.peripheralManager.changingState = false
+		self.advertiser.changingState = false
 	}}
 
 	
 	//[CBUUID(string: "FFF0")] //[BatteryServiceCBUUID, UserDataServiceCBUUID, GenericServiceCBUUID, GenericAccessServiceCBUUID, CBUUID(string: "1810"), CBUUID(string: "1805"), CBUUID(string: "1818"), CBUUID(string: "1816"), CBUUID(string: "180A"), CBUUID(string: "1808"), CBUUID(string: "1809"), CBUUID(string: "180D"), CBUUID(string: "1812"), CBUUID(string: "1802"), CBUUID(string: "1803"), CBUUID(string: "1819"), CBUUID(string: "1807"), CBUUID(string: "180E"), CBUUID(string: "1806"), CBUUID(string: "1813"), CBUUID(string: "1804")]
 	
-	public var services: [CBUUID] = [] { didSet { self.centralManager.updateScan() }}
-	public var monitorRSSI = false { didSet { self.centralManager.updateScan() }}
+	public var services: [CBUUID] = [] { didSet { self.scanner.updateScan() }}
+	public var monitorRSSI = false { didSet { self.scanner.updateScan() }}
 	public var deviceLifetime: NSTimeInterval = 0.0 { didSet {
 		self.peripherals.map({ $0.updateVisibilityTimer(); })
 	}}
@@ -107,6 +107,6 @@ public class BTLE: NSObject {
 		BTLE.registeredClasses.peripheralClass = peripheralClass
 	}
 
-	public lazy var centralManager: BTLECentralManager = { return BTLECentralManager() }()
-	public lazy var peripheralManager: BTLEPeripheralManager = { return BTLEPeripheralManager() }()
+	public lazy var scanner: BTLECentralManager = { return BTLECentralManager() }()
+	public lazy var advertiser: BTLEPeripheralManager = { return BTLEPeripheralManager() }()
 }

@@ -93,13 +93,13 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	
 	public func connect() {
 		self.state = .Connecting
-		BTLE.manager.centralManager.cbCentral.connectPeripheral(self.cbPeripheral, options: [CBConnectPeripheralOptionNotifyOnConnectionKey: true])
+		BTLE.manager.scanner.cbCentral.connectPeripheral(self.cbPeripheral, options: [CBConnectPeripheralOptionNotifyOnConnectionKey: true])
 	}
 	
 	public func disconnect() {
 		if self.state == .Connected { self.state = .Disconnecting }
 		
-		BTLE.manager.centralManager.cbCentral.cancelPeripheralConnection(self.cbPeripheral)
+		BTLE.manager.scanner.cbCentral.cancelPeripheralConnection(self.cbPeripheral)
 	}
 	
 	public var summaryDescription: String {
