@@ -95,7 +95,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	func addPeripheral(peripheral: CBPeripheral, RSSI: Int? = nil, advertisementData: [NSObject: AnyObject]? = nil) -> BTLEPeripheral {
 		for per in self.peripherals {
 			if per.uuid == peripheral.identifier {
-				if let rssi = RSSI { per.rssi = rssi }
+				if let rssi = RSSI { per.modulateRSSI(rssi) }
 				if let advertisementData = advertisementData { per.advertisementData = advertisementData }
 				return per
 			}
@@ -170,12 +170,18 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	//=============================================================================================
 	//MARK: Ignored Devices
 	let ignoredPeripheralUUIDsKey = "ignored-btle-uuids"
-	lazy var ignoredPeripheralUUIDs: Set<String> = { Set(NSUserDefaults.keyedObject(self.ignoredPeripheralUUIDsKey) as? [String] ?? []) }()
+	lazy var ignoredPeripheralUUIDs: Set<String> = {
+		let list = NSUserDefaults.keyedObject(self.ignoredPeripheralUUIDsKey) as? [String] ?? []
+		
+		if BTLE.debugging { println("Ignored IDs: " + NSArray(array: list).componentsJoinedByString(", ")) }
+		
+		return Set(list)
+	}()
 	func addIgnoredPeripheral(peripheral: BTLEPeripheral) {
 		self.peripherals.remove(peripheral)
 		self.ignoredPeripherals.insert(peripheral)
 		
-		self.ignoredPeripheralUUIDs = self.ignoredPeripherals.map({ return $0.uuid.UUIDString })
+		self.ignoredPeripheralUUIDs.insert(peripheral.uuid.UUIDString)
 		NSUserDefaults.setKeyedObject(Array(self.ignoredPeripheralUUIDs), forKey: self.ignoredPeripheralUUIDsKey)
 	}
 	
@@ -183,7 +189,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		self.ignoredPeripherals.remove(peripheral)
 		self.peripherals.append(peripheral)
 		
-		self.ignoredPeripheralUUIDs = self.ignoredPeripherals.map({ return $0.uuid.UUIDString })
+		self.ignoredPeripheralUUIDs.remove(peripheral.uuid.UUIDString)
 		NSUserDefaults.setKeyedObject(Array(self.ignoredPeripheralUUIDs), forKey: self.ignoredPeripheralUUIDsKey)
 	}
 	

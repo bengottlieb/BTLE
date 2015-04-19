@@ -34,7 +34,13 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	public var cbPeripheral: CBPeripheral!
 	public var uuid: NSUUID!
 	public var name: String!
-	public var lastCommunicatedAt: NSDate! { didSet { self.updateVisibilityTimer() }}
+	public var lastCommunicatedAt: NSDate! { didSet {
+		if self.state == .Undiscovered {
+			self.state = .Discovered
+			self.sendNotification(BTLE.notifications.peripheralDidRegainComms)
+		}
+		self.updateVisibilityTimer()
+	}}
 	public var loadingState = BTLE.LoadingState.NotLoaded {
 		didSet {
 			if self.loadingState == .Loaded {
@@ -65,13 +71,26 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		}
 	}}
 	public var rssi: Int? { didSet {
-		if self.state == .Undiscovered {
-			self.state = .Discovered
-			self.sendNotification(BTLE.notifications.peripheralDidRegainComms)
-		}
 		self.lastCommunicatedAt = NSDate()
 		self.sendNotification(BTLE.notifications.peripheralDidUpdateRSSI)
 	}}
+	
+	
+	func modulateRSSI(newRSSI: Int) {
+		if abs(newRSSI) == 127 { return }
+		if let rssi = self.rssi {
+			var delta = abs(Float(newRSSI - rssi))
+			if delta < 5 {
+				self.lastCommunicatedAt = NSDate()
+				self.sendNotification(BTLE.notifications.peripheralDidUpdateRSSI)
+				return
+			}
+			
+			self.rssi = rssi + Int(ceilf(Float(newRSSI - rssi) * 0.25))
+		} else if newRSSI < 127 {
+			self.rssi = newRSSI
+		}
+	}
 	
 	public override required init() {
 		super.init()
