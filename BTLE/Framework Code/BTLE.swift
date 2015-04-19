@@ -47,10 +47,10 @@ public class BTLE: NSObject {
 		self.centralManager.changingState = false
 	}}
 	
-	public var peripheralState: State = .Off { didSet {
+	public var advertisingState: State = .Off { didSet {
 		self.peripheralManager.changingState = true
 		
-		switch self.peripheralState {
+		switch self.advertisingState {
 		case .Off: fallthrough
 		case .StartingUp: break
 			

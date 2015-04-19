@@ -21,9 +21,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
 		
 		//BTLE.manager.services = [CBUUID(string: "01EB2EF1-BF82-4516-81BE-57E119207436")]
-		BTLE.debugging = true
-		BTLE.registerServiceClass(LockService.self, forServiceID: CBUUID(string: "FFF0"))
-		BTLE.registerPeripheralClass(LockPeripheral.self)
 		
 		return true
 	}

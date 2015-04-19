@@ -11,6 +11,8 @@ import BTLE
 import CoreBluetooth
 import SA_Swift
 
+
+
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 	@IBOutlet var tableView: UITableView!
 	@IBOutlet var scanSwitch: UISwitch!
@@ -26,34 +28,31 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		}
 	}
 	
-	var advertise = false { didSet {
-			if self.advertise {
-				var characteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: nil)
-				var service = BTLEMutableService(uuid: CBUUID(string: "FFF3"), isPrimary: true, characteristics: [ characteristic ])
-				
-				self.startAdvertising()
-			} else {
-				self.startScanning()
-			}
-		}
-	}
-	var timer: NSTimer?
-	override func viewWillAppear(animated: Bool) {
-		super.viewWillAppear(animated)
+	override func viewDidLoad() {
+		super.viewDidLoad()
 		
-		self.advertise = true
-	}
-	
-	func startAdvertising() {
-		BTLE.manager.peripheralState = .Active
-	}
-	
-	func startScanning() {
+		BTLE.debugging = true
+		BTLE.registerServiceClass(LockService.self, forServiceID: CBUUID(string: "FFF0"))
+		BTLE.registerPeripheralClass(LockPeripheral.self)
+
+		//setup scanner
 		BTLE.manager.deviceLifetime = 20.0
-		BTLE.manager.scanningState = .Active
-		self.scanSwitch.on = BTLE.manager.scanningState == .Active || BTLE.manager.scanningState == .StartingUp
-		self.monitorRSSISwitch.on = BTLE.manager.monitorRSSI
+		BTLE.manager.scanningState = (NSUserDefaults.keyedBool("scanning") ?? false) ? .Active : .Off
+
 		
+		//setup advertiser
+		var characteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: nil)
+		var service = BTLEMutableService(uuid: CBUUID(string: "FFF3"), isPrimary: true, characteristics: [ characteristic ])
+		
+		BTLE.manager.peripheralManager.addService(service)
+		BTLE.manager.advertisingState = (NSUserDefaults.keyedBool("advertising") ?? false) ? .Active : .Off
+		
+		self.scanSwitch.on = BTLE.manager.scanningState == .Active || BTLE.manager.scanningState == .StartingUp
+		self.advertiseSwitch.on = BTLE.manager.advertisingState == .Active || BTLE.manager.advertisingState == .StartingUp
+		self.monitorRSSISwitch.on = BTLE.manager.monitorRSSI
+
+	
+	
 		self.addAsObserver(BTLE.notifications.peripheralDidDisconnect, selector: "reload", object: nil)
 		self.addAsObserver(BTLE.notifications.peripheralDidConnect, selector: "reload", object: nil)
 		self.addAsObserver(BTLE.notifications.didDiscoverPeripheral, selector: "reload", object: nil)
@@ -63,13 +62,28 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		self.addAsObserver(BTLE.notifications.peripheralDidUpdateName, selector: "reload", object: nil)
 		self.addAsObserver(BTLE.notifications.peripheralDidLoseComms, selector: "reload", object: nil)
 		self.addAsObserver(BTLE.notifications.peripheralDidRegainComms, selector: "reload", object: nil)
+
+		if self.scanSwitch.on {
+			self.timer = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: "reload", userInfo: nil, repeats: true)
+		}
+	}
+	
+	var timer: NSTimer?
+	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated)
 		
-		self.timer = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: "reload", userInfo: nil, repeats: true)
 	}
 	
 	@IBAction func toggleScanning() {
 		BTLE.manager.scanningState = self.scanSwitch.on ? .Active : .Idle
 
+		if self.scanSwitch.on {
+			self.timer = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: "reload", userInfo: nil, repeats: true)
+		} else {
+			self.timer?.invalidate()
+			self.timer = nil
+		}
+		NSUserDefaults.setKeyedBool(self.scanSwitch.on, forKey: "scanning")
 	}
 
 	@IBAction func toggleRSSIMonitoring() {
@@ -77,6 +91,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	}
 	
 	@IBAction func toggleAdvertising() {
+		BTLE.manager.advertisingState = self.advertiseSwitch.on ? .Active : .Idle
+		NSUserDefaults.setKeyedBool(self.advertiseSwitch.on, forKey: "advertising")
 	}
 	
 	@IBAction func configureServices() {

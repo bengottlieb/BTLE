@@ -27,12 +27,19 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		
 		if self.cbPeripheralManager.state == .PoweredOn {
 			self.setupAdvertising()
+		} else {
+			BTLE.manager.advertisingState = .StartingUp
 		}
 	}
 
 	
 	public func stopAdvertising() {
-		
+		if !self.changingState {
+			if BTLE.manager.advertisingState == .Off { return }
+		}
+		self.cbPeripheralManager.stopAdvertising()
+
+		BTLE.manager.advertisingState == .Off
 	}
 	
 	//=============================================================================================
@@ -83,9 +90,10 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		
 	}
 	
-	var services: [BTLEMutableService] = []
+	public var services: [BTLEMutableService] = []
 	
-	func addService(service: BTLEMutableService) {
+	public func addService(service: BTLEMutableService) {
+		self.setupCBPeripheralManager()
 		self.services.append(service)
 		self.cbPeripheralManager.addService(service.cbService as! CBMutableService)
 	}
