@@ -105,8 +105,10 @@ public class BTLEMutableService: BTLEService {
 	
 	public func addCharacteristic(chr: BTLECharacteristic) {
 		self.characteristics.append(chr)
+		println("Service: \(self.cbService.characteristics)")
 		chr.service = self
 		if let svc = self.cbService as? CBMutableService {
+			if svc.characteristics == nil { svc.characteristics = [] }
 			svc.characteristics.append(chr.cbCharacteristic)
 		}
 	}

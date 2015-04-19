@@ -15,6 +15,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	@IBOutlet var tableView: UITableView!
 	@IBOutlet var scanSwitch: UISwitch!
 	@IBOutlet var monitorRSSISwitch: UISwitch!
+	@IBOutlet var advertiseSwitch: UISwitch!
 
 	var devices: [BTLEPeripheral] = []
 	
@@ -49,8 +50,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	
 	func startScanning() {
 		BTLE.manager.deviceLifetime = 20.0
-		BTLE.manager.centralState = .Active
-		self.scanSwitch.on = BTLE.manager.centralState == .Active || BTLE.manager.centralState == .StartingUp
+		BTLE.manager.scanningState = .Active
+		self.scanSwitch.on = BTLE.manager.scanningState == .Active || BTLE.manager.scanningState == .StartingUp
 		self.monitorRSSISwitch.on = BTLE.manager.monitorRSSI
 		
 		self.addAsObserver(BTLE.notifications.peripheralDidDisconnect, selector: "reload", object: nil)
@@ -67,7 +68,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	}
 	
 	@IBAction func toggleScanning() {
-		BTLE.manager.centralState = self.scanSwitch.on ? .Active : .Idle
+		BTLE.manager.scanningState = self.scanSwitch.on ? .Active : .Idle
 
 	}
 
@@ -75,7 +76,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		BTLE.manager.monitorRSSI = !BTLE.manager.monitorRSSI
 	}
 	
-
+	@IBAction func toggleAdvertising() {
+	}
+	
+	@IBAction func configureServices() {
+	
+	}
+	
 	func connectToggled(toggle: UISwitch) {
 		var device = self.devices[toggle.tag]
 		

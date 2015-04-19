@@ -30,9 +30,9 @@ public class BTLE: NSObject {
 	}
 	
 	public var peripherals: [BTLEPeripheral] = []
-	public var centralState: State = .Off { didSet {
+	public var scanningState: State = .Off { didSet {
 		self.centralManager.changingState = true
-		switch self.centralState {
+		switch self.scanningState {
 		case .Off: break
 		case .StartingUp:
 			break

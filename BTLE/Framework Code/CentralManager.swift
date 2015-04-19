@@ -45,7 +45,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		if let centralManager = self.cbCentral {
 			centralManager.stopScan()
 			NSNotification.postNotification(BTLE.notifications.didFinishScan, object: self)
-			if !self.changingState { BTLE.manager.centralState = .Off }
+			if !self.changingState { BTLE.manager.scanningState = .Off }
 		}
 	}
 	
@@ -54,7 +54,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 
 		if let centralManager = self.cbCentral {
 			self.cbCentral = nil
-			if !self.changingState { BTLE.manager.centralState = .Off }
+			if !self.changingState { BTLE.manager.scanningState = .Off }
 		}
 	}
 	
@@ -151,7 +151,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		for peripheral in connected {
 			self.addPeripheral(peripheral)
 		}
-		BTLE.manager.centralState = .Active
+		BTLE.manager.scanningState = .Active
 	}
 
 

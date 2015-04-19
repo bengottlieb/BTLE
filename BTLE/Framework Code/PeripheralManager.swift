@@ -77,7 +77,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		
 		if let peripheralManager = self.cbPeripheralManager {
 			self.cbPeripheralManager = nil
-			if !self.changingState { BTLE.manager.centralState = .Off }
+			if !self.changingState { BTLE.manager.scanningState = .Off }
 		}
 		
 		
