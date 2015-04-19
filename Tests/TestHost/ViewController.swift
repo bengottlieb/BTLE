@@ -154,6 +154,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		tableView.endUpdates()
 	}
 
+	func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+		var device = self.devices[indexPath.row]
+		
+		return 71.0 + CGFloat(max(device.advertisementData.count - 2, 0)) * 13.0
+	}
 }
 
 

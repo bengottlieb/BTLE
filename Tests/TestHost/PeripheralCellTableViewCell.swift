@@ -38,7 +38,20 @@ class PeripheralCellTableViewCell: UITableViewCell {
 				self.rssiLabel.text = "\(per.rssi ?? 0)"
 				
 				var seconds = Int(abs(per.lastCommunicatedAt.timeIntervalSinceNow))
-				self.detailsLabel?.text = "\(seconds) sec since last ping, \(per.services.count) services"
+				var text = ""
+				for (key, value) in per.advertisementData {
+					if let describable = value as? Printable {
+						var line = describable.description.stringByReplacingOccurrencesOfString("\n", withString: "")
+						text += "\n\(key): \(line)"
+					} else {
+						text += "\n\(key): \(value)"
+					}
+					
+				}
+				
+				var string = NSMutableAttributedString(string: "\(seconds) sec since last ping, \(per.services.count) services", attributes: [NSFontAttributeName: UIFont.boldSystemFontOfSize(12)])
+				string.appendAttributedString(NSAttributedString(string: text, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(12)]))
+				self.detailsLabel?.attributedText = string
 
 				
 				self.connectedSwitch.on = (per.state == .Connected || per.state == .Connecting)

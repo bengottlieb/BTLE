@@ -65,8 +65,10 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	weak var updateScanTimer: NSTimer?
 	func updateScan() {
 		dispatch_async_main {
-			self.updateScanTimer?.invalidate()
-			self.updateScanTimer = NSTimer.scheduledTimerWithTimeInterval(0.0001, target: self, selector: "updateScanTimerFired", userInfo: nil, repeats: false)
+			if BTLE.manager.scanningState == .Active {
+				self.updateScanTimer?.invalidate()
+				self.updateScanTimer = NSTimer.scheduledTimerWithTimeInterval(0.0001, target: self, selector: "updateScanTimerFired", userInfo: nil, repeats: false)
+			}
 		}
 	}
 	

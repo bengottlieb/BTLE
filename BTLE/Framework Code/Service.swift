@@ -20,6 +20,7 @@ public class BTLEService: NSObject, Printable {
 	var loading = false
 	public var characteristics: [BTLECharacteristic] = []
 	var pendingCharacteristics: [BTLECharacteristic] = []
+	public var uuid: CBUUID { return self.cbService.UUID }
 	
 	class func createService(service svc: CBService, onPeriperhal: BTLEPeripheral) -> BTLEService {
 		if let serviceClass: BTLEService.Type = BTLE.registeredClasses.services[svc.UUID] {
