@@ -47,6 +47,9 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	public func peripheralManagerDidUpdateState(peripheral: CBPeripheralManager!) {
 		switch cbPeripheralManager.state {
 		case .PoweredOn:
+			for service in self.services {
+				self.cbPeripheralManager.addService(service.cbService as! CBMutableService)
+			}
 			self.setupAdvertising()
 		default: break
 		}
@@ -95,7 +98,9 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	public func addService(service: BTLEMutableService) {
 		self.setupCBPeripheralManager()
 		self.services.append(service)
-		self.cbPeripheralManager.addService(service.cbService as! CBMutableService)
+		if self.cbPeripheralManager.state == .PoweredOn {
+			self.cbPeripheralManager.addService(service.cbService as! CBMutableService)
+		}
 	}
 
 }

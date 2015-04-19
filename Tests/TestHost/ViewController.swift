@@ -41,7 +41,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
 		
 		//setup advertiser
-		var characteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: nil)
+		var characteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: .Read)
 		var service = BTLEMutableService(uuid: CBUUID(string: "FFF3"), isPrimary: true, characteristics: [ characteristic ])
 		
 		BTLE.manager.advertiser.addService(service)
