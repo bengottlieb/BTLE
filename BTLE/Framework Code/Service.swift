@@ -14,7 +14,7 @@ protocol BTLEServiceProtocol {
 	init(service svc: CBService, onPeriperhal: BTLEPeripheral);
 }
 
-public class BTLEService: NSObject, Printable, BTLEServiceProtocol {
+public class BTLEService: NSObject, Printable {
 	public var cbService: CBService!
 	var peripheral: BTLEPeripheral!
 	var loading = false
@@ -29,11 +29,10 @@ public class BTLEService: NSObject, Printable, BTLEServiceProtocol {
 		}
 	}
 	
-	public override required init() {
-		super.init()
-	}
 	
-	public required init(service svc: CBService, onPeriperhal: BTLEPeripheral) {
+	override init() { super.init() }
+	
+	required public init(service svc: CBService, onPeriperhal: BTLEPeripheral) {
 		cbService = svc
 		peripheral = onPeriperhal
 		super.init()
@@ -91,5 +90,26 @@ public class BTLEService: NSObject, Printable, BTLEServiceProtocol {
 	public override var description: String { return "\(self.cbService): \(self.characteristics)" }
 	
 	public func characteristicWithUUID(uuid: CBUUID) -> BTLECharacteristic? { return filter(self.characteristics, { $0.cbCharacteristic.UUID == uuid }).last }
+	
+}
+
+
+public class BTLEMutableService: BTLEService {
+	public init(uuid: CBUUID, isPrimary: Bool = true, characteristics chrs: [BTLECharacteristic] = []) {
+		super.init()
+		self.cbService = CBMutableService(type: uuid, primary: isPrimary)
+		for svc in chrs { self.addCharacteristic(svc) }
+	}
+
+	public required init(service svc: CBService, onPeriperhal: BTLEPeripheral) { fatalError("init(service:onPeriperhal:) has not been implemented") }
+	
+	public func addCharacteristic(chr: BTLECharacteristic) {
+		self.characteristics.append(chr)
+		chr.service = self
+		if let svc = self.cbService as? CBMutableService {
+			svc.characteristics.append(chr.cbCharacteristic)
+		}
+	}
+	
 	
 }

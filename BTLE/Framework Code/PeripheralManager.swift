@@ -83,5 +83,11 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		
 	}
 	
+	var services: [BTLEMutableService] = []
+	
+	func addService(service: BTLEMutableService) {
+		self.services.append(service)
+		self.cbPeripheralManager.addService(service.cbService as! CBMutableService)
+	}
 
 }

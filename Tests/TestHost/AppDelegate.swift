@@ -75,6 +75,4 @@ class LockService: BTLEService {
 		
 		println("BTLEService: \(lockStatus), Data: \(data)")
 	}
-	
-	required init() { super.init() }
 }

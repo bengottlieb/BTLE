@@ -8,6 +8,7 @@
 
 import UIKit
 import BTLE
+import CoreBluetooth
 import SA_Swift
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
@@ -24,15 +25,22 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		}
 	}
 	
+	var advertise = false { didSet {
+			if self.advertise {
+				var characteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: nil)
+				var service = BTLEMutableService(uuid: CBUUID(string: "FFF3"), isPrimary: true, characteristics: [ characteristic ])
+				
+				self.startAdvertising()
+			} else {
+				self.startScanning()
+			}
+		}
+	}
 	var timer: NSTimer?
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
 		
-		if true {
-			self.startAdvertising()
-		} else {
-			self.startScanning()
-		}
+		self.advertise = true
 	}
 	
 	func startAdvertising() {

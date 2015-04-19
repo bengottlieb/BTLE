@@ -10,24 +10,24 @@ import Foundation
 import CoreBluetooth
 
 public class BTLECharacteristic: NSObject {
-	public let cbCharacteristic: CBCharacteristic
-	public let service: BTLEService
+	public var cbCharacteristic: CBCharacteristic!
+	public var service: BTLEService!
 	var loading = false
 	
 	var peripheral: BTLEPeripheral { return self.service.peripheral }
 	
-	class func characteristic(chr: CBCharacteristic, ofService: BTLEService) -> BTLECharacteristic {
+	class func characteristic(chr: CBCharacteristic, ofService: BTLEService?) -> BTLECharacteristic {
 	//	if chr.UUID == LockStatusCharacteristic { return BTLELockStatusCharacteristic(characteristic: chr, ofService: ofService) }
 		
 		return BTLECharacteristic(characteristic: chr, ofService: ofService)
 	}
 	
-	init(characteristic chr: CBCharacteristic, ofService: BTLEService) {
+	init(characteristic chr: CBCharacteristic, ofService: BTLEService?) {
 		cbCharacteristic = chr
 		service = ofService
 		super.init()
 		
-		self.load()
+		if let svc = ofService { self.load() }
 	}
 	
 	func load() {
@@ -59,4 +59,11 @@ public class BTLECharacteristic: NSObject {
 	}
 	public var dataValue: NSData? { return self.cbCharacteristic.value }
 	public var stringValue: String { if let d = self.dataValue { return (NSString(data: d, encoding: NSASCIIStringEncoding) ?? "") as String; }; return "" }
+}
+
+
+public class BTLEMutableCharacteristic : BTLECharacteristic {
+	public init(uuid: CBUUID, properties: CBCharacteristicProperties, value: NSData? = nil, permissions: CBAttributePermissions = .Readable) {
+		super.init(characteristic: CBMutableCharacteristic(type: uuid, properties: properties, value: value, permissions: permissions), ofService: nil)
+	}
 }
