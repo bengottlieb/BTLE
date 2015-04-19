@@ -36,6 +36,8 @@
 		B58D64931A899094005A0002 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B58D648D1A899094005A0002 /* Images.xcassets */; };
 		B58D64951A899094005A0002 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D648F1A899094005A0002 /* ViewController.swift */; };
 		B58D64961A899285005A0002 /* BTLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B58D646B1A898F81005A0002 /* BTLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B5A4823E1AE3F1E8001636BE /* DeviceDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A4823C1AE3F1E8001636BE /* DeviceDetailsViewController.swift */; };
+		B5A4823F1AE3F1E8001636BE /* DeviceDetailsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5A4823D1AE3F1E8001636BE /* DeviceDetailsViewController.xib */; };
 		B5D6083E1ADBF4F6004DC9AC /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */; };
 		B5D6083F1ADBF4F6004DC9AC /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */; };
 		B5D608411ADBFD4C004DC9AC /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D608401ADBFD4C004DC9AC /* Peripheral.swift */; };
@@ -103,6 +105,8 @@
 		B58D648D1A899094005A0002 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		B58D648E1A899094005A0002 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B58D648F1A899094005A0002 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		B5A4823C1AE3F1E8001636BE /* DeviceDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DeviceDetailsViewController.swift; path = "Device Details/DeviceDetailsViewController.swift"; sourceTree = "<group>"; };
+		B5A4823D1AE3F1E8001636BE /* DeviceDetailsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DeviceDetailsViewController.xib; path = "Device Details/DeviceDetailsViewController.xib"; sourceTree = "<group>"; };
 		B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManager.swift; sourceTree = "<group>"; };
 		B5D608401ADBFD4C004DC9AC /* Peripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
 		B5D608441ADC097E004DC9AC /* SA_Swift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SA_Swift.framework; sourceTree = "<group>"; };
@@ -243,6 +247,8 @@
 				B58D648D1A899094005A0002 /* Images.xcassets */,
 				B58D648E1A899094005A0002 /* Info.plist */,
 				B58D648F1A899094005A0002 /* ViewController.swift */,
+				B5A4823C1AE3F1E8001636BE /* DeviceDetailsViewController.swift */,
+				B5A4823D1AE3F1E8001636BE /* DeviceDetailsViewController.xib */,
 			);
 			path = TestHost;
 			sourceTree = "<group>";
@@ -409,6 +415,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B58D64931A899094005A0002 /* Images.xcassets in Resources */,
+				B5A4823F1AE3F1E8001636BE /* DeviceDetailsViewController.xib in Resources */,
 				B58D64911A899094005A0002 /* LaunchScreen.xib in Resources */,
 				B58D64921A899094005A0002 /* Main.storyboard in Resources */,
 			);
@@ -458,6 +465,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5A4823E1AE3F1E8001636BE /* DeviceDetailsViewController.swift in Sources */,
 				B58D64951A899094005A0002 /* ViewController.swift in Sources */,
 				B58D64901A899094005A0002 /* AppDelegate.swift in Sources */,
 			);

@@ -67,6 +67,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		self.addAsObserver(BTLE.notifications.peripheralDidUpdateName, selector: "reload", object: nil)
 		self.addAsObserver(BTLE.notifications.peripheralDidLoseComms, selector: "reload", object: nil)
 		self.addAsObserver(BTLE.notifications.peripheralDidRegainComms, selector: "reload", object: nil)
+		
+		
+		self.updateStatus()
 	}
 	
 	func updateStatus() {
@@ -151,7 +154,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 		var device = self.devices[indexPath.row]
 		
-		println("\(device.fullDescription)")
+		self.navigationController?.pushViewController(DeviceDetailsViewController(peripheral: device), animated: true)
 	}
 
 }
