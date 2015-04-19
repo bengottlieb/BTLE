@@ -13,7 +13,11 @@ import SA_Swift
 public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	var dispatchQueue = dispatch_queue_create("BTLE.CentralManager queue", DISPATCH_QUEUE_SERIAL)
 	var cbCentral: CBCentralManager!
+
+	public var peripherals: [BTLEPeripheral] = []
+	public var ignoredPeripherals: Set<BTLEPeripheral> = Set<BTLEPeripheral>()
 	
+
 	//=============================================================================================
 	//MARK: Actions
 
@@ -89,14 +93,20 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	}
 	
 	func addPeripheral(peripheral: CBPeripheral, RSSI: Int? = nil, advertisementData: [NSObject: AnyObject]? = nil) -> BTLEPeripheral {
-		for per in BTLE.manager.peripherals {
+		for per in self.peripherals {
 			if per.uuid == peripheral.identifier {
 				if let rssi = RSSI { per.rssi = rssi }
 				if let advertisementData = advertisementData { per.advertisementData = advertisementData }
 				return per
 			}
 		}
-		
+
+		for per in self.ignoredPeripherals {
+			if per.uuid == peripheral.identifier {
+				return per
+			}
+		}
+
 		let per: BTLEPeripheral
 		
 		if let perClass = BTLE.registeredClasses.peripheralClass {
@@ -104,12 +114,15 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		} else {
 			per = BTLEPeripheral(peripheral: peripheral, RSSI: RSSI, advertisementData: advertisementData)
 		}
-		BTLE.manager.peripherals.append(per)
+		if per.ignored {
+			self.ignoredPeripherals.insert(per)
+		} else {
+			self.peripherals.append(per)
+		}
 		
-		NSNotification.postNotification(BTLE.notifications.peripheralWasDiscovered, object: per)
+		per.sendNotification(BTLE.notifications.peripheralWasDiscovered)
 		return per
 	}
-
 
 	//=============================================================================================
 	//MARK: CBCentralManagerDelegate
@@ -134,13 +147,13 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	public func centralManager(centralManager: CBCentralManager!, didConnectPeripheral peripheral: CBPeripheral!) {
 		var per = self.addPeripheral(peripheral)
 		per.state = .Connected
-		NSNotification.postNotification(BTLE.notifications.peripheralDidConnect, object: per)
+		per.sendNotification(BTLE.notifications.peripheralDidConnect)
 	}
 	
 	public func centralManager(centralManager: CBCentralManager!, didDisconnectPeripheral peripheral: CBPeripheral!, error: NSError!) {
 		var per = self.addPeripheral(peripheral)
 		per.state = .Discovered
-		NSNotification.postNotification(BTLE.notifications.peripheralDidDisconnect, object: per)
+		per.sendNotification(BTLE.notifications.peripheralDidDisconnect)
 	}
 	
 	//=============================================================================================
@@ -154,5 +167,28 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		BTLE.manager.scanningState = .Active
 	}
 
+	//=============================================================================================
+	//MARK: Ignored Devices
+	let ignoredPeripheralUUIDsKey = "ignored-btle-uuids"
+	lazy var ignoredPeripheralUUIDs: Set<String> = { Set(NSUserDefaults.keyedObject(self.ignoredPeripheralUUIDsKey) as? [String] ?? []) }()
+	func addIgnoredPeripheral(peripheral: BTLEPeripheral) {
+		self.peripherals.remove(peripheral)
+		self.ignoredPeripherals.insert(peripheral)
+		
+		self.ignoredPeripheralUUIDs = self.ignoredPeripherals.map({ return $0.uuid.UUIDString })
+		NSUserDefaults.setKeyedObject(Array(self.ignoredPeripheralUUIDs), forKey: self.ignoredPeripheralUUIDsKey)
+	}
+	
+	func removeIgnoredPeripheral(peripheral: BTLEPeripheral) {
+		self.ignoredPeripherals.remove(peripheral)
+		self.peripherals.append(peripheral)
+		
+		self.ignoredPeripheralUUIDs = self.ignoredPeripherals.map({ return $0.uuid.UUIDString })
+		NSUserDefaults.setKeyedObject(Array(self.ignoredPeripheralUUIDs), forKey: self.ignoredPeripheralUUIDsKey)
+	}
+	
+	func isPeripheralIgnored(peripheral: BTLEPeripheral) -> Bool {
+		return self.ignoredPeripherals.contains(peripheral) || self.ignoredPeripheralUUIDs.contains(peripheral.uuid.UUIDString)
+	}
 
 }

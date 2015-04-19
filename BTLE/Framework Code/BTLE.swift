@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreBluetooth
+import SA_Swift
 
 let AlertServiceCBUUID = CBUUID(string: "1811")
 let BatteryServiceCBUUID = CBUUID(string: "180F")
@@ -29,7 +30,6 @@ public class BTLE: NSObject {
 		set { BTLE_Debugging = newValue }
 	}
 	
-	public var peripherals: [BTLEPeripheral] = []
 	public var scanningState: State = .Off { didSet {
 		self.scanner.changingState = true
 		switch self.scanningState {
@@ -69,7 +69,7 @@ public class BTLE: NSObject {
 	public var services: [CBUUID] = [] { didSet { self.scanner.updateScan() }}
 	public var monitorRSSI = false { didSet { self.scanner.updateScan() }}
 	public var deviceLifetime: NSTimeInterval = 0.0 { didSet {
-		self.peripherals.map({ $0.updateVisibilityTimer(); })
+		self.scanner.peripherals.map({ $0.updateVisibilityTimer(); })
 	}}
 	
 	
@@ -112,4 +112,5 @@ public class BTLE: NSObject {
 
 	public lazy var scanner: BTLECentralManager = { return BTLECentralManager() }()
 	public lazy var advertiser: BTLEPeripheralManager = { return BTLEPeripheralManager() }()
+	
 }

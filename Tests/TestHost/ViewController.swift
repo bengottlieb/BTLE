@@ -22,7 +22,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	var devices: [BTLEPeripheral] = []
 	
 	func reload() {
-		self.devices = BTLE.manager.peripherals
+		self.devices = BTLE.manager.scanner.peripherals
 		dispatch_async_main {
 			self.tableView.reloadData()
 		}
@@ -31,6 +31,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
+		self.tableView.registerNib(UINib(nibName: "PeripheralCellTableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
+		
 		BTLE.debugging = true
 		BTLE.registerServiceClass(LockService.self, forServiceID: CBUUID(string: "FFF0"))
 		BTLE.registerPeripheralClass(LockPeripheral.self)
@@ -38,6 +40,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		//setup scanner
 		BTLE.manager.deviceLifetime = 20.0
 		BTLE.manager.scanningState = (NSUserDefaults.keyedBool("scanning") ?? false) ? .Active : .Off
+		BTLE.manager.monitorRSSI = (NSUserDefaults.keyedBool("monitorRSSI") ?? false)
 
 		
 		//setup advertiser
@@ -58,16 +61,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		self.addAsObserver(BTLE.notifications.didFinishAdvertising, selector: "updateStatus", object: nil)
 
 	
-		self.addAsObserver(BTLE.notifications.peripheralDidDisconnect, selector: "reload", object: nil)
-		self.addAsObserver(BTLE.notifications.peripheralDidConnect, selector: "reload", object: nil)
 		self.addAsObserver(BTLE.notifications.peripheralWasDiscovered, selector: "reload", object: nil)
-		self.addAsObserver(BTLE.notifications.peripheralDidUpdateRSSI, selector: "reload", object: nil)
-		self.addAsObserver(BTLE.notifications.peripheralDidBeginLoading, selector: "reload", object: nil)
-		self.addAsObserver(BTLE.notifications.peripheralDidFinishLoading, selector: "reload", object: nil)
-		self.addAsObserver(BTLE.notifications.peripheralDidUpdateName, selector: "reload", object: nil)
-		self.addAsObserver(BTLE.notifications.peripheralDidLoseComms, selector: "reload", object: nil)
-		self.addAsObserver(BTLE.notifications.peripheralDidRegainComms, selector: "reload", object: nil)
-		
 		
 		self.updateStatus()
 	}
@@ -86,7 +80,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	var timer: NSTimer?
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
-		
+		self.navigationController?.navigationBarHidden = true
 	}
 	
 	@IBAction func toggleScanning() {
@@ -95,7 +89,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	}
 
 	@IBAction func toggleRSSIMonitoring() {
-		BTLE.manager.monitorRSSI = !BTLE.manager.monitorRSSI
+		BTLE.manager.monitorRSSI = self.monitorRSSISwitch.on
+		NSUserDefaults.setKeyedBool(self.monitorRSSISwitch.on, forKey: "monitorRSSI")
 	}
 	
 	@IBAction func toggleAdvertising() {
@@ -129,24 +124,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	}
 	
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		var cell = UITableViewCell(style: .Subtitle, reuseIdentifier: "cell")
+		var cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! PeripheralCellTableViewCell
 		var device = self.devices[indexPath.row]
 		
-		cell.textLabel?.text = "\(device.summaryDescription)"
-
-		var toggle = UISwitch(frame: CGRectZero)
-		toggle.on = device.state == .Connected || device.state == .Connecting
-		toggle.tag = indexPath.row
-		toggle.addTarget(self, action: "connectToggled:", forControlEvents: .ValueChanged)
-		
-		cell.accessoryView = toggle
-		
-		var seconds = Int(abs(device.lastCommunicatedAt.timeIntervalSinceNow))
-		cell.detailTextLabel?.text = "\(seconds) sec since last ping, \(device.services.count) services"
-		
-		if device.state == .Undiscovered {
-			cell.textLabel?.textColor = UIColor.redColor()
-		}
+		cell.peripheral = device
 		
 		return cell
 	}
@@ -155,6 +136,22 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		var device = self.devices[indexPath.row]
 		
 		self.navigationController?.pushViewController(DeviceDetailsViewController(peripheral: device), animated: true)
+	}
+	
+	func tableView(tableView: UITableView, titleForDeleteConfirmationButtonForRowAtIndexPath indexPath: NSIndexPath) -> String! {
+		return "Ignore"
+	}
+	
+	func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+		tableView.beginUpdates()
+		
+		tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+		var device = self.devices[indexPath.row]
+		
+		device.ignored = true
+		self.devices = BTLE.manager.scanner.peripherals
+		
+		tableView.endUpdates()
 	}
 
 }

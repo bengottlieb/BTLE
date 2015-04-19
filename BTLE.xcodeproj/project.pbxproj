@@ -50,6 +50,10 @@
 		B5D6084B1ADC4486004DC9AC /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D608491ADC4486004DC9AC /* Service.swift */; };
 		B5D6084D1ADC44A5004DC9AC /* Characteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6084C1ADC44A5004DC9AC /* Characteristic.swift */; };
 		B5D6084E1ADC44A5004DC9AC /* Characteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6084C1ADC44A5004DC9AC /* Characteristic.swift */; };
+		B5DAB3331AE40B3800D49D44 /* PeripheralCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5DAB3311AE40B3800D49D44 /* PeripheralCellTableViewCell.swift */; };
+		B5DAB3341AE40B3800D49D44 /* PeripheralCellTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5DAB3321AE40B3800D49D44 /* PeripheralCellTableViewCell.xib */; };
+		B5DAB3361AE418FE00D49D44 /* Array+SA_Additions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5DAB3351AE418FE00D49D44 /* Array+SA_Additions.swift */; };
+		B5DAB3371AE418FE00D49D44 /* Array+SA_Additions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5DAB3351AE418FE00D49D44 /* Array+SA_Additions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -112,6 +116,9 @@
 		B5D608441ADC097E004DC9AC /* SA_Swift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SA_Swift.framework; sourceTree = "<group>"; };
 		B5D608491ADC4486004DC9AC /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		B5D6084C1ADC44A5004DC9AC /* Characteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Characteristic.swift; sourceTree = "<group>"; };
+		B5DAB3311AE40B3800D49D44 /* PeripheralCellTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralCellTableViewCell.swift; sourceTree = "<group>"; };
+		B5DAB3321AE40B3800D49D44 /* PeripheralCellTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PeripheralCellTableViewCell.xib; sourceTree = "<group>"; };
+		B5DAB3351AE418FE00D49D44 /* Array+SA_Additions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+SA_Additions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -233,6 +240,7 @@
 				B5D608401ADBFD4C004DC9AC /* Peripheral.swift */,
 				B5D608491ADC4486004DC9AC /* Service.swift */,
 				B5D6084C1ADC44A5004DC9AC /* Characteristic.swift */,
+				B5DAB3351AE418FE00D49D44 /* Array+SA_Additions.swift */,
 			);
 			name = "Framework Code";
 			path = "BTLE/Framework Code";
@@ -247,6 +255,8 @@
 				B58D648D1A899094005A0002 /* Images.xcassets */,
 				B58D648E1A899094005A0002 /* Info.plist */,
 				B58D648F1A899094005A0002 /* ViewController.swift */,
+				B5DAB3311AE40B3800D49D44 /* PeripheralCellTableViewCell.swift */,
+				B5DAB3321AE40B3800D49D44 /* PeripheralCellTableViewCell.xib */,
 				B5A4823C1AE3F1E8001636BE /* DeviceDetailsViewController.swift */,
 				B5A4823D1AE3F1E8001636BE /* DeviceDetailsViewController.xib */,
 			);
@@ -416,6 +426,7 @@
 			files = (
 				B58D64931A899094005A0002 /* Images.xcassets in Resources */,
 				B5A4823F1AE3F1E8001636BE /* DeviceDetailsViewController.xib in Resources */,
+				B5DAB3341AE40B3800D49D44 /* PeripheralCellTableViewCell.xib in Resources */,
 				B58D64911A899094005A0002 /* LaunchScreen.xib in Resources */,
 				B58D64921A899094005A0002 /* Main.storyboard in Resources */,
 			);
@@ -466,6 +477,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B5A4823E1AE3F1E8001636BE /* DeviceDetailsViewController.swift in Sources */,
+				B5DAB3331AE40B3800D49D44 /* PeripheralCellTableViewCell.swift in Sources */,
 				B58D64951A899094005A0002 /* ViewController.swift in Sources */,
 				B58D64901A899094005A0002 /* AppDelegate.swift in Sources */,
 			);
@@ -480,6 +492,7 @@
 				B5D6083E1ADBF4F6004DC9AC /* CentralManager.swift in Sources */,
 				B5345B3F1AE1F20F0074F337 /* PeripheralManager.swift in Sources */,
 				B58D647F1A898FBD005A0002 /* BTLE.swift in Sources */,
+				B5DAB3361AE418FE00D49D44 /* Array+SA_Additions.swift in Sources */,
 				B5D6084A1ADC4486004DC9AC /* Service.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -497,6 +510,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B58D64831A898FBE005A0002 /* BTLE.swift in Sources */,
+				B5DAB3371AE418FE00D49D44 /* Array+SA_Additions.swift in Sources */,
 				B5D6084B1ADC4486004DC9AC /* Service.swift in Sources */,
 				B5D6084E1ADC44A5004DC9AC /* Characteristic.swift in Sources */,
 				B5D608421ADBFD4C004DC9AC /* Peripheral.swift in Sources */,

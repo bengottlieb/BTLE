@@ -38,14 +38,14 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	public var loadingState = BTLE.LoadingState.NotLoaded {
 		didSet {
 			if self.loadingState == .Loaded {
-				NSNotification.postNotification(BTLE.notifications.peripheralDidFinishLoading, object: self)
+				self.sendNotification(BTLE.notifications.peripheralDidFinishLoading)
 				if BTLE.debugging { println("Loaded device: \(self.fullDescription)") }
 			}
 		}
 	}
 	public var services: [BTLEService] = []
 	public var advertisementData: [NSObject: AnyObject] = [:] { didSet {
-		NSNotification.postNotification(BTLE.notifications.peripheralDidUpdateAdvertisementData, object: self)
+		self.sendNotification(BTLE.notifications.peripheralDidUpdateAdvertisementData)
 	}}
 	public var state: State = .Discovered { didSet {
 		switch self.state {
@@ -67,10 +67,10 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	public var rssi: Int? { didSet {
 		if self.state == .Undiscovered {
 			self.state = .Discovered
-			NSNotification.postNotification(BTLE.notifications.peripheralDidRegainComms, object: self)
+			self.sendNotification(BTLE.notifications.peripheralDidRegainComms)
 		}
 		self.lastCommunicatedAt = NSDate()
-		NSNotification.postNotification(BTLE.notifications.peripheralDidUpdateRSSI, object: self)
+		self.sendNotification(BTLE.notifications.peripheralDidUpdateRSSI)
 	}}
 	
 	public override required init() {
@@ -84,6 +84,8 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		lastCommunicatedAt = NSDate()
 		if let adv = adv { advertisementData = adv }
 		
+		ignored = BTLE.manager.scanner.ignoredPeripheralUUIDs.contains(peripheral.identifier.UUIDString)
+		if ignored && BTLE.debugging { println("Ignoring peripheral: \(name), \(uuid)") }
 		super.init()
 		peripheral.delegate = self
 		peripheral.readRSSI()
@@ -102,8 +104,19 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		BTLE.manager.scanner.cbCentral.cancelPeripheralConnection(self.cbPeripheral)
 	}
 	
+	public var ignored: Bool = false {
+		didSet {
+			if self.ignored {
+				BTLE.manager.scanner.addIgnoredPeripheral(self)
+			} else {
+				BTLE.manager.scanner.removeIgnoredPeripheral(self)
+			}
+			
+		}
+	}
+	
 	public var summaryDescription: String {
-		var string = "(\(self.rssi ?? -127)) BT \(self.name) \(self.uuid.UUIDString)"
+		var string = ""
 		if self.state == .Connected { string = "Connected " + string }
 		if self.state == .Connecting { string = "Connecting " + string }
 		
@@ -138,7 +151,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	//MARK: Internal
 	var forceReload = false
 	func loadServices(reload: Bool = false) {
-		NSNotification.postNotification(BTLE.notifications.peripheralDidBeginLoading, object: self)
+		self.sendNotification(BTLE.notifications.peripheralDidBeginLoading)
 		self.loadingState = .Loading
 		self.forceReload = reload
 		self.cbPeripheral.discoverServices(nil)
@@ -207,10 +220,14 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		
 		if self.state == .Discovered {
 			self.state = .Undiscovered
-			NSNotification.postNotification(BTLE.notifications.peripheralDidLoseComms, object: self)
+			self.sendNotification(BTLE.notifications.peripheralDidLoseComms)
 		}
 	}
 	
+	func sendNotification(name: String) {
+		if !self.ignored { NSNotification.postNotification(name, object: self) }
+	}
+
 	//=============================================================================================
 	//MARK: Delegate
 
@@ -237,7 +254,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	
 	public func peripheralDidUpdateName(peripheral: CBPeripheral!) {
 		self.name = peripheral.name
-		NSNotification.postNotification(BTLE.notifications.peripheralDidUpdateName, object: self)
+		self.sendNotification(BTLE.notifications.peripheralDidUpdateName)
 		if BTLE.debugging { println("Updated name for: \(self.name)") }
 	}
 
