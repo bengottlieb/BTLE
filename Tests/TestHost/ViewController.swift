@@ -34,7 +34,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		self.tableView.registerNib(UINib(nibName: "PeripheralCellTableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
 		
 		BTLE.debugging = true
-		BTLE.registerServiceClass(LockService.self, forServiceID: CBUUID(string: "FFF0"))
+		BTLE.registerServiceClass(LockService.self, forServiceID: CBUUID(string: "FFFF"))
 		BTLE.registerPeripheralClass(LockPeripheral.self)
 
 		//setup scanner
@@ -157,7 +157,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
 		var device = self.devices[indexPath.row]
 		
-		return 71.0 + CGFloat(max(device.advertisementData.count - 2, 0)) * 13.0
+		return 71.0 + CGFloat(max(device.advertisementData.count - 2, 0)) * 15.0
 	}
 }
 
