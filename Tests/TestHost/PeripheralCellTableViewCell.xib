@@ -48,7 +48,7 @@
                         <constraints>
                             <constraint firstAttribute="width" constant="420" id="oIt-RC-zfL"/>
                         </constraints>
-                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                        <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                         <variation key="default">

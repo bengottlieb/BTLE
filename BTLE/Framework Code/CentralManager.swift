@@ -14,8 +14,9 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	var dispatchQueue = dispatch_queue_create("BTLE.CentralManager queue", DISPATCH_QUEUE_SERIAL)
 	var cbCentral: CBCentralManager!
 
-	public var peripherals: [BTLEPeripheral] = []
+	public var peripherals: Set<BTLEPeripheral> = Set<BTLEPeripheral>()
 	public var ignoredPeripherals: Set<BTLEPeripheral> = Set<BTLEPeripheral>()
+	public var oldPeripherals: Set<BTLEPeripheral> = Set<BTLEPeripheral>()
 	
 
 	//=============================================================================================
@@ -34,9 +35,14 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	func startScanning(duration: NSTimeInterval = 0.0) {
 		self.setupCBCentral()
 		
+		self.oldPeripherals = self.oldPeripherals.union(self.peripherals.union(self.ignoredPeripherals))
+		self.ignoredPeripherals = Set<BTLEPeripheral>()
+		self.peripherals = Set<BTLEPeripheral>()
+		
 		if self.cbCentral.state == .PoweredOn {
 			NSNotification.postNotification(BTLE.notifications.willStartScan, object: self)
 			var options = BTLE.manager.monitorRSSI ? [CBCentralManagerScanOptionAllowDuplicatesKey: true] : [:]
+			if BTLE.debugging { println(BTLE.manager.services.count > 0 ? "Starting scan for \(BTLE.manager.services)" : "Starting unfiltered scan") }
 			self.cbCentral.scanForPeripheralsWithServices(BTLE.manager.services, options: options)
 			if duration != 0.0 {
 				self.searchTimer = NSTimer.scheduledTimerWithTimeInterval(duration, target: self, selector: "stopScanning", userInfo: nil, repeats: false)
@@ -49,7 +55,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		if let centralManager = self.cbCentral {
 			centralManager.stopScan()
 			NSNotification.postNotification(BTLE.notifications.didFinishScan, object: self)
-			if !self.changingState { BTLE.manager.scanningState = .Off }
+			if self.stateChangeCounter == 0 { BTLE.manager.scanningState = .Idle }
 		}
 	}
 	
@@ -58,7 +64,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 
 		if let centralManager = self.cbCentral {
 			self.cbCentral = nil
-			if !self.changingState { BTLE.manager.scanningState = .Off }
+			if self.stateChangeCounter == 0 { BTLE.manager.scanningState = .Off }
 		}
 	}
 	
@@ -67,22 +73,24 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		dispatch_async_main {
 			if BTLE.manager.scanningState == .Active {
 				self.updateScanTimer?.invalidate()
-				self.updateScanTimer = NSTimer.scheduledTimerWithTimeInterval(0.0001, target: self, selector: "updateScanTimerFired", userInfo: nil, repeats: false)
+				self.updateScanTimer = NSTimer.scheduledTimerWithTimeInterval(0.0001, target: self, selector: "cycleScanning", userInfo: nil, repeats: false)
 			}
 		}
 	}
 	
 	//=============================================================================================
 	//MARK: Timers
-	func updateScanTimerFired() {
+	func cycleScanning() {
+		self.stateChangeCounter++
 		self.stopScanning()
 		self.startScanning()
+		self.stateChangeCounter--
 	}
 	
 	
 	//=============================================================================================
 	//MARK: setup
-	var changingState = false
+	var stateChangeCounter = 0 { didSet { assert(stateChangeCounter >= 0, "Illegal value for stateChangeCounter") }}
 	func setupCBCentral(rebuild: Bool = false) {
 		if self.cbCentral == nil || rebuild {
 			self.turnOff()
@@ -109,6 +117,20 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 			}
 		}
 
+		for per in self.oldPeripherals {
+			if per.uuid == peripheral.identifier {
+				self.oldPeripherals.remove(per)
+				if per.ignored {
+					self.ignoredPeripherals.insert(per)
+				} else {
+					self.peripherals.insert(per)
+					if let rssi = RSSI { per.modulateRSSI(rssi) }
+					if let advertisementData = advertisementData { per.advertisementData = advertisementData }
+					return per
+				}
+			}
+		}
+		
 		let per: BTLEPeripheral
 		
 		if let perClass = BTLE.registeredClasses.peripheralClass {
@@ -119,7 +141,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		if per.ignored {
 			self.ignoredPeripherals.insert(per)
 		} else {
-			self.peripherals.append(per)
+			self.peripherals.insert(per)
 		}
 		
 		per.sendNotification(BTLE.notifications.peripheralWasDiscovered)
@@ -130,7 +152,17 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	//MARK: CBCentralManagerDelegate
 	public func centralManagerDidUpdateState(centralManager: CBCentralManager!) {
 		switch centralManager.state {
-		case .PoweredOn: self.fetchConnectedPeripherals()
+		case .PoweredOn:
+			if BTLE.manager.scanningState == .PowerInterupted {
+				BTLE.manager.scanningState = .Active
+			}
+			self.fetchConnectedPeripherals()
+
+		case .PoweredOff:
+			if BTLE.manager.scanningState == .Active || BTLE.manager.scanningState == .StartingUp {
+				BTLE.manager.scanningState = .PowerInterupted
+				self.stopScanning()
+			}
 		default: break
 		}
 
@@ -189,7 +221,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	
 	func removeIgnoredPeripheral(peripheral: BTLEPeripheral) {
 		self.ignoredPeripherals.remove(peripheral)
-		self.peripherals.append(peripheral)
+		self.peripherals.insert(peripheral)
 		
 		self.ignoredPeripheralUUIDs.remove(peripheral.uuid.UUIDString)
 		NSUserDefaults.setKeyedObject(Array(self.ignoredPeripheralUUIDs), forKey: self.ignoredPeripheralUUIDsKey)

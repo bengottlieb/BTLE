@@ -15,26 +15,45 @@ protocol BTLEPeripheralProtocol {
 	init(peripheral: CBPeripheral, RSSI: Int?, advertisementData adv: [NSObject: AnyObject]?);
 }
 
+public struct BTLEServiceUUIDs {
+	public static let deviceInfo = CBUUID(string: "0x180A")
+	
+	public static let iOSContinuity = CBUUID(string: "D0611E78-BBB4-4591-A5F8-487910AE4366")
 
-let DeviceInfoServiceUUID = CBUUID(string: "0x180A")
+	public static let battery = CBUUID(string: "180F")
+	public static let currentTime = CBUUID(string: "1805")
+	public static let alert = CBUUID(string: "1811")
+	public static let running = CBUUID(string: "1814")
+	public static let userData = CBUUID(string: "181C")
+	public static let generic = CBUUID(string: "1801")
+	public static let genericAccess = CBUUID(string: "1800")
 
-let SerialNumberCharacteristicUUID = CBUUID(string: "0x2A25")
-let ModelNumberCharacteristicUUID = CBUUID(string: "0x2A24")
-let FirmwareVersionCharacteristicUUID = CBUUID(string: "0x2A26")
-let HardwareRevisionCharacteristicUUID = CBUUID(string: "0x2A27")
-let SoftwareRevisionCharacteristicUUID = CBUUID(string: "0x2A28")
-let ManufacturersNameCharacteristicUUID = CBUUID(string: "0x2A29")
-let RegulatoryCertificationDataCharacteristicUUID = CBUUID(string: "0x2A2A")
-let PnPIDCharacteristicUUID = CBUUID(string: "0x2A50")
+
+}
+
+public struct BTLECharacteristicUUIDs {
+	public static let serialNumber = CBUUID(string: "0x2A25")
+	public static let modelNumber = CBUUID(string: "0x2A24")
+	public static let firmwareVersion = CBUUID(string: "0x2A26")
+	public static let hardwareRevision = CBUUID(string: "0x2A27")
+	public static let softwareRevision = CBUUID(string: "0x2A28")
+	public static let manufacturersName = CBUUID(string: "0x2A29")
+	public static let regulatoryCertificationData = CBUUID(string: "0x2A2A")
+	public static let pnpID = CBUUID(string: "0x2A50")
+}
+
 
 
 public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
+	deinit {
+		println("deiniting: \(self)")
+	}
 	public enum State { case Discovered, Connecting, Connected, Disconnecting, Undiscovered, Unknown }
 	
 	public var cbPeripheral: CBPeripheral!
 	public var uuid: NSUUID!
 	public var name: String!
-	public var lastCommunicatedAt: NSDate! { didSet {
+	public var lastCommunicatedAt = NSDate() { didSet {
 		if self.state == .Undiscovered {
 			self.state = .Discovered
 			self.sendNotification(BTLE.notifications.peripheralDidRegainComms)
@@ -100,7 +119,6 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		cbPeripheral = peripheral
 		uuid = peripheral.identifier
 		name = peripheral.name ?? "unknown"
-		lastCommunicatedAt = NSDate()
 		if let adv = adv { advertisementData = adv }
 		
 		ignored = BTLE.manager.scanner.ignoredPeripheralUUIDs.contains(peripheral.identifier.UUIDString)
@@ -120,7 +138,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	public func disconnect() {
 		if self.state == .Connected { self.state = .Disconnecting }
 		
-		BTLE.manager.scanner.cbCentral.cancelPeripheralConnection(self.cbPeripheral)
+		BTLE.manager.scanner.cbCentral?.cancelPeripheralConnection(self.cbPeripheral)
 	}
 	
 	public var ignored: Bool = false {
@@ -254,14 +272,18 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		var remainingServices = self.services
 		
 		for invalidated in invalidatedServices as! [CBService] {
-			self.addService(invalidated).load()
+			if self.shouldLoadService(invalidated) {
+				self.addService(invalidated).load()
+			}
 		}
 	}
 	
 	public func peripheral(peripheral: CBPeripheral!, didDiscoverServices error: NSError!) {
 		if let services = self.cbPeripheral.services as? [CBService] {
 			for svc in services {
-				self.addService(svc)
+				if self.shouldLoadService(svc) {
+					self.addService(svc)
+				}
 			}
 			
 			if self.numberOfPendingServices == 0 {
@@ -278,21 +300,27 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 
 	public func peripheral(peripheral: CBPeripheral!, didDiscoverCharacteristicsForService service: CBService!, error: NSError!) {
-		self.addService(service).updateCharacteristics()
+		if self.shouldLoadService(service) {
+			self.addService(service).updateCharacteristics()
+		}
 	}
 	
 	
 	public func peripheral(peripheral: CBPeripheral!, didUpdateValueForCharacteristic characteristic: CBCharacteristic!, error: NSError!) {
-		self.addService(characteristic.service).didLoadCharacteristic(characteristic)
+		if self.shouldLoadService(characteristic.service) {
+			self.addService(characteristic.service).didLoadCharacteristic(characteristic)
+		}
 	}
 
 	public func peripheral(peripheral: CBPeripheral!, didReadRSSI RSSI: NSNumber!, error: NSError!) {
 		if let rssi = RSSI {
 			self.rssi = rssi.integerValue
 		}
-
-		//println("updated RSSI for \(self)")
 	}
-
+	
+	public func shouldLoadService(service: CBService) -> Bool {
+		println("Service: \(service), UUID: \(service.UUID.UUIDString)")
+		return true
+	}
 }
 

@@ -52,11 +52,16 @@ public class BTLEService: NSObject, Printable {
 	func updateCharacteristics() {
 		if let characteristics = self.cbService.characteristics as? [CBCharacteristic] {
 			for chr in characteristics {
-				if self.findCharacteristicMatching(chr) == nil {
-					self.characteristics.append(BTLECharacteristic.characteristic(chr, ofService: self))
+				if self.findCharacteristicMatching(chr) == nil && self.shouldLoadCharacteristic(chr) {
+					var characteristic = BTLECharacteristic(characteristic: chr, ofService: self)
+					self.characteristics.append(characteristic)
 				}
 			}
 		}
+	}
+	
+	public func shouldLoadCharacteristic(characteristic: CBCharacteristic) -> Bool {
+		return true
 	}
 	
 	public func didFinishLoading() {
@@ -91,6 +96,9 @@ public class BTLEService: NSObject, Printable {
 	public override var description: String { return "\(self.cbService): \(self.characteristics)" }
 	
 	public func characteristicWithUUID(uuid: CBUUID) -> BTLECharacteristic? { return filter(self.characteristics, { $0.cbCharacteristic.UUID == uuid }).last }
+
+	
+	func addToPeripheralManager(mgr: CBPeripheralManager?) { }
 	
 }
 
@@ -114,5 +122,18 @@ public class BTLEMutableService: BTLEService {
 		}
 	}
 	
+	public var advertised = false
+	public var addedToManager = false
 	
+	override func addToPeripheralManager(mgr: CBPeripheralManager?) {
+		if self.addedToManager { return }
+		if let mgr = mgr {
+			if let mutable = self.cbService as? CBMutableService {
+				mgr.addService(mutable)
+				self.addedToManager = true
+			}
+		}
+	}
+	
+
 }

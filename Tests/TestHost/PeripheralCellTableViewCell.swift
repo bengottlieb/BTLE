@@ -81,18 +81,23 @@ class PeripheralCellTableViewCell: UITableViewCell {
 		}
 	}
 	
+	weak var updateTimer: NSTimer?
+	func queueUIUpdate() {
+		self.updateTimer?.invalidate()
+		self.updateTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "updateUI", userInfo: nil, repeats: false)
+	}
 	
 	func setupNotificationsForPeripheral(peripheral: BTLEPeripheral?) {
 		self.removeAsObserver()
 		if let per = peripheral {
-			self.addAsObserver(BTLE.notifications.peripheralDidDisconnect, selector: "updateUI", object: per)
-			self.addAsObserver(BTLE.notifications.peripheralDidConnect, selector: "updateUI", object: per)
-			self.addAsObserver(BTLE.notifications.peripheralDidUpdateRSSI, selector: "updateUI", object: per)
-			self.addAsObserver(BTLE.notifications.peripheralDidBeginLoading, selector: "updateUI", object: per)
-			self.addAsObserver(BTLE.notifications.peripheralDidFinishLoading, selector: "updateUI", object: per)
-			self.addAsObserver(BTLE.notifications.peripheralDidUpdateName, selector: "updateUI", object: per)
-			self.addAsObserver(BTLE.notifications.peripheralDidLoseComms, selector: "updateUI", object: per)
-			self.addAsObserver(BTLE.notifications.peripheralDidRegainComms, selector: "updateUI", object: per)
+			self.addAsObserver(BTLE.notifications.peripheralDidDisconnect, selector: "queueUIUpdate", object: per)
+			self.addAsObserver(BTLE.notifications.peripheralDidConnect, selector: "queueUIUpdate", object: per)
+			self.addAsObserver(BTLE.notifications.peripheralDidUpdateRSSI, selector: "queueUIUpdate", object: per)
+			self.addAsObserver(BTLE.notifications.peripheralDidBeginLoading, selector: "queueUIUpdate", object: per)
+			self.addAsObserver(BTLE.notifications.peripheralDidFinishLoading, selector: "queueUIUpdate", object: per)
+			self.addAsObserver(BTLE.notifications.peripheralDidUpdateName, selector: "queueUIUpdate", object: per)
+			self.addAsObserver(BTLE.notifications.peripheralDidLoseComms, selector: "queueUIUpdate", object: per)
+			self.addAsObserver(BTLE.notifications.peripheralDidRegainComms, selector: "queueUIUpdate", object: per)
 		}
 	}
 }

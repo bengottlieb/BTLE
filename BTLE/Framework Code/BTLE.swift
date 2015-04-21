@@ -10,20 +10,23 @@ import Foundation
 import CoreBluetooth
 import SA_Swift
 
-let AlertServiceCBUUID = CBUUID(string: "1811")
-let BatteryServiceCBUUID = CBUUID(string: "180F")
-let RunningServiceCBUUID = CBUUID(string: "1814")
-let UserDataServiceCBUUID = CBUUID(string: "181C")
-let GenericServiceCBUUID = CBUUID(string: "1801")
-let GenericAccessServiceCBUUID = CBUUID(string: "1800")
-
 var BTLE_Debugging = false
 
 public class BTLE: NSObject {
 	public class var manager: BTLE { struct s { static let manager = BTLE() }; return s.manager }
 	public enum LoadingState { case NotLoaded, Loading, Loaded, LoadingCancelled }
 
-	public enum State { case Off, StartingUp, Active, Idle }
+	public enum State { case Off, StartingUp, Active, Idle, PowerInterupted
+		var stringValue: String {
+			switch (self) {
+			case .Off: return "off"
+			case .StartingUp: return "starting up"
+			case .Active: return "active"
+			case .Idle: return "idle"
+			case .PowerInterupted: return "interupted by power-off"
+			}
+		}
+	}
 	
 	public class var debugging: Bool {
 		get { return BTLE_Debugging }
@@ -31,7 +34,8 @@ public class BTLE: NSObject {
 	}
 	
 	public var scanningState: State = .Off { didSet {
-		self.scanner.changingState = true
+		//println("changing scan state to \(self.scanningState.stringValue)")
+		self.scanner.stateChangeCounter++
 		switch self.scanningState {
 		case .Off: break
 		case .StartingUp:
@@ -43,12 +47,15 @@ public class BTLE: NSObject {
 		case .Idle:
 			self.scanner.stopScanning()
 			
+		case .PowerInterupted:
+			break
+			
 		}
-		self.scanner.changingState = false
+		self.scanner.stateChangeCounter--
 	}}
 	
 	public var advertisingState: State = .Off { didSet {
-		self.advertiser.changingState = true
+		self.advertiser.stateChangeCounter++
 		
 		switch self.advertisingState {
 		case .Off: fallthrough
@@ -58,9 +65,11 @@ public class BTLE: NSObject {
 			self.advertiser.startAdvertising()
 		case .Idle:
 			self.advertiser.stopAdvertising()
+			
+		case .PowerInterupted: break
 		}
 		
-		self.advertiser.changingState = false
+		self.advertiser.stateChangeCounter--
 	}}
 
 	
@@ -69,9 +78,9 @@ public class BTLE: NSObject {
 	public var services: [CBUUID] = [] { didSet { self.scanner.updateScan() }}
 	public var monitorRSSI = false { didSet { self.scanner.updateScan() }}
 	public var deviceLifetime: NSTimeInterval = 0.0 { didSet {
-		self.scanner.peripherals.map({ $0.updateVisibilityTimer(); })
+		Array(self.scanner.peripherals).map({ $0.updateVisibilityTimer(); })
 	}}
-	
+	public var loadEncryptedCharacteristics = false
 	
 	public struct notifications {
 		public static let willStartScan = "com.standalone.btle.willStartScan"
