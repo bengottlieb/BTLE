@@ -142,7 +142,7 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 	}
 	
 	func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-		if indexPath.section == 0 { return 44 }
+		if indexPath.section == 0 { return 22 }
 		
 		return 100
 	}

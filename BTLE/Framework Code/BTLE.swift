@@ -14,7 +14,7 @@ var BTLE_Debugging = false
 
 public class BTLE: NSObject {
 	public class var manager: BTLE { struct s { static let manager = BTLE() }; return s.manager }
-	public enum LoadingState { case NotLoaded, Loading, Loaded, LoadingCancelled }
+	public enum LoadingState { case NotLoaded, Loading, Loaded, LoadingCancelled, Reloading }
 
 	public enum State { case Off, StartingUp, Active, Idle, PowerInterupted
 		var stringValue: String {

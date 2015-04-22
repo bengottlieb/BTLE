@@ -17,7 +17,7 @@ protocol BTLEServiceProtocol {
 public class BTLEService: NSObject, Printable {
 	public var cbService: CBService!
 	var peripheral: BTLEPeripheral!
-	var loading = false
+	var loadingState = BTLE.LoadingState.NotLoaded
 	public var characteristics: [BTLECharacteristic] = []
 	var pendingCharacteristics: [BTLECharacteristic] = []
 	public var uuid: CBUUID { return self.cbService.UUID }
@@ -38,13 +38,17 @@ public class BTLEService: NSObject, Printable {
 		peripheral = onPeriperhal
 		super.init()
 		
-		self.load()
+		self.reload()
 	}
 	
-	func load() {
-		if !self.loading {
-			self.loading = true
+	func reload() {
+		if self.loadingState != .Loading && self.loadingState != .Reloading {
+			println("Loading Service: \(self), UUID: \(self.uuid)")
+			self.loadingState = (self.loadingState == .Loaded) ? .Reloading : .Loading
 			
+			for chr in self.characteristics {
+				chr.reload()
+			}
 			self.peripheral.cbPeripheral.discoverCharacteristics(nil, forService: self.cbService)
 		}
 	}
@@ -65,7 +69,7 @@ public class BTLEService: NSObject, Printable {
 	}
 	
 	public func didFinishLoading() {
-		self.loading = false
+		self.loadingState = .Loaded
 		self.peripheral.didFinishLoadingService(self)
 	}
 	
@@ -73,20 +77,20 @@ public class BTLEService: NSObject, Printable {
 		return filter(self.characteristics, { $0.cbCharacteristic == chr }).last
 	}
 	
-	var numberOfPendingCharacteristics: Int {
+	var numberOfLoadingCharacteristics: Int {
 		var count = 0
 		
 		for chr in self.characteristics {
-			if chr.loading { count++ }
+			if chr.loadingState	== .Loading || chr.loadingState	== .Reloading { count++ }
 		}
 		return count
 	}
 	
-	func didLoadCharacteristic(chr: CBCharacteristic) {
+	func didLoadCharacteristic(chr: CBCharacteristic, error: NSError?) {
 		//println("Loaded characteristic: \(chr)")
 		if let char = self.findCharacteristicMatching(chr) {
-			char.didLoad()
-			if self.numberOfPendingCharacteristics == 0 {
+			char.didLoadWithError(error)
+			if self.numberOfLoadingCharacteristics == 0 {
 				self.didFinishLoading()
 			}
 			NSNotification.postNotification(BTLE.notifications.characteristicDidUpdate, object: char, userInfo: nil)
@@ -97,13 +101,20 @@ public class BTLEService: NSObject, Printable {
 	
 	public func characteristicWithUUID(uuid: CBUUID) -> BTLECharacteristic? { return filter(self.characteristics, { $0.cbCharacteristic.UUID == uuid }).last }
 
-	
 	func addToPeripheralManager(mgr: CBPeripheralManager?) { }
 	
 }
 
+//=============================================================================================
+//MARK: BTLEMutableService
+
 
 public class BTLEMutableService: BTLEService {
+	public var advertised = false
+	public var addedToManager = false
+	public var isLive = false
+	
+
 	public init(uuid: CBUUID, isPrimary: Bool = true, characteristics chrs: [BTLECharacteristic] = []) {
 		super.init()
 		self.cbService = CBMutableService(type: uuid, primary: isPrimary)
@@ -114,17 +125,12 @@ public class BTLEMutableService: BTLEService {
 	
 	public func addCharacteristic(chr: BTLECharacteristic) {
 		self.characteristics.append(chr)
-		println("Characteristic: \(self.cbService.characteristics)")
 		chr.service = self
 		if let svc = self.cbService as? CBMutableService {
 			if svc.characteristics == nil { svc.characteristics = [] }
 			svc.characteristics.append(chr.cbCharacteristic)
 		}
 	}
-	
-	public var advertised = false
-	public var addedToManager = false
-	public var isLive = false
 	
 	override func addToPeripheralManager(mgr: CBPeripheralManager?) {
 		if self.addedToManager { return }

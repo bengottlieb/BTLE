@@ -76,7 +76,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		switch self.state {
 		case .Connected:
 			self.updateRSSI()
-			self.loadServices()
+			self.reloadServices()
 			
 			
 		case .Disconnecting: fallthrough
@@ -162,6 +162,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		case .Loading: string = "Loading " + string
 		case .Loaded: string = "Loaded " + string
 		case .LoadingCancelled: string = "Cancelled " + string
+		case .Reloading: string = "Reloading " + string
 		}
 		
 		return string
@@ -192,42 +193,44 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	public func reloadServices() {
-		self.loadServices(reload: true)
+		self.loadServices(self.services)
+		self.cbPeripheral.discoverServices(nil)
 	}
 	
 	//=============================================================================================
 	//MARK: Internal
-	var forceReload = false
-	func loadServices(reload: Bool = false) {
+	func loadServices(services: [BTLEService]) {
 		self.sendNotification(BTLE.notifications.peripheralDidBeginLoading)
 		self.loadingState = .Loading
-		self.forceReload = reload
-		self.cbPeripheral.discoverServices(nil)
+		for service in services {
+			service.reload()
+		}
 	}
 	
 	func didFinishLoadingService(service: BTLEService) {
-		if self.numberOfPendingServices == 0 {
+		println("Finished loading \(service.uuid), \(self.numberOfLoadingServices) left")
+		if self.numberOfLoadingServices == 0 {
 			self.loadingState = .Loaded
 		}
 	}
 	
-	var numberOfPendingServices: Int {
+	var numberOfLoadingServices: Int {
 		var count = 0
 		
 		for chr in self.services {
-			if chr.loading { count++ }
+			if chr.loadingState == .Loading || chr.loadingState == .Reloading { count++ }
 		}
 		return count
 	}
 
-	func addService(cbService: CBService) -> BTLEService {
+	func findOrCreateService(cbService: CBService) -> BTLEService {
 		if let service = self.serviceWithUUID(cbService.UUID) {
-			if self.forceReload { service.load() }
 			return service
 		}
 		
 		var service = BTLEService.createService(service: cbService, onPeriperhal: self)
 		self.services.append(service)
+
 		return service
 	}
 	
@@ -295,7 +298,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		
 		for invalidated in invalidatedServices as! [CBService] {
 			if self.shouldLoadService(invalidated) {
-				self.addService(invalidated).load()
+				self.findOrCreateService(invalidated).reload()
 			}
 		}
 	}
@@ -304,11 +307,11 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		if let services = self.cbPeripheral.services as? [CBService] {
 			for svc in services {
 				if self.shouldLoadService(svc) {
-					self.addService(svc)
+					self.findOrCreateService(svc)
 				}
 			}
 			
-			if self.numberOfPendingServices == 0 {
+			if self.numberOfLoadingServices == 0 {
 				self.loadingState = .Loaded
 			}
 		}
@@ -320,13 +323,13 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 
 	public func peripheral(peripheral: CBPeripheral!, didDiscoverCharacteristicsForService service: CBService!, error: NSError!) {
 		if self.shouldLoadService(service) {
-			self.addService(service).updateCharacteristics()
+			self.findOrCreateService(service).updateCharacteristics()
 		}
 	}
 	
 	public func peripheral(peripheral: CBPeripheral!, didUpdateValueForCharacteristic characteristic: CBCharacteristic!, error: NSError!) {
 		if self.shouldLoadService(characteristic.service) {
-			self.addService(characteristic.service).didLoadCharacteristic(characteristic)
+			self.findOrCreateService(characteristic.service).didLoadCharacteristic(characteristic, error: error)
 		}
 	}
 	
@@ -355,7 +358,6 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 
 	
 	public func shouldLoadService(service: CBService) -> Bool {
-		println("Loading Service: \(service), UUID: \(service.UUID.UUIDString)")
 		return true
 	}
 }

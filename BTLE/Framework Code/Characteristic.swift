@@ -15,9 +15,16 @@ public class BTLECharacteristic: NSObject {
 	public var service: BTLEService!
 	public var descriptors: [BTLEDescriptor] = []
 	public var listeningState = ListeningState.NotListening { didSet { NSNotification.postNotification(BTLE.notifications.characteristicListeningChanged, object: self) }}
-	
-	public override var description: String {
-		return "\(self.cbCharacteristic)"
+	public override var description: String { return "\(self.cbCharacteristic)" }
+
+	init(characteristic chr: CBCharacteristic, ofService svc: BTLEService?) {
+		cbCharacteristic = chr
+		service = svc
+		
+		dataValue = chr.value
+		super.init()
+		
+		if svc != nil { self.reload() }
 	}
 	
 	public func listenForUpdates(listen: Bool) {
@@ -34,10 +41,6 @@ public class BTLECharacteristic: NSObject {
 		}
 	}
 	
-	public func reload() {
-		self.peripheral.cbPeripheral.readValueForCharacteristic(self.cbCharacteristic)
-	}
-	
 	public func publishValue(data: NSData, withResponse: Bool = false) {
 		self.peripheral.cbPeripheral.writeValue(data, forCharacteristic: self.cbCharacteristic, type: withResponse ? .WithResponse : .WithoutResponse)
 	}
@@ -50,29 +53,29 @@ public class BTLECharacteristic: NSObject {
 		self.peripheral.cbPeripheral.discoverDescriptorsForCharacteristic(self.cbCharacteristic)
 	}
 	
-	public func didLoad() {
-		self.dataValue = self.cbCharacteristic.value
-		self.loading = false
-	}
 	public var dataValue: NSData?
 	public var stringValue: String { if let d = self.dataValue { return (NSString(data: d, encoding: NSASCIIStringEncoding) ?? "") as String; }; return "" }
 	
 	public var isEncrypted: Bool {
-		return self.cbCharacteristic.properties.rawValue & (CBCharacteristicProperties.IndicateEncryptionRequired.rawValue | CBCharacteristicProperties.NotifyEncryptionRequired.rawValue | CBCharacteristicProperties.ExtendedProperties.rawValue) != 0
+		return self.propertyEnabled(.IndicateEncryptionRequired) || self.propertyEnabled(.NotifyEncryptionRequired) || self.propertyEnabled(.ExtendedProperties)
 	}
 	
 	public var propertiesAsString: String { return BTLECharacteristic.characteristicPropertiesAsString(self.cbCharacteristic.properties) }
 
 	
-	func didWriteValue() {
-		
+	//=============================================================================================
+	//MARK: Call backs from Peripheral Delegate
+
+	public func didLoadWithError(error: NSError?) {
+		if error == nil {
+			self.dataValue = self.cbCharacteristic.value
+			self.loadingState = .Loaded
+		} else {
+			self.loadingState = self.loadingState == .Reloading ? .Loaded : .NotLoaded
+		}
 	}
-	
-	func didUpdateValueForDescriptor(descriptor: CBDescriptor) {
-		
-	}
-	
-	func didWriteValueForDescriptor(descriptor: CBDescriptor) {
+
+	public func didWriteValue() {
 		
 	}
 	
@@ -81,33 +84,17 @@ public class BTLECharacteristic: NSObject {
 		
 	}
 	
-	func loadDescriptors() {
-		if let descr = self.cbCharacteristic.descriptors as? [CBDescriptor] {
-			self.descriptors = descr.map({ return BTLEDescriptor(descriptor: $0)})
-		}
-	}
-	
-	var loading = false
-	
-	var peripheral: BTLEPeripheral { return self.service.peripheral }
-	
-	init(characteristic chr: CBCharacteristic, ofService svc: BTLEService?) {
-		cbCharacteristic = chr
-		service = svc
-		
-		dataValue = chr.value
-		super.init()
-		
-		if svc != nil { self.load() }
-	}
-	
-	func load() {
-		if !self.loading {
-			self.loading = true
+	public var loadingState = BTLE.LoadingState.NotLoaded
+	public func reload() {
+		if self.loadingState == .Loaded || self.loadingState == .NotLoaded  {
+			self.loadingState = (self.loadingState == .Loaded) ? .Reloading : .Loading
 			self.peripheral.cbPeripheral.readValueForCharacteristic(self.cbCharacteristic)
 		}
 	}
 	
+	
+
+	var peripheral: BTLEPeripheral { return self.service.peripheral }
 
 	class func characteristicPropertiesAsString(chr: CBCharacteristicProperties) -> String {
 		var string = ""
@@ -125,6 +112,25 @@ public class BTLECharacteristic: NSObject {
 		
 		return string
 	}
+
+	//=============================================================================================
+	//MARK: Descriptors
+
+	func loadDescriptors() {
+		if let descr = self.cbCharacteristic.descriptors as? [CBDescriptor] {
+			self.descriptors = descr.map({ return BTLEDescriptor(descriptor: $0)})
+		}
+	}
+	
+	func didUpdateValueForDescriptor(descriptor: CBDescriptor) {
+		
+	}
+	
+	func didWriteValueForDescriptor(descriptor: CBDescriptor) {
+		
+	}
+	
+	
 }
 
 
