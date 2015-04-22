@@ -246,9 +246,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 				if BTLE.manager.deviceLifetime > timeSinceLastComms {
 					var timeoutInverval = (BTLE.manager.deviceLifetime - timeSinceLastComms)
 					
-					if timeoutInverval < 3 {
-						println("short term timer: \(timeSinceLastComms) sec")
-					}
+					// if timeoutInverval < 3 { println("short term timer: \(timeSinceLastComms) sec") }
 					
 					self.visibilityTimer?.invalidate()
 					self.visibilityTimer = NSTimer.scheduledTimerWithTimeInterval(timeoutInverval, target: self, selector: "disconnectDueToTimeout", userInfo: nil, repeats: false)
@@ -357,7 +355,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 
 	
 	public func shouldLoadService(service: CBService) -> Bool {
-		println("Service: \(service), UUID: \(service.UUID.UUIDString)")
+		println("Loading Service: \(service), UUID: \(service.UUID.UUIDString)")
 		return true
 	}
 }

@@ -43,6 +43,8 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 		self.addAsObserver(BTLE.notifications.peripheralDidBeginLoading, selector: "startLoading")
 		self.addAsObserver(BTLE.notifications.peripheralDidFinishLoading, selector: "finishLoading")
 		self.updateSections()
+		
+		self.title = per.name
 	}
 
 	required init(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -57,6 +59,7 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 		self.connectedSwitch.on = self.peripheral.state == .Connected
 		
 		self.tableView.registerNib(UINib(nibName: "CharacteristicTableViewCell", bundle: nil), forCellReuseIdentifier: "characteristic")
+		
         // Do any additional setup after loading the view.
     }
 	

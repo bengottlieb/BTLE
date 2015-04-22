@@ -15,6 +15,7 @@ class CharacteristicTableViewCell: UITableViewCell {
 	@IBOutlet var nameAndPropertiesLabel: UILabel!
 	@IBOutlet var stringValueLabel: UILabel!
 	@IBOutlet var dataValueLabel: UILabel!
+	@IBOutlet var notifySwitch: UISwitch!
 	
 	deinit {
 		self.removeAsObserver()
@@ -28,6 +29,8 @@ class CharacteristicTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
 		self.addAsObserver(BTLE.notifications.characteristicDidUpdate, selector: "updateUI", object: nil)
+		self.addAsObserver(BTLE.notifications.characteristicListeningChanged, selector: "updateUI", object: nil)
+		
 		self.updateUI()
         // Initialization code
     }
@@ -35,6 +38,8 @@ class CharacteristicTableViewCell: UITableViewCell {
 	func updateUI() {
 		dispatch_async_main	{
 			if let chr = self.characteristic {
+				self.notifySwitch.on = (chr.listeningState == .Listening || chr.listeningState == .StartingToListen)
+				self.notifySwitch.enabled = (chr.listeningState == .Listening || chr.listeningState == .NotListening)
 				var desc = chr.cbCharacteristic.UUID.description
 				self.nameAndPropertiesLabel?.text = desc.substringToIndex(desc.index(20)) + ": " + chr.propertiesAsString
 				
@@ -54,5 +59,8 @@ class CharacteristicTableViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-    
+	
+	@IBAction func toggledNotify() {
+		self.characteristic?.listenForUpdates(self.notifySwitch.on)
+	}
 }

@@ -21,7 +21,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	@IBOutlet var advertiseSwitch: UISwitch!
 	@IBOutlet var filterByServicesSwitch: UISwitch!
 
-	var characteristicData = "A"
+	var characteristicData = NSDate().localTimeString(timeStyle: .FullStyle)
 	var devices: [BTLEPeripheral] = []
 	
 	func reload() {
@@ -50,7 +50,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		
 		//setup advertiser
 		
-		self.characteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: CBCharacteristicProperties.Read, value: self.characteristicData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true))
+		self.characteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify, value: self.characteristicData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true))
 		
 		var service = BTLEMutableService(uuid: testServiceID, isPrimary: true, characteristics: [ self.characteristic! ])
 		service.advertised = true
@@ -124,7 +124,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	}
 	
 	@IBAction func configureServices() {
-		self.characteristicData = self.characteristicData + "B"
+		self.characteristicData = NSDate().localTimeString(timeStyle: .FullStyle)
 		
 		var published = self.characteristicData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
 		

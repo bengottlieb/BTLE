@@ -102,6 +102,7 @@ public class BTLE: NSObject {
 		public static let peripheralDidFinishLoading = "com.standalone.btle.peripheralDidLoad"
 		public static let peripheralDidBeginLoading = "com.standalone.btle.peripheralBeginLoading"
 
+		public static let characteristicListeningChanged = "com.standalone.btle.characteristicListeningChanged"
 		public static let characteristicDidUpdate = "com.standalone.btle.characteristicDidUpdate"
 
 	}

@@ -60,7 +60,7 @@ class LockService: BTLEService {
 	override func didFinishLoading() {
 		var lockStatus = self.characteristicWithUUID(LockStatusCharacteristic)
 		var data = lockStatus?.dataValue
-		lockStatus?.listenForUpdates = true
+		//lockStatus?.listenForUpdates = true
 		
 		
 		println("BTLEService: \(lockStatus), Data: \(data)")

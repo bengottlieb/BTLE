@@ -207,7 +207,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	lazy var ignoredPeripheralUUIDs: Set<String> = {
 		let list = NSUserDefaults.keyedObject(self.ignoredPeripheralUUIDsKey) as? [String] ?? []
 		
-		if BTLE.debugging { println("Ignored IDs: " + NSArray(array: list).componentsJoinedByString(", ")) }
+		if BTLE.debugging && list.count > 0 { println("Ignored IDs: " + NSArray(array: list).componentsJoinedByString(", ")) }
 		
 		return Set(list)
 	}()

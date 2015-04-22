@@ -10,19 +10,26 @@ import Foundation
 import CoreBluetooth
 
 public class BTLECharacteristic: NSObject {
+	public enum ListeningState { case NotListening, StartingToListen, Listening, FinishingListening }
 	public var cbCharacteristic: CBCharacteristic!
 	public var service: BTLEService!
 	public var descriptors: [BTLEDescriptor] = []
+	public var listeningState = ListeningState.NotListening { didSet { NSNotification.postNotification(BTLE.notifications.characteristicListeningChanged, object: self) }}
 	
 	public override var description: String {
 		return "\(self.cbCharacteristic)"
 	}
 	
-	public var listenForUpdates: Bool = false {
-		didSet {
-			if self.propertyEnabled(.Notify) || self.propertyEnabled(.Indicate) {
-				println("Setting notification/indications for \(self)")
-				self.peripheral.cbPeripheral.setNotifyValue(self.listenForUpdates, forCharacteristic: self.cbCharacteristic)
+	public func listenForUpdates(listen: Bool) {
+		if self.propertyEnabled(.Notify) || self.propertyEnabled(.Indicate) {
+			switch self.listeningState {
+			case .NotListening: fallthrough
+			case .FinishingListening:
+				if listen { self.peripheral.cbPeripheral.setNotifyValue(true, forCharacteristic: self.cbCharacteristic) }
+				
+			case .Listening: fallthrough
+			case .StartingToListen:
+				if !listen { self.peripheral.cbPeripheral.setNotifyValue(false, forCharacteristic: self.cbCharacteristic) }
 			}
 		}
 	}
@@ -49,6 +56,7 @@ public class BTLECharacteristic: NSObject {
 	}
 	public var dataValue: NSData?
 	public var stringValue: String { if let d = self.dataValue { return (NSString(data: d, encoding: NSASCIIStringEncoding) ?? "") as String; }; return "" }
+	
 	public var isEncrypted: Bool {
 		return self.cbCharacteristic.properties.rawValue & (CBCharacteristicProperties.IndicateEncryptionRequired.rawValue | CBCharacteristicProperties.NotifyEncryptionRequired.rawValue | CBCharacteristicProperties.ExtendedProperties.rawValue) != 0
 	}
@@ -69,6 +77,7 @@ public class BTLECharacteristic: NSObject {
 	}
 	
 	func didUpdateNotifyValue() {
+		self.listeningState = self.cbCharacteristic.isNotifying ? .Listening : .NotListening
 		
 	}
 	
@@ -121,7 +130,10 @@ public class BTLECharacteristic: NSObject {
 
 public class BTLEMutableCharacteristic : BTLECharacteristic {
 	public init(uuid: CBUUID, properties: CBCharacteristicProperties, value: NSData? = nil, permissions: CBAttributePermissions = .Readable) {
-		super.init(characteristic: CBMutableCharacteristic(type: uuid, properties: properties, value: value, permissions: permissions), ofService: nil)
+		var creationData = properties.rawValue & CBCharacteristicProperties.Notify.rawValue != 0 ? nil : value
+		var chr = CBMutableCharacteristic(type: uuid, properties: properties, value: creationData, permissions: permissions)
+		super.init(characteristic: chr, ofService: nil)
+		self.dataValue = value
 	}
 	
 	public func updateDataValue(data: NSData?) {
@@ -129,7 +141,11 @@ public class BTLEMutableCharacteristic : BTLECharacteristic {
 		
 		if let data = data {
 			let mgr = BTLE.manager.advertiser.cbPeripheralManager!
-			mgr.updateValue(data, forCharacteristic: self.cbCharacteristic as! CBMutableCharacteristic, onSubscribedCentrals: nil)
+			if !mgr.updateValue(data, forCharacteristic: self.cbCharacteristic as! CBMutableCharacteristic, onSubscribedCentrals: nil) {
+				println("Unable to update \(self)")
+			}
+		} else {
+			println("No data to update \(self)")
 		}
 	}
 }

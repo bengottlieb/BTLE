@@ -49,6 +49,12 @@
                             </mask>
                         </variation>
                     </label>
+                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uo2-B6-G0t">
+                        <rect key="frame" x="263" y="63" width="51" height="31"/>
+                        <connections>
+                            <action selector="toggledNotify" destination="KGk-i7-Jjw" eventType="valueChanged" id="cpC-z3-cbs"/>
+                        </connections>
+                    </switch>
                 </subviews>
                 <constraints>
                     <constraint firstItem="h9s-6C-CyC" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="7lb-PZ-vQd"/>
@@ -59,6 +65,8 @@
                     <constraint firstItem="ilz-v1-52M" firstAttribute="top" secondItem="h9s-6C-CyC" secondAttribute="bottom" constant="3" id="aEB-NA-ty8"/>
                     <constraint firstItem="ilz-v1-52M" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="bfG-Qf-WWT"/>
                     <constraint firstItem="h9s-6C-CyC" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="-2" id="gmB-Js-4Bc"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="uo2-B6-G0t" secondAttribute="bottom" constant="-3" id="pLJ-Od-tFe"/>
+                    <constraint firstItem="uo2-B6-G0t" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="vIf-g6-8cZ"/>
                     <constraint firstItem="9Jj-Nd-iCg" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="w8l-Vs-Lbd"/>
                     <constraint firstItem="9Jj-Nd-iCg" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="zQB-db-sGE"/>
                 </constraints>
@@ -66,6 +74,7 @@
             <connections>
                 <outlet property="dataValueLabel" destination="9Jj-Nd-iCg" id="5jG-Fk-KWm"/>
                 <outlet property="nameAndPropertiesLabel" destination="h9s-6C-CyC" id="lO1-ZM-y49"/>
+                <outlet property="notifySwitch" destination="uo2-B6-G0t" id="Mjg-TR-otr"/>
                 <outlet property="stringValueLabel" destination="ilz-v1-52M" id="xeX-ce-Z0R"/>
             </connections>
             <point key="canvasLocation" x="706" y="441"/>
