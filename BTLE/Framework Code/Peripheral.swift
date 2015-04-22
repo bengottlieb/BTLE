@@ -182,7 +182,18 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	public func serviceWithUUID(uuid: CBUUID) -> BTLEService? { return filter(self.services, { $0.cbService.UUID == uuid }).last }
-
+	public func characteristicFromCBCharacteristic(characteristic: CBCharacteristic) -> BTLECharacteristic? {
+		if let service = self.serviceWithUUID(characteristic.service.UUID) {
+			if let chr = service.characteristicWithUUID(characteristic.UUID) {
+				return chr
+			}
+		}
+		return nil
+	}
+	
+	public func reloadServices() {
+		self.loadServices(reload: true)
+	}
 	
 	//=============================================================================================
 	//MARK: Internal
@@ -199,7 +210,6 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 			self.loadingState = .Loaded
 		}
 	}
-	
 	
 	var numberOfPendingServices: Int {
 		var count = 0
@@ -266,8 +276,22 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 
 	//=============================================================================================
-	//MARK: Delegate
+	//MARK: Delegate - Peripheral
+	
+	public func peripheral(peripheral: CBPeripheral!, didReadRSSI RSSI: NSNumber!, error: NSError!) {
+		if let rssi = RSSI {
+			self.rssi = rssi.integerValue
+		}
+	}
 
+	public func peripheralDidUpdateName(peripheral: CBPeripheral!) {
+		self.name = peripheral.name
+		self.sendNotification(BTLE.notifications.peripheralDidUpdateName)
+		if BTLE.debugging { println("Updated name for: \(self.name)") }
+	}
+
+	//=============================================================================================
+	//MARK: Delegate - Service
 	public func peripheral(peripheral: CBPeripheral!, didModifyServices invalidatedServices: [AnyObject]!) {
 		var remainingServices = self.services
 		
@@ -293,11 +317,8 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 
 	
-	public func peripheralDidUpdateName(peripheral: CBPeripheral!) {
-		self.name = peripheral.name
-		self.sendNotification(BTLE.notifications.peripheralDidUpdateName)
-		if BTLE.debugging { println("Updated name for: \(self.name)") }
-	}
+	//=============================================================================================
+	//MARK:	 Delegate - Characteristic
 
 	public func peripheral(peripheral: CBPeripheral!, didDiscoverCharacteristicsForService service: CBService!, error: NSError!) {
 		if self.shouldLoadService(service) {
@@ -305,18 +326,35 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		}
 	}
 	
-	
 	public func peripheral(peripheral: CBPeripheral!, didUpdateValueForCharacteristic characteristic: CBCharacteristic!, error: NSError!) {
 		if self.shouldLoadService(characteristic.service) {
 			self.addService(characteristic.service).didLoadCharacteristic(characteristic)
 		}
 	}
-
-	public func peripheral(peripheral: CBPeripheral!, didReadRSSI RSSI: NSNumber!, error: NSError!) {
-		if let rssi = RSSI {
-			self.rssi = rssi.integerValue
-		}
+	
+	public func peripheral(peripheral: CBPeripheral!, didWriteValueForCharacteristic characteristic: CBCharacteristic!, error: NSError!) {
+		self.characteristicFromCBCharacteristic(characteristic)?.didWriteValue()
 	}
+	
+	public func peripheral(peripheral: CBPeripheral!, didUpdateNotificationStateForCharacteristic characteristic: CBCharacteristic!, error: NSError!) {
+		self.characteristicFromCBCharacteristic(characteristic)?.didUpdateNotifyValue()
+	}
+	
+	public func peripheral(peripheral: CBPeripheral!, didDiscoverDescriptorsForCharacteristic characteristic: CBCharacteristic!, error: NSError!) {
+		self.characteristicFromCBCharacteristic(characteristic)?.loadDescriptors()
+	}
+	
+	public func peripheral(peripheral: CBPeripheral!, didUpdateValueForDescriptor descriptor: CBDescriptor!, error: NSError!) {
+		self.characteristicFromCBCharacteristic(descriptor.characteristic)?.didUpdateValueForDescriptor(descriptor)
+	}
+	
+	public func peripheral(peripheral: CBPeripheral!, didWriteValueForDescriptor descriptor: CBDescriptor!, error: NSError!) {
+		self.characteristicFromCBCharacteristic(descriptor.characteristic)?.didWriteValueForDescriptor(descriptor)
+	}
+	
+	//=============================================================================================
+	//MARK: For overriding
+
 	
 	public func shouldLoadService(service: CBService) -> Bool {
 		println("Service: \(service), UUID: \(service.UUID.UUIDString)")

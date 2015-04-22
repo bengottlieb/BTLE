@@ -19,14 +19,18 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 	@IBOutlet var tableView: UITableView!
 	@IBOutlet var connectedSwitch: UISwitch!
 	
+	var refreshControl: UIRefreshControl?
+	
 	
 	func startLoading() {
-		self.tableView.alpha = 0.5
+		dispatch_async_main {
+			self.refreshControl?.beginRefreshing()
+		}
 	}
 
 	func finishLoading() {
 		dispatch_async_main {
-			self.tableView.alpha = 1.0
+			self.refreshControl?.endRefreshing()
 		}
 		self.updateSections()
 	}
@@ -45,10 +49,20 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 	
     override func viewDidLoad() {
         super.viewDidLoad()
+		
+		self.refreshControl = UIRefreshControl(frame: CGRectZero)
+		self.tableView.addSubview(self.refreshControl!)
+		self.refreshControl?.addTarget(self, action: "reloadDevice", forControlEvents: .ValueChanged)
 
 		self.connectedSwitch.on = self.peripheral.state == .Connected
+		
+		self.tableView.registerNib(UINib(nibName: "CharacteristicTableViewCell", bundle: nil), forCellReuseIdentifier: "characteristic")
         // Do any additional setup after loading the view.
     }
+	
+	func reloadDevice() {
+		self.peripheral.reloadServices()
+	}
 	
 	override func viewWillAppear(animated: Bool) {
 		self.navigationController?.navigationBarHidden = false
@@ -96,7 +110,10 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 	
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		if let service = self.sections[indexPath.section] {
-			var cell = UITableViewCell(style: .Default, reuseIdentifier: "cell")
+			var cell = tableView.dequeueReusableCellWithIdentifier("characteristic", forIndexPath: indexPath) as! CharacteristicTableViewCell
+			var chr = service.characteristics[indexPath.row]
+			
+			cell.characteristic = chr
 			
 			return cell
  		} else {
@@ -115,9 +132,31 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 	
 	func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
 		if let service = self.sections[section] {
-			return service.uuid.UUIDString
+			return service.uuid.description
 		} else {
 			return "Advertisement Data"
+		}
+	}
+	
+	func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+		if indexPath.section == 0 { return 44 }
+		
+		return 100
+	}
+	
+	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+		if let service = self.sections[indexPath.section] {
+			var chr = service.characteristics[indexPath.row]
+			
+			chr.reload()
+			println("\(chr)")
+		} else {
+			var info = self.peripheral.advertisementData
+			var keys = sorted((info as NSDictionary).allKeys as! [String], <)
+			var key = keys[indexPath.row]
+			var value = info[key] as? Printable
+			
+			println("\(value)")
 		}
 	}
 }

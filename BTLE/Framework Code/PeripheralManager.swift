@@ -77,8 +77,53 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		
 	}
 	
+	public func peripheralManager(peripheral: CBPeripheralManager!, didReceiveReadRequest request: CBATTRequest!) {
+		if let characteristic = self.characteristicWithCBCharacteristic(request.characteristic) {
+			if let data = characteristic.dataValue {
+				var range = NSRange(location: request.offset, length: data.length - request.offset)
+				request.value = characteristic.dataValue?.subdataWithRange(range)
+				self.cbPeripheralManager?.respondToRequest(request, withResult: .Success)
+			} else {
+				self.cbPeripheralManager?.respondToRequest(request, withResult: .Success)
+			}
+		}
+		
+		self.cbPeripheralManager?.respondToRequest(request, withResult: .AttributeNotFound)
+	}
+	
+	public func peripheralManager(peripheral: CBPeripheralManager!, didReceiveWriteRequests requests: [AnyObject]!) {
+		println("received write requests: \(requests)")
+	
+		if let requests = requests as? [CBATTRequest] where requests.count > 0 {
+			self.cbPeripheralManager?.respondToRequest(requests[0], withResult: .Success)
+		}
+	}
+	
+	//=============================================================================================
+	//MARK: Delegate - status
+
+	
 	public func peripheralManagerDidStartAdvertising(peripheral: CBPeripheralManager!, error: NSError!) {
-		if BTLE.debugging { println("advertising started with error: \(error)") }
+		if let error = error {
+			if BTLE.debugging { println("advertising started with error: \(error)") }
+			BTLE.manager.advertisingState = .Idle
+		}
+	}
+	
+	public func peripheralManager(peripheral: CBPeripheralManager!, didAddService service: CBService!, error: NSError!) {
+		self.serviceWithCBService(service)?.isLive = true
+	}
+	
+	//=============================================================================================
+	//MARK: Delegate - Characteristic
+
+	
+	public func peripheralManager(peripheral: CBPeripheralManager!, central: CBCentral!, didSubscribeToCharacteristic characteristic: CBCharacteristic!) {
+		
+	}
+	
+	public func peripheralManager(peripheral: CBPeripheralManager!, central: CBCentral!, didUnsubscribeFromCharacteristic characteristic: CBCharacteristic!) {
+		
 	}
 	
 	//=============================================================================================
@@ -131,6 +176,22 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		}
 		
 		
+	}
+	
+	func serviceWithCBService(service: CBService) -> BTLEMutableService? {
+		for svc in self.services {
+			if svc.cbService == service { return svc }
+		}
+		return nil
+	}
+	
+	func characteristicWithCBCharacteristic(characteristic: CBCharacteristic) -> BTLEMutableCharacteristic? {
+		if let svc = self.serviceWithCBService(characteristic.service) {
+			for chr in svc.characteristics {
+				if chr.cbCharacteristic == characteristic { return chr as? BTLEMutableCharacteristic }
+			}
+		}
+		return nil
 	}
 	
 	public var services: [BTLEMutableService] = []

@@ -124,6 +124,7 @@ public class BTLEMutableService: BTLEService {
 	
 	public var advertised = false
 	public var addedToManager = false
+	public var isLive = false
 	
 	override func addToPeripheralManager(mgr: CBPeripheralManager?) {
 		if self.addedToManager { return }

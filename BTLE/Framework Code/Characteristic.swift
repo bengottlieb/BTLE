@@ -12,24 +12,7 @@ import CoreBluetooth
 public class BTLECharacteristic: NSObject {
 	public var cbCharacteristic: CBCharacteristic!
 	public var service: BTLEService!
-	var loading = false
-	
-	var peripheral: BTLEPeripheral { return self.service.peripheral }
-	
-	init(characteristic chr: CBCharacteristic, ofService svc: BTLEService?) {
-		cbCharacteristic = chr
-		service = svc
-		super.init()
-		
-		if svc != nil { self.load() }
-	}
-	
-	func load() {
-		if !self.loading {
-			self.loading = true
-			self.peripheral.cbPeripheral.readValueForCharacteristic(self.cbCharacteristic)
-		}
-	}
+	public var descriptors: [BTLEDescriptor] = []
 	
 	public override var description: String {
 		return "\(self.cbCharacteristic)"
@@ -44,20 +27,80 @@ public class BTLECharacteristic: NSObject {
 		}
 	}
 	
+	public func reload() {
+		self.peripheral.cbPeripheral.readValueForCharacteristic(self.cbCharacteristic)
+	}
+	
+	public func publishValue(data: NSData, withResponse: Bool = false) {
+		self.peripheral.cbPeripheral.writeValue(data, forCharacteristic: self.cbCharacteristic, type: withResponse ? .WithResponse : .WithoutResponse)
+	}
+	
 	public func propertyEnabled(prop: CBCharacteristicProperties) -> Bool {
 		return (self.cbCharacteristic.properties.rawValue & prop.rawValue) != 0
 	}
 	
+	public func queryDescriptors() {
+		self.peripheral.cbPeripheral.discoverDescriptorsForCharacteristic(self.cbCharacteristic)
+	}
+	
 	public func didLoad() {
+		self.dataValue = self.cbCharacteristic.value
 		self.loading = false
 	}
-	public var dataValue: NSData? { return self.cbCharacteristic.value }
+	public var dataValue: NSData?
 	public var stringValue: String { if let d = self.dataValue { return (NSString(data: d, encoding: NSASCIIStringEncoding) ?? "") as String; }; return "" }
 	public var isEncrypted: Bool {
 		return self.cbCharacteristic.properties.rawValue & (CBCharacteristicProperties.IndicateEncryptionRequired.rawValue | CBCharacteristicProperties.NotifyEncryptionRequired.rawValue | CBCharacteristicProperties.ExtendedProperties.rawValue) != 0
 	}
 	
-	class func characteristicsAsString(chr: CBCharacteristicProperties) -> String {
+	public var propertiesAsString: String { return BTLECharacteristic.characteristicPropertiesAsString(self.cbCharacteristic.properties) }
+
+	
+	func didWriteValue() {
+		
+	}
+	
+	func didUpdateValueForDescriptor(descriptor: CBDescriptor) {
+		
+	}
+	
+	func didWriteValueForDescriptor(descriptor: CBDescriptor) {
+		
+	}
+	
+	func didUpdateNotifyValue() {
+		
+	}
+	
+	func loadDescriptors() {
+		if let descr = self.cbCharacteristic.descriptors as? [CBDescriptor] {
+			self.descriptors = descr.map({ return BTLEDescriptor(descriptor: $0)})
+		}
+	}
+	
+	var loading = false
+	
+	var peripheral: BTLEPeripheral { return self.service.peripheral }
+	
+	init(characteristic chr: CBCharacteristic, ofService svc: BTLEService?) {
+		cbCharacteristic = chr
+		service = svc
+		
+		dataValue = chr.value
+		super.init()
+		
+		if svc != nil { self.load() }
+	}
+	
+	func load() {
+		if !self.loading {
+			self.loading = true
+			self.peripheral.cbPeripheral.readValueForCharacteristic(self.cbCharacteristic)
+		}
+	}
+	
+
+	class func characteristicPropertiesAsString(chr: CBCharacteristicProperties) -> String {
 		var string = ""
 	
 		if chr.rawValue & CBCharacteristicProperties.Broadcast.rawValue > 0 { string += "Broadcast, " }
@@ -79,5 +122,14 @@ public class BTLECharacteristic: NSObject {
 public class BTLEMutableCharacteristic : BTLECharacteristic {
 	public init(uuid: CBUUID, properties: CBCharacteristicProperties, value: NSData? = nil, permissions: CBAttributePermissions = .Readable) {
 		super.init(characteristic: CBMutableCharacteristic(type: uuid, properties: properties, value: value, permissions: permissions), ofService: nil)
+	}
+	
+	public func updateDataValue(data: NSData?) {
+		self.dataValue = data
+		
+		if let data = data {
+			let mgr = BTLE.manager.advertiser.cbPeripheralManager!
+			mgr.updateValue(data, forCharacteristic: self.cbCharacteristic as! CBMutableCharacteristic, onSubscribedCentrals: nil)
+		}
 	}
 }

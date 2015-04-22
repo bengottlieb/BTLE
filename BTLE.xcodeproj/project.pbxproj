@@ -21,6 +21,10 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		B5037E711AE6F9BF000D2A64 /* CharacteristicTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5037E6F1AE6F9BF000D2A64 /* CharacteristicTableViewCell.swift */; };
+		B5037E721AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5037E701AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib */; };
+		B5037E741AE72B18000D2A64 /* Descriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5037E731AE72B18000D2A64 /* Descriptor.swift */; };
+		B5037E751AE72B18000D2A64 /* Descriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5037E731AE72B18000D2A64 /* Descriptor.swift */; };
 		B504E65D1A8968DC001B414B /* BTLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B504E6461A8968DC001B414B /* BTLE.framework */; };
 		B504E69D1A896E82001B414B /* BTLE_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B504E69C1A896E82001B414B /* BTLE_Tests.swift */; };
 		B504E6A41A897017001B414B /* BTLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B504E6461A8968DC001B414B /* BTLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -89,6 +93,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B5037E6F1AE6F9BF000D2A64 /* CharacteristicTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicTableViewCell.swift; sourceTree = "<group>"; };
+		B5037E701AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CharacteristicTableViewCell.xib; sourceTree = "<group>"; };
+		B5037E731AE72B18000D2A64 /* Descriptor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Descriptor.swift; sourceTree = "<group>"; };
 		B504E6131A89230F001B414B /* TestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B504E6461A8968DC001B414B /* BTLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BTLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B504E66A1A896980001B414B /* BuildFramework.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = BuildFramework.sh; path = BTLE/BuildFramework.sh; sourceTree = "<group>"; };
@@ -240,6 +247,7 @@
 				B5D608401ADBFD4C004DC9AC /* Peripheral.swift */,
 				B5D608491ADC4486004DC9AC /* Service.swift */,
 				B5D6084C1ADC44A5004DC9AC /* Characteristic.swift */,
+				B5037E731AE72B18000D2A64 /* Descriptor.swift */,
 				B5DAB3351AE418FE00D49D44 /* Array+SA_Additions.swift */,
 			);
 			name = "Framework Code";
@@ -259,6 +267,8 @@
 				B5DAB3321AE40B3800D49D44 /* PeripheralCellTableViewCell.xib */,
 				B5A4823C1AE3F1E8001636BE /* DeviceDetailsViewController.swift */,
 				B5A4823D1AE3F1E8001636BE /* DeviceDetailsViewController.xib */,
+				B5037E6F1AE6F9BF000D2A64 /* CharacteristicTableViewCell.swift */,
+				B5037E701AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib */,
 			);
 			path = TestHost;
 			sourceTree = "<group>";
@@ -424,6 +434,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5037E721AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib in Resources */,
 				B58D64931A899094005A0002 /* Images.xcassets in Resources */,
 				B5A4823F1AE3F1E8001636BE /* DeviceDetailsViewController.xib in Resources */,
 				B5DAB3341AE40B3800D49D44 /* PeripheralCellTableViewCell.xib in Resources */,
@@ -480,6 +491,7 @@
 				B5DAB3331AE40B3800D49D44 /* PeripheralCellTableViewCell.swift in Sources */,
 				B58D64951A899094005A0002 /* ViewController.swift in Sources */,
 				B58D64901A899094005A0002 /* AppDelegate.swift in Sources */,
+				B5037E711AE6F9BF000D2A64 /* CharacteristicTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -489,6 +501,7 @@
 			files = (
 				B5D6084D1ADC44A5004DC9AC /* Characteristic.swift in Sources */,
 				B5D608411ADBFD4C004DC9AC /* Peripheral.swift in Sources */,
+				B5037E741AE72B18000D2A64 /* Descriptor.swift in Sources */,
 				B5D6083E1ADBF4F6004DC9AC /* CentralManager.swift in Sources */,
 				B5345B3F1AE1F20F0074F337 /* PeripheralManager.swift in Sources */,
 				B58D647F1A898FBD005A0002 /* BTLE.swift in Sources */,
@@ -510,6 +523,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B58D64831A898FBE005A0002 /* BTLE.swift in Sources */,
+				B5037E751AE72B18000D2A64 /* Descriptor.swift in Sources */,
 				B5DAB3371AE418FE00D49D44 /* Array+SA_Additions.swift in Sources */,
 				B5D6084B1ADC4486004DC9AC /* Service.swift in Sources */,
 				B5D6084E1ADC44A5004DC9AC /* Characteristic.swift in Sources */,

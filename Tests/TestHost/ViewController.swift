@@ -21,6 +21,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	@IBOutlet var advertiseSwitch: UISwitch!
 	@IBOutlet var filterByServicesSwitch: UISwitch!
 
+	var characteristicData = "A"
 	var devices: [BTLEPeripheral] = []
 	
 	func reload() {
@@ -29,6 +30,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 			self.tableView.reloadData()
 		}
 	}
+	
+	var characteristic: BTLEMutableCharacteristic?
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -46,8 +49,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		BTLE.manager.services = (NSUserDefaults.keyedBool("filterByServices") ?? false) ? [] : [filterServiceID]
 		
 		//setup advertiser
-		var characteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: .Read)
-		var service = BTLEMutableService(uuid: testServiceID, isPrimary: true, characteristics: [ characteristic ])
+		
+		self.characteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: CBCharacteristicProperties.Read, value: self.characteristicData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true))
+		
+		var service = BTLEMutableService(uuid: testServiceID, isPrimary: true, characteristics: [ self.characteristic! ])
 		service.advertised = true
 		
 		BTLE.manager.advertiser.addService(service)
@@ -119,7 +124,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	}
 	
 	@IBAction func configureServices() {
+		self.characteristicData = self.characteristicData + "B"
 		
+		var published = self.characteristicData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+		
+		self.characteristic!.updateDataValue(published)
 	}
 	
 	func connectToggled(toggle: UISwitch) {
