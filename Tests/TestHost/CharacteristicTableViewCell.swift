@@ -16,6 +16,7 @@ class CharacteristicTableViewCell: UITableViewCell {
 	@IBOutlet var stringValueLabel: UILabel!
 	@IBOutlet var dataValueLabel: UILabel!
 	@IBOutlet var notifySwitch: UISwitch!
+	@IBOutlet var writeButton: UIButton!
 	
 	deinit {
 		self.removeAsObserver()
@@ -43,6 +44,9 @@ class CharacteristicTableViewCell: UITableViewCell {
 				var desc = chr.cbCharacteristic.UUID.description
 				self.nameAndPropertiesLabel?.text = desc.substringToIndex(desc.index(20)) + ": " + chr.propertiesAsString
 				
+				self.notifySwitch.hidden = !chr.canNotify
+				self.writeButton.hidden = !chr.centralCanWriteTo
+				
 				if let data = chr.dataValue {
 					self.stringValueLabel?.text = String(data: data, encoding: NSUTF8StringEncoding) ?? ""
 					self.dataValueLabel?.text = data.hexString
@@ -62,5 +66,13 @@ class CharacteristicTableViewCell: UITableViewCell {
 	
 	@IBAction func toggledNotify() {
 		self.characteristic?.listenForUpdates(self.notifySwitch.on)
+	}
+	
+	@IBAction func writeTo() {
+		var string = NSDate().localTimeString(timeStyle: .FullStyle).uppercaseString
+		
+		var data = string.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+
+		self.characteristic?.publishValue(data!, withResponse: true)
 	}
 }

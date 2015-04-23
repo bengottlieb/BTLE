@@ -334,7 +334,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	public func peripheral(peripheral: CBPeripheral!, didWriteValueForCharacteristic characteristic: CBCharacteristic!, error: NSError!) {
-		self.characteristicFromCBCharacteristic(characteristic)?.didWriteValue()
+		self.characteristicFromCBCharacteristic(characteristic)?.didWriteValue(error)
 	}
 	
 	public func peripheral(peripheral: CBPeripheral!, didUpdateNotificationStateForCharacteristic characteristic: CBCharacteristic!, error: NSError!) {

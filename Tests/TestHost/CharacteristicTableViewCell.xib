@@ -55,11 +55,22 @@
                             <action selector="toggledNotify" destination="KGk-i7-Jjw" eventType="valueChanged" id="cpC-z3-cbs"/>
                         </connections>
                     </switch>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7GZ-XZ-NyV">
+                        <rect key="frame" x="209" y="61" width="36" height="30"/>
+                        <state key="normal" title="Write">
+                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                        <connections>
+                            <action selector="writeTo" destination="KGk-i7-Jjw" eventType="touchUpInside" id="QPo-pa-mhe"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="uo2-B6-G0t" firstAttribute="leading" secondItem="7GZ-XZ-NyV" secondAttribute="trailing" constant="18" id="0Ou-Mj-zSH"/>
                     <constraint firstItem="h9s-6C-CyC" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="7lb-PZ-vQd"/>
                     <constraint firstItem="h9s-6C-CyC" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="8nj-eJ-ycN"/>
                     <constraint firstItem="9Jj-Nd-iCg" firstAttribute="top" secondItem="ilz-v1-52M" secondAttribute="bottom" constant="8" id="IbZ-mC-2D5"/>
+                    <constraint firstItem="7GZ-XZ-NyV" firstAttribute="centerY" secondItem="uo2-B6-G0t" secondAttribute="centerY" constant="-2.5" id="PFs-Br-qqr"/>
                     <constraint firstItem="ilz-v1-52M" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="PN0-WA-1PK"/>
                     <constraint firstAttribute="bottomMargin" secondItem="9Jj-Nd-iCg" secondAttribute="bottom" constant="-8" id="USe-mc-kqS"/>
                     <constraint firstItem="ilz-v1-52M" firstAttribute="top" secondItem="h9s-6C-CyC" secondAttribute="bottom" constant="3" id="aEB-NA-ty8"/>
@@ -76,6 +87,7 @@
                 <outlet property="nameAndPropertiesLabel" destination="h9s-6C-CyC" id="lO1-ZM-y49"/>
                 <outlet property="notifySwitch" destination="uo2-B6-G0t" id="Mjg-TR-otr"/>
                 <outlet property="stringValueLabel" destination="ilz-v1-52M" id="xeX-ce-Z0R"/>
+                <outlet property="writeButton" destination="7GZ-XZ-NyV" id="8Yy-eU-dMp"/>
             </connections>
             <point key="canvasLocation" x="706" y="441"/>
         </tableViewCell>

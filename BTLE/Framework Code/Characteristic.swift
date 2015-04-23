@@ -16,6 +16,7 @@ public class BTLECharacteristic: NSObject {
 	public var descriptors: [BTLEDescriptor] = []
 	public var listeningState = ListeningState.NotListening { didSet { NSNotification.postNotification(BTLE.notifications.characteristicListeningChanged, object: self) }}
 	public override var description: String { return "\(self.cbCharacteristic)" }
+	public var publishInProgress = false
 
 	init(characteristic chr: CBCharacteristic, ofService svc: BTLEService?) {
 		cbCharacteristic = chr
@@ -28,7 +29,7 @@ public class BTLECharacteristic: NSObject {
 	}
 	
 	public func listenForUpdates(listen: Bool) {
-		if self.propertyEnabled(.Notify) || self.propertyEnabled(.Indicate) {
+		if self.canNotify {
 			switch self.listeningState {
 			case .NotListening: fallthrough
 			case .FinishingListening:
@@ -41,8 +42,15 @@ public class BTLECharacteristic: NSObject {
 		}
 	}
 	
+	public var canNotify: Bool { return self.propertyEnabled(.Notify) || self.propertyEnabled(.Indicate) }
+	public var centralCanWriteTo: Bool { return self.propertyEnabled(.Write) || self.propertyEnabled(.WriteWithoutResponse) }
 	public func publishValue(data: NSData, withResponse: Bool = false) {
-		self.peripheral.cbPeripheral.writeValue(data, forCharacteristic: self.cbCharacteristic, type: withResponse ? .WithResponse : .WithoutResponse)
+		if self.centralCanWriteTo {
+			self.publishInProgress = true
+			self.peripheral.cbPeripheral.writeValue(data, forCharacteristic: self.cbCharacteristic, type: withResponse ? .WithResponse : .WithoutResponse)
+		} else {
+			println("Trying to write to a read-only characteristic: \(self)")
+		}
 	}
 	
 	public func propertyEnabled(prop: CBCharacteristicProperties) -> Bool {
@@ -75,8 +83,14 @@ public class BTLECharacteristic: NSObject {
 		}
 	}
 
-	public func didWriteValue() {
-		
+	public func didWriteValue(error: NSError?) {
+		if let error = error {
+			println("Error while writing to \(self): \(error)")
+		}
+		if self.publishInProgress {
+			println("publish complete")
+			self.publishInProgress = false
+		}
 	}
 	
 	func didUpdateNotifyValue() {
@@ -135,7 +149,7 @@ public class BTLECharacteristic: NSObject {
 
 
 public class BTLEMutableCharacteristic : BTLECharacteristic {
-	public init(uuid: CBUUID, properties: CBCharacteristicProperties, value: NSData? = nil, permissions: CBAttributePermissions = .Readable) {
+	public init(uuid: CBUUID, properties: CBCharacteristicProperties, value: NSData? = nil, permissions: CBAttributePermissions = .Readable | .Writeable) {
 		var creationData = properties.rawValue & CBCharacteristicProperties.Notify.rawValue != 0 ? nil : value
 		var chr = CBMutableCharacteristic(type: uuid, properties: properties, value: creationData, permissions: permissions)
 		super.init(characteristic: chr, ofService: nil)

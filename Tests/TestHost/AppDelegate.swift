@@ -9,6 +9,7 @@
 import UIKit
 import CoreBluetooth
 import BTLE
+import SA_Swift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -19,9 +20,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 		// Override point for customization after application launch
 		
-		
+		var settings = UIUserNotificationSettings(forTypes: .Alert | .Sound | .Badge, categories: nil)
+		application.registerUserNotificationSettings(settings)
+		application.registerForRemoteNotifications()
+	
 		//BTLE.manager.services = [CBUUID(string: "01EB2EF1-BF82-4516-81BE-57E119207436")]
 		
+		self.addAsObserver(BTLE.notifications.characteristicWasWrittenTo, selector: "zapped:")
 		return true
 	}
 
@@ -40,7 +45,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	func applicationWillTerminate(application: UIApplication) {
 	}
 
-
+	func zapped(note: NSNotification) {
+		println("received write requests: \(note.object)")
+		
+		SoundEffect.playSound("zap.caf")
+		UILocalNotification.playSound("zap.caf")
+		
+	}
 }
 
 class LockPeripheral: BTLEPeripheral {
@@ -64,5 +75,15 @@ class LockService: BTLEService {
 		
 		
 		println("BTLEService: \(lockStatus), Data: \(data)")
+	}
+}
+
+extension UILocalNotification {
+	class func playSound(soundName: String) {
+		var note = UILocalNotification()
+		
+		note.fireDate = NSDate(timeIntervalSinceNow: 0.01)
+		note.soundName = soundName
+		UIApplication.sharedApplication().scheduleLocalNotification(note)
 	}
 }

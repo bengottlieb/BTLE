@@ -31,7 +31,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		}
 	}
 	
-	var characteristic: BTLEMutableCharacteristic?
+	var notifyCharacteristic: BTLEMutableCharacteristic?
+	var writableCharacteristic: BTLEMutableCharacteristic?
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -50,9 +51,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		
 		//setup advertiser
 		
-		self.characteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify, value: self.characteristicData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true))
+		self.writableCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF5"), properties: CBCharacteristicProperties.Read | CBCharacteristicProperties.Write, value: nil)
+		self.notifyCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify, value: self.characteristicData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true))
 		
-		var service = BTLEMutableService(uuid: testServiceID, isPrimary: true, characteristics: [ self.characteristic! ])
+		var service = BTLEMutableService(uuid: testServiceID, isPrimary: true, characteristics: [ self.writableCharacteristic!, self.notifyCharacteristic! ])
 		service.advertised = true
 		
 		BTLE.manager.advertiser.addService(service)
@@ -128,7 +130,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		
 		var published = self.characteristicData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
 		
-		self.characteristic!.updateDataValue(published)
+		self.notifyCharacteristic!.updateDataValue(published)
 	}
 	
 	func connectToggled(toggle: UISwitch) {

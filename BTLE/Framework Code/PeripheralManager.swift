@@ -92,11 +92,13 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	}
 	
 	public func peripheralManager(peripheral: CBPeripheralManager!, didReceiveWriteRequests requests: [AnyObject]!) {
-		println("received write requests: \(requests)")
-	
 		if let requests = requests as? [CBATTRequest] where requests.count > 0 {
+			for request in requests {
+				NSNotification.postNotification(BTLE.notifications.characteristicWasWrittenTo, object: self.characteristicWithCBCharacteristic(request.characteristic))
+			}
 			self.cbPeripheralManager?.respondToRequest(requests[0], withResult: .Success)
 		}
+		
 	}
 	
 	//=============================================================================================
