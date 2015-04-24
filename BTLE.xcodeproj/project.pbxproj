@@ -31,6 +31,9 @@
 		B504E6A41A897017001B414B /* BTLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B504E6461A8968DC001B414B /* BTLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B504E6A51A897087001B414B /* BTLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B504E6461A8968DC001B414B /* BTLE.framework */; };
 		B5345B3F1AE1F20F0074F337 /* PeripheralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5345B3E1AE1F20F0074F337 /* PeripheralManager.swift */; };
+		B57CA3C11AEAD51700B0125F /* NearbyPeripheralsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B57CA3C01AEAD51700B0125F /* NearbyPeripheralsTableView.swift */; };
+		B57CA3C41AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B57CA3C21AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift */; };
+		B57CA3C51AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B57CA3C31AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib */; };
 		B582A2BB1ADDB1FB00736517 /* SA_Swift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B582A2BA1ADDB1FB00736517 /* SA_Swift.framework */; };
 		B58D64791A898F89005A0002 /* BTLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B58D64681A898F81005A0002 /* BTLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B58D647F1A898FBD005A0002 /* BTLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D64751A898F81005A0002 /* BTLE.swift */; };
@@ -106,6 +109,9 @@
 		B504E69C1A896E82001B414B /* BTLE_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTLE_Tests.swift; sourceTree = "<group>"; };
 		B504E6AF1A898110001B414B /* BTLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BTLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5345B3E1AE1F20F0074F337 /* PeripheralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManager.swift; sourceTree = "<group>"; };
+		B57CA3C01AEAD51700B0125F /* NearbyPeripheralsTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPeripheralsTableView.swift; sourceTree = "<group>"; };
+		B57CA3C21AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPeripheralsTableViewCell.swift; sourceTree = "<group>"; };
+		B57CA3C31AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NearbyPeripheralsTableViewCell.xib; sourceTree = "<group>"; };
 		B582A2BA1ADDB1FB00736517 /* SA_Swift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SA_Swift.framework; sourceTree = "<group>"; };
 		B58D64671A898F81005A0002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B58D64681A898F81005A0002 /* BTLE.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BTLE.h; sourceTree = "<group>"; };
@@ -251,6 +257,9 @@
 				B5D6084C1ADC44A5004DC9AC /* Characteristic.swift */,
 				B5037E731AE72B18000D2A64 /* Descriptor.swift */,
 				B5DAB3351AE418FE00D49D44 /* Array+SA_Additions.swift */,
+				B57CA3C01AEAD51700B0125F /* NearbyPeripheralsTableView.swift */,
+				B57CA3C21AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift */,
+				B57CA3C31AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib */,
 			);
 			name = "Framework Code";
 			path = "BTLE/Framework Code";
@@ -451,6 +460,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B57CA3C51AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -508,6 +518,8 @@
 				B5037E741AE72B18000D2A64 /* Descriptor.swift in Sources */,
 				B5D6083E1ADBF4F6004DC9AC /* CentralManager.swift in Sources */,
 				B5345B3F1AE1F20F0074F337 /* PeripheralManager.swift in Sources */,
+				B57CA3C11AEAD51700B0125F /* NearbyPeripheralsTableView.swift in Sources */,
+				B57CA3C41AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift in Sources */,
 				B58D647F1A898FBD005A0002 /* BTLE.swift in Sources */,
 				B5DAB3361AE418FE00D49D44 /* Array+SA_Additions.swift in Sources */,
 				B5D6084A1ADC4486004DC9AC /* Service.swift in Sources */,
