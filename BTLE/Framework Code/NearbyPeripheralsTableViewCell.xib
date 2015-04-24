@@ -33,6 +33,10 @@
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RPX-U4-hAi">
+                        <rect key="frame" x="0.0" y="0.0" width="12" height="12"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
                 </subviews>
                 <constraints>
                     <constraint firstItem="h3h-4t-RoB" firstAttribute="centerY" secondItem="ckI-VU-T2K" secondAttribute="centerY" constant="-0.5" id="EUb-j8-L3m"/>
@@ -43,6 +47,7 @@
                 </constraints>
             </tableViewCellContentView>
             <connections>
+                <outlet property="indicator" destination="RPX-U4-hAi" id="UsE-10-6wB"/>
                 <outlet property="nameLabel" destination="ckI-VU-T2K" id="EeX-PI-EZF"/>
                 <outlet property="rssiLabel" destination="h3h-4t-RoB" id="0Ec-E2-bST"/>
             </connections>

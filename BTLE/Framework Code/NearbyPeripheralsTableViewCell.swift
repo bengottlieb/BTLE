@@ -17,9 +17,23 @@ public class NearbyPeripheralsTableViewCell: UITableViewCell {
 	
 	@IBOutlet var nameLabel: UILabel!
 	@IBOutlet var rssiLabel: UILabel!
+	@IBOutlet var indicator: UIView!
 	
-	public var peripheral: BTLEPeripheral? { didSet { self.updateUI() }}
+	public var peripheral: BTLEPeripheral? { didSet {
+		self.removeAsObserver()
+		self.updateUI()
+		if let per = self.peripheral {
+			self.addAsObserver(BTLE.notifications.peripheralDidUpdateRSSI, selector: "pinged", object: per)
+		}
+	}}
 	
+	func pinged() {
+		dispatch_async_main() {
+			self.indicator.alpha = 1.0
+			UIView.animateWithDuration(0.5, animations: { self.indicator.alpha = 0.0} )
+			self.updateUI()
+		}
+	}
 	
 	public func updateUI() {
 		dispatch_async_main() {
@@ -43,7 +57,11 @@ public class NearbyPeripheralsTableViewCell: UITableViewCell {
 		
 		self.rssiLabel.layer.cornerRadius = self.rssiLabel.bounds.size.width / 2
 		
-		self.addAsObserver(BTLE.notifications.peripheralDidUpdateRSSI, selector: "updateUI")
+		self.indicator.backgroundColor = UIColor.blueColor()
+		self.indicator.layer.masksToBounds = true
+		self.indicator.layer.cornerRadius = self.indicator.bounds.width / 2
+		self.indicator.alpha = 0.0
+		
 	}
 	
 	
