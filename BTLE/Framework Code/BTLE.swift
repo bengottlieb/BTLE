@@ -13,6 +13,7 @@ import SA_Swift
 var BTLE_Debugging = false
 
 public class BTLE: NSObject {
+
 	public class var manager: BTLE { struct s { static let manager = BTLE() }; return s.manager }
 	public enum LoadingState { case NotLoaded, Loading, Loaded, LoadingCancelled, Reloading }
 

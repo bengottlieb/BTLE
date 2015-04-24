@@ -12,7 +12,7 @@ import SA_Swift
 
 protocol BTLEPeripheralProtocol {
 	init();
-	init(peripheral: CBPeripheral, RSSI: Int?, advertisementData adv: [NSObject: AnyObject]?);
+	init(peripheral: CBPeripheral, RSSI: BTLEPeripheral.RSSValue?, advertisementData adv: [NSObject: AnyObject]?);
 }
 
 public struct BTLEServiceUUIDs {
@@ -49,6 +49,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		println("deiniting: \(self)")
 	}
 	public enum State { case Discovered, Connecting, Connected, Disconnecting, Undiscovered, Unknown }
+	public typealias RSSValue = Int
 	
 	public var cbPeripheral: CBPeripheral!
 	public var uuid: NSUUID!
@@ -89,13 +90,13 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		default: break
 		}
 	}}
-	public var rssi: Int? { didSet {
+	public var rssi: RSSValue? { didSet {
 		self.lastCommunicatedAt = NSDate()
 		self.sendNotification(BTLE.notifications.peripheralDidUpdateRSSI)
 	}}
 	
 	
-	func modulateRSSI(newRSSI: Int) {
+	func modulateRSSI(newRSSI: RSSValue) {
 		if abs(newRSSI) == 127 { return }
 		if let rssi = self.rssi {
 			var delta = abs(Float(newRSSI - rssi))
@@ -115,7 +116,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		super.init()
 	}
 	
-	public required init(peripheral: CBPeripheral, RSSI: Int?, advertisementData adv: [NSObject: AnyObject]?) {
+	public required init(peripheral: CBPeripheral, RSSI: RSSValue?, advertisementData adv: [NSObject: AnyObject]?) {
 		cbPeripheral = peripheral
 		uuid = peripheral.identifier
 		name = peripheral.name ?? "unknown"
