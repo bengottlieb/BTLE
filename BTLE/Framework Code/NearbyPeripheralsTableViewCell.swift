@@ -34,7 +34,7 @@ public class NearbyPeripheralsTableViewCell: UITableViewCell {
 	}
 	
 	
-    override func awakeFromNib() {
+    public override func awakeFromNib() {
         super.awakeFromNib()
 		
 		self.rssiLabel.layer.borderWidth = 2.0
