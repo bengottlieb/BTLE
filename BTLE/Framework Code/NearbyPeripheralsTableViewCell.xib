@@ -15,7 +15,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ckI-VU-T2K">
-                        <rect key="frame" x="8" y="11" width="270" height="21"/>
+                        <rect key="frame" x="20" y="4" width="258" height="21"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="21" id="mNb-Hh-WpT"/>
                         </constraints>
@@ -37,17 +37,30 @@
                         <rect key="frame" x="0.0" y="0.0" width="12" height="12"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YOy-jY-acy">
+                        <rect key="frame" x="20" y="22" width="258" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="1QP-8o-btx"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="h3h-4t-RoB" firstAttribute="centerY" secondItem="ckI-VU-T2K" secondAttribute="centerY" constant="-0.5" id="EUb-j8-L3m"/>
-                    <constraint firstAttribute="centerY" secondItem="ckI-VU-T2K" secondAttribute="centerY" id="GBN-L2-Rio"/>
+                    <constraint firstItem="ckI-VU-T2K" firstAttribute="width" secondItem="YOy-jY-acy" secondAttribute="width" id="8Jd-A5-H7D"/>
+                    <constraint firstItem="h3h-4t-RoB" firstAttribute="centerY" secondItem="ckI-VU-T2K" secondAttribute="centerY" constant="6.5" id="EUb-j8-L3m"/>
+                    <constraint firstAttribute="centerY" secondItem="ckI-VU-T2K" secondAttribute="centerY" constant="7" id="GBN-L2-Rio"/>
                     <constraint firstItem="h3h-4t-RoB" firstAttribute="leading" secondItem="ckI-VU-T2K" secondAttribute="trailing" constant="3" id="QVb-x4-gI6"/>
                     <constraint firstAttribute="trailingMargin" secondItem="ckI-VU-T2K" secondAttribute="trailing" constant="34" id="bjs-Ou-uCS"/>
-                    <constraint firstItem="ckI-VU-T2K" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="hhY-BW-mKJ"/>
+                    <constraint firstItem="ckI-VU-T2K" firstAttribute="leading" secondItem="YOy-jY-acy" secondAttribute="leading" id="gYc-id-NPQ"/>
+                    <constraint firstItem="ckI-VU-T2K" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="12" id="hhY-BW-mKJ"/>
+                    <constraint firstItem="YOy-jY-acy" firstAttribute="top" secondItem="ckI-VU-T2K" secondAttribute="bottom" constant="-3" id="l02-JS-n5d"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
                 <outlet property="indicator" destination="RPX-U4-hAi" id="UsE-10-6wB"/>
+                <outlet property="lastCommunicatedAtLabel" destination="YOy-jY-acy" id="pRb-Wh-bJF"/>
                 <outlet property="nameLabel" destination="ckI-VU-T2K" id="EeX-PI-EZF"/>
                 <outlet property="rssiLabel" destination="h3h-4t-RoB" id="0Ec-E2-bST"/>
             </connections>

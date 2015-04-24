@@ -11,13 +11,19 @@ import SA_Swift
 
 
 public class NearbyPeripheralsTableViewCell: UITableViewCell {
-	deinit { self.removeAsObserver() }
+	deinit {
+		self.removeAsObserver()
+		self.timer?.invalidate()
+	}
 	
 	static let identifier = "NearbyPeripheralsTableViewCell"
 	
 	@IBOutlet var nameLabel: UILabel!
 	@IBOutlet var rssiLabel: UILabel!
+	@IBOutlet var lastCommunicatedAtLabel: UILabel!
 	@IBOutlet var indicator: UIView!
+	
+	var timer: NSTimer?
 	
 	public var peripheral: BTLEPeripheral? { didSet {
 		self.removeAsObserver()
@@ -40,16 +46,25 @@ public class NearbyPeripheralsTableViewCell: UITableViewCell {
 			if let per = self.peripheral {
 				self.nameLabel.text = per.name
 				self.rssiLabel.text = "\(per.rssi ?? 0)"
+				NSDate().year
 				
 				self.rssiLabel.backgroundColor = per.state == .Connected ? UIColor.blueColor() : UIColor.clearColor()
 				self.rssiLabel.textColor = per.state == .Connected ? UIColor.whiteColor() : UIColor.blackColor()
+				self.lastCommunicatedAtLabel.text = NSDate.ageString(abs(per.lastCommunicatedAt.timeIntervalSinceNow))
 			}
 		}
 	}
 	
+	func updateLastCommsLabel() {
+		if let per = self.peripheral {
+			self.lastCommunicatedAtLabel.text = NSDate.ageString(abs(per.lastCommunicatedAt.timeIntervalSinceNow))
+		}
+	}
 	
     public override func awakeFromNib() {
         super.awakeFromNib()
+		
+		self.timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: "updateLastCommsLabel", userInfo: nil, repeats: true)
 		
 		self.rssiLabel.layer.borderWidth = 2.0
 		self.rssiLabel.layer.borderColor = UIColor.blackColor().CGColor
@@ -63,8 +78,5 @@ public class NearbyPeripheralsTableViewCell: UITableViewCell {
 		self.indicator.alpha = 0.0
 		
 	}
-	
-	
-	
-	
 }
+
