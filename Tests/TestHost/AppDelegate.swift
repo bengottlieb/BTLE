@@ -55,8 +55,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 class LockPeripheral: BTLEPeripheral {
-	required init(peripheral: CBPeripheral, RSSValue: Int?, advertisementData adv: [NSObject: AnyObject]?) {
-		super.init(peripheral: peripheral, RSSValue: RSSI, advertisementData: adv)
+	required init(peripheral: CBPeripheral, RSSI: BTLEPeripheral.RSSValue?, advertisementData adv: [NSObject: AnyObject]?) {
+		super.init(peripheral: peripheral, RSSI: RSSI, advertisementData: adv)
 	}
 	required init() { super.init() }
 }

@@ -105,7 +105,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	func addPeripheral(peripheral: CBPeripheral, RSSI: Int? = nil, advertisementData: [NSObject: AnyObject]? = nil) -> BTLEPeripheral {
 		for per in self.peripherals {
 			if per.uuid == peripheral.identifier {
-				if let rssi = RSSI { per.modulateRSSI(rssi) }
+				if let rssi = RSSI { per.setCurrentRSSI(rssi) }
 				if let advertisementData = advertisementData { per.advertisementData = advertisementData }
 				return per
 			}
@@ -124,7 +124,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 					self.ignoredPeripherals.insert(per)
 				} else {
 					self.peripherals.insert(per)
-					if let rssi = RSSI { per.modulateRSSI(rssi) }
+					if let rssi = RSSI { per.setCurrentRSSI(rssi) }
 					if let advertisementData = advertisementData { per.advertisementData = advertisementData }
 					return per
 				}

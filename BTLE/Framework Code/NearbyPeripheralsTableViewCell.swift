@@ -50,14 +50,14 @@ public class NearbyPeripheralsTableViewCell: UITableViewCell {
 				
 				self.rssiLabel.backgroundColor = per.state == .Connected ? UIColor.blueColor() : UIColor.clearColor()
 				self.rssiLabel.textColor = per.state == .Connected ? UIColor.whiteColor() : UIColor.blackColor()
-				self.lastCommunicatedAtLabel.text = NSDate.ageString(abs(per.lastCommunicatedAt.timeIntervalSinceNow))
+				self.lastCommunicatedAtLabel.text = NSDate.ageString(abs(per.lastCommunicatedAt.timeIntervalSinceNow)) + ", " + per.distance.toString
 			}
 		}
 	}
 	
 	func updateLastCommsLabel() {
 		if let per = self.peripheral {
-			self.lastCommunicatedAtLabel.text = NSDate.ageString(abs(per.lastCommunicatedAt.timeIntervalSinceNow))
+			self.lastCommunicatedAtLabel.text = NSDate.ageString(abs(per.lastCommunicatedAt.timeIntervalSinceNow)) + ", " + per.distance.toString
 		}
 	}
 	

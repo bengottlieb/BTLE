@@ -10,6 +10,14 @@ import Foundation
 import CoreBluetooth
 import SA_Swift
 
+let rssi_range_touching = -25
+let rssi_range_very_close = -30
+let rssi_range_close = -35
+let rssi_range_nearby = -45
+let rssi_range_same_room = -55
+let rssi_range_around = -65
+
+
 protocol BTLEPeripheralProtocol {
 	init();
 	init(peripheral: CBPeripheral, RSSI: BTLEPeripheral.RSSValue?, advertisementData adv: [NSObject: AnyObject]?);
@@ -50,6 +58,30 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	public enum State { case Discovered, Connecting, Connected, Disconnecting, Undiscovered, Unknown }
 	public typealias RSSValue = Int
+	public enum Distance { case Touching, VeryClose, Close, Nearby, SameRoom, Around, Far, Unknown
+		init(raw: RSSValue) {
+			if raw > rssi_range_touching { self = .Touching }
+			else if raw > rssi_range_very_close { self = .VeryClose }
+			else if raw > rssi_range_close { self = .Close }
+			else if raw > rssi_range_nearby { self = .Nearby }
+			else if raw > rssi_range_same_room { self = .SameRoom }
+			else if raw > rssi_range_around { self = .Around }
+			else { self = .Far }
+		}
+		
+		var toString: String {
+			switch self {
+			case .Touching: return "touching"
+			case .VeryClose: return "very close"
+			case .Close: return "close"
+			case .Nearby: return "nearby"
+			case .SameRoom: return "same room"
+			case .Around: return "around"
+			case .Far: return "far"
+			case .Unknown: return "unknown"
+			}
+		}
+	}
 	
 	public var cbPeripheral: CBPeripheral!
 	public var uuid: NSUUID!
@@ -94,22 +126,24 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		self.lastCommunicatedAt = NSDate()
 		self.sendNotification(BTLE.notifications.peripheralDidUpdateRSSI)
 	}}
+	public var rawRSSI: RSSValue?
 	
+	public var distance: Distance { if let rssi = self.rssi { return Distance(raw: rssi) }; return .Unknown }
 	
-	func modulateRSSI(newRSSI: RSSValue) {
+	public var rssiHistory: [RSSValue] = []
+	func setCurrentRSSI(newRSSI: RSSValue) {
 		if abs(newRSSI) == 127 { return }
-		if let rssi = self.rssi {
-			var delta = abs(Float(newRSSI - rssi))
-			if delta < 5 {
-				self.lastCommunicatedAt = NSDate()
-				self.sendNotification(BTLE.notifications.peripheralDidUpdateRSSI)
-				return
-			}
-			
-			self.rssi = rssi + Int(ceilf(Float(newRSSI - rssi) * 0.25))
-		} else if newRSSI < 127 {
+		
+		self.rawRSSI = newRSSI
+		if BTLE.manager.disableRSSISmoothing {
 			self.rssi = newRSSI
+		} else {
+			self.rssiHistory.append(newRSSI)
+			if self.rssiHistory.count > 10 { self.rssiHistory.removeAtIndex(0) }
+			
+			self.rssi = self.rssiHistory.reduce(0, combine: +) / self.rssiHistory.count
 		}
+		self.lastCommunicatedAt = NSDate()
 	}
 	
 	public override required init() {

@@ -78,6 +78,7 @@ public class BTLE: NSObject {
 	
 	public var services: [CBUUID] = [] { didSet { self.scanner.updateScan() }}
 	public var monitorRSSI = false { didSet { self.scanner.updateScan() }}
+	public var disableRSSISmoothing = false
 	public var deviceLifetime: NSTimeInterval = 0.0 { didSet {
 		Array(self.scanner.peripherals).map({ $0.updateVisibilityTimer(); })
 	}}
