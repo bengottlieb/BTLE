@@ -13,7 +13,6 @@ import SA_Swift
 var BTLE_Debugging = false
 
 public class BTLE: NSObject {
-
 	public class var manager: BTLE { struct s { static let manager = BTLE() }; return s.manager }
 	public enum LoadingState { case NotLoaded, Loading, Loaded, LoadingCancelled, Reloading }
 
@@ -125,5 +124,34 @@ public class BTLE: NSObject {
 
 	public lazy var scanner: BTLECentralManager = { return BTLECentralManager() }()
 	public lazy var advertiser: BTLEPeripheralManager = { return BTLEPeripheralManager() }()
+	
+	
+	//BTLE Authorization status
+	public var isAuthorized: Bool { return CBPeripheralManager.authorizationStatus() == .Authorized }
+	public func authorizeWithCompletion(completion: (Bool) -> Void) { self.authorizer = BTLEAuthorizer(completion: completion) }
+
+	class BTLEAuthorizer: NSObject, CBPeripheralManagerDelegate {
+		init(completion comp: (Bool) -> Void) {
+			completion = comp
+			super.init()
+			self.manager = CBPeripheralManager(delegate: self, queue: nil, options: [CBPeripheralManagerOptionShowPowerAlertKey: true])
+			self.manager.startAdvertising(nil)
+		}
+		let completion: (Bool) -> Void
+		var manager: CBPeripheralManager!
+		func peripheralManagerDidUpdateState(peripheral: CBPeripheralManager!) {
+			if CBPeripheralManager.authorizationStatus() == .Denied {
+				self.completion(false)
+				self.manager.stopAdvertising()
+				BTLE.manager.authorizer = nil
+			} else if CBPeripheralManager.authorizationStatus() == .Authorized {
+				self.completion(true)
+				self.manager.stopAdvertising()
+				BTLE.manager.authorizer = nil
+			}
+		}
+	}
+	var authorizer: BTLEAuthorizer?
+
 	
 }
