@@ -15,6 +15,7 @@ public class NearbyPeripheralsTableView: UITableView, UITableViewDelegate, UITab
 
 	public required init(coder aDecoder: NSCoder) { super.init(coder: aDecoder); self.setup() }
 	public override init(frame: CGRect) { super.init(frame: frame); self.setup() }
+	public override init(frame: CGRect, style: UITableViewStyle) { super.init(frame: frame, style: style); self.setup() }
 	
 	public var peripherals: [BTLEPeripheral]? { didSet { self.reload() }}
 	

@@ -109,6 +109,15 @@
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JlJ-G0-yhi">
+                                            <rect key="frame" x="93" y="13" width="33" height="30"/>
+                                            <state key="normal" title="Near">
+                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <connections>
+                                                <action selector="nearby" destination="vXZ-lx-hvc" eventType="touchUpInside" id="xtI-64-vE7"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                     <constraints>
@@ -133,14 +142,6 @@
                                     <outlet property="delegate" destination="vXZ-lx-hvc" id="rAA-kA-je6"/>
                                 </connections>
                             </tableView>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="TZY-af-kAm" customClass="NearbyPeripheralsTableView" customModule="BTLE">
-                                <rect key="frame" x="150" y="185" width="300" height="300"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="300" id="3Qa-T6-7N4"/>
-                                    <constraint firstAttribute="height" constant="300" id="900-aX-naW"/>
-                                </constraints>
-                            </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
@@ -148,11 +149,9 @@
                             <constraint firstItem="e81-rY-poL" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="topMargin" constant="20" id="8xJ-Ue-ZmU"/>
                             <constraint firstItem="iiv-YA-evf" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" constant="-16" id="AXI-Di-tAV"/>
                             <constraint firstItem="iiv-YA-evf" firstAttribute="top" secondItem="e81-rY-poL" secondAttribute="bottom" id="Mmv-mA-KjO"/>
-                            <constraint firstAttribute="centerY" secondItem="TZY-af-kAm" secondAttribute="centerY" id="PgQ-hw-0os"/>
                             <constraint firstAttribute="trailingMargin" secondItem="iiv-YA-evf" secondAttribute="trailing" constant="-16" id="VKc-2i-VRz"/>
                             <constraint firstItem="e81-rY-poL" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" constant="-16" id="dd3-Ot-6zp"/>
                             <constraint firstAttribute="trailingMargin" secondItem="e81-rY-poL" secondAttribute="trailing" constant="-16" id="rrm-wU-tFd"/>
-                            <constraint firstAttribute="centerX" secondItem="TZY-af-kAm" secondAttribute="centerX" id="tYY-cB-5MJ"/>
                         </constraints>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>

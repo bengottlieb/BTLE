@@ -149,7 +149,7 @@ public class BTLECharacteristic: NSObject {
 
 
 public class BTLEMutableCharacteristic : BTLECharacteristic {
-	public init(uuid: CBUUID, properties: CBCharacteristicProperties, value: NSData? = nil, permissions: CBAttributePermissions = .Readable | .Writeable) {
+	public init(uuid: CBUUID, properties: CBCharacteristicProperties, value: NSData? = nil, permissions: CBAttributePermissions = .Readable) {
 		var creationData = properties.rawValue & CBCharacteristicProperties.Notify.rawValue != 0 ? nil : value
 		var chr = CBMutableCharacteristic(type: uuid, properties: properties, value: creationData, permissions: permissions)
 		super.init(characteristic: chr, ofService: nil)

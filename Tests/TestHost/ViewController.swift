@@ -190,6 +190,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		
 		return 71.0 + CGFloat(max(device.advertisementData.count - 2, 0)) * 15.0
 	}
+	
+	@IBAction func nearby() {
+		self.presentViewController(NearbyPeripheralsViewController().navigationWrappedController(hideNavigationBar: false), animated: true, completion: nil)
+	}
 }
 
 

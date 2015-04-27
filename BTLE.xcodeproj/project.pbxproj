@@ -46,6 +46,7 @@
 		B58D64961A899285005A0002 /* BTLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B58D646B1A898F81005A0002 /* BTLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B5A4823E1AE3F1E8001636BE /* DeviceDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A4823C1AE3F1E8001636BE /* DeviceDetailsViewController.swift */; };
 		B5A4823F1AE3F1E8001636BE /* DeviceDetailsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5A4823D1AE3F1E8001636BE /* DeviceDetailsViewController.xib */; };
+		B5BCEC091AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BCEC081AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift */; };
 		B5D6083E1ADBF4F6004DC9AC /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */; };
 		B5D6083F1ADBF4F6004DC9AC /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */; };
 		B5D608411ADBFD4C004DC9AC /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D608401ADBFD4C004DC9AC /* Peripheral.swift */; };
@@ -127,6 +128,7 @@
 		B58D648F1A899094005A0002 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		B5A4823C1AE3F1E8001636BE /* DeviceDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DeviceDetailsViewController.swift; path = "Device Details/DeviceDetailsViewController.swift"; sourceTree = "<group>"; };
 		B5A4823D1AE3F1E8001636BE /* DeviceDetailsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DeviceDetailsViewController.xib; path = "Device Details/DeviceDetailsViewController.xib"; sourceTree = "<group>"; };
+		B5BCEC081AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPeripheralsViewController.swift; sourceTree = "<group>"; };
 		B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManager.swift; sourceTree = "<group>"; };
 		B5D608401ADBFD4C004DC9AC /* Peripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
 		B5D608441ADC097E004DC9AC /* SA_Swift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SA_Swift.framework; sourceTree = "<group>"; };
@@ -259,9 +261,7 @@
 				B5D6084C1ADC44A5004DC9AC /* Characteristic.swift */,
 				B5037E731AE72B18000D2A64 /* Descriptor.swift */,
 				B5DAB3351AE418FE00D49D44 /* Array+SA_Additions.swift */,
-				B57CA3C01AEAD51700B0125F /* NearbyPeripheralsTableView.swift */,
-				B57CA3C21AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift */,
-				B57CA3C31AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib */,
+				B5BCEC0A1AEDCD500089C3DC /* Nearby */,
 			);
 			name = "Framework Code";
 			path = "BTLE/Framework Code";
@@ -285,6 +285,17 @@
 				B5037E761AE875FC000D2A64 /* zap.caf */,
 			);
 			path = TestHost;
+			sourceTree = "<group>";
+		};
+		B5BCEC0A1AEDCD500089C3DC /* Nearby */ = {
+			isa = PBXGroup;
+			children = (
+				B57CA3C01AEAD51700B0125F /* NearbyPeripheralsTableView.swift */,
+				B5BCEC081AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift */,
+				B57CA3C21AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift */,
+				B57CA3C31AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib */,
+			);
+			name = Nearby;
 			sourceTree = "<group>";
 		};
 		B5D608431ADC097E004DC9AC /* Frameworks */ = {
@@ -522,6 +533,7 @@
 				B5345B3F1AE1F20F0074F337 /* PeripheralManager.swift in Sources */,
 				B57CA3C11AEAD51700B0125F /* NearbyPeripheralsTableView.swift in Sources */,
 				B57CA3C41AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift in Sources */,
+				B5BCEC091AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift in Sources */,
 				B58D647F1A898FBD005A0002 /* BTLE.swift in Sources */,
 				B5DAB3361AE418FE00D49D44 /* Array+SA_Additions.swift in Sources */,
 				B5D6084A1ADC4486004DC9AC /* Service.swift in Sources */,
