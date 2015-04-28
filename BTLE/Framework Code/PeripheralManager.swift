@@ -204,5 +204,12 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 			mgr.addService(service.cbService as! CBMutableService)
 		}
 	}
+	
+	public func removeService(service: BTLEMutableService) {
+		if let mgr = self.cbPeripheralManager where mgr.state == .PoweredOn {
+			mgr.removeService(service.cbService as! CBMutableService)
+		}
+		self.services.remove(service)
+	}
 
 }
