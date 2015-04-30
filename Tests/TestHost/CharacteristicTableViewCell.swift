@@ -73,6 +73,6 @@ class CharacteristicTableViewCell: UITableViewCell {
 		
 		var data = string.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
 
-		self.characteristic?.publishValue(data!, withResponse: true)
+		self.characteristic?.writeBackValue(data!, withResponse: true)
 	}
 }

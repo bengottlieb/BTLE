@@ -74,7 +74,7 @@ class LockService: BTLEService {
 		//lockStatus?.listenForUpdates = true
 		
 		
-		println("BTLEService: \(lockStatus), Data: \(data)")
+		//println("BTLEService: \(lockStatus), Data: \(data)")
 	}
 }
 

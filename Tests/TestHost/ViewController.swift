@@ -51,10 +51,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		
 		//setup advertiser
 		
-		self.writableCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF5"), properties: CBCharacteristicProperties.Read | CBCharacteristicProperties.Write, value: nil)
+		self.writableCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF5"), properties: CBCharacteristicProperties.Write, value: nil)
 		self.notifyCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify, value: self.characteristicData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true))
 		
-		var service = BTLEMutableService(uuid: testServiceID, isPrimary: true, characteristics: [ self.writableCharacteristic!, self.notifyCharacteristic! ])
+		var service = BTLEMutableService(uuid: testServiceID, isPrimary: true, characteristics: [ self.writableCharacteristic! ])
 		service.advertised = true
 		
 		BTLE.manager.advertiser.addService(service)

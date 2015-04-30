@@ -16,7 +16,7 @@ public class BTLECharacteristic: NSObject {
 	public var descriptors: [BTLEDescriptor] = []
 	public var listeningState = ListeningState.NotListening { didSet { NSNotification.postNotification(BTLE.notifications.characteristicListeningChanged, object: self) }}
 	public override var description: String { return "\(self.cbCharacteristic)" }
-	public var publishInProgress = false
+	public var writeBackInProgress = false
 
 	init(characteristic chr: CBCharacteristic, ofService svc: BTLEService?) {
 		cbCharacteristic = chr
@@ -44,12 +44,18 @@ public class BTLECharacteristic: NSObject {
 	
 	public var canNotify: Bool { return self.propertyEnabled(.Notify) || self.propertyEnabled(.Indicate) }
 	public var centralCanWriteTo: Bool { return self.propertyEnabled(.Write) || self.propertyEnabled(.WriteWithoutResponse) }
-	public func publishValue(data: NSData, withResponse: Bool = false) {
+	public func writeBackValue(data: NSData, withResponse: Bool = false) -> Bool {
+		if self.peripheral.state != .Connected {
+			println("Not currently connected")
+			return false
+		}
 		if self.centralCanWriteTo {
-			self.publishInProgress = true
+			self.writeBackInProgress = true
 			self.peripheral.cbPeripheral.writeValue(data, forCharacteristic: self.cbCharacteristic, type: withResponse ? .WithResponse : .WithoutResponse)
+			return true
 		} else {
 			println("Trying to write to a read-only characteristic: \(self)")
+			return false
 		}
 	}
 	
@@ -84,13 +90,15 @@ public class BTLECharacteristic: NSObject {
 	}
 
 	public func didWriteValue(error: NSError?) {
+		println("************** Write Complete ***************")
 		if let error = error {
 			println("Error while writing to \(self): \(error)")
 		}
-		if self.publishInProgress {
-			println("publish complete")
-			self.publishInProgress = false
+		if self.writeBackInProgress {
+			println("writeBack complete")
+			self.writeBackInProgress = false
 		}
+		NSNotification.postNotification(BTLE.notifications.characteristicDidFinishWritingBack, object: self)
 	}
 	
 	func didUpdateNotifyValue() {

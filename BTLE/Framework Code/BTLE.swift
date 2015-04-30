@@ -107,6 +107,7 @@ public class BTLE: NSObject {
 		public static let characteristicDidUpdate = "com.standalone.btle.characteristicDidUpdate"
 		
 		public static let characteristicWasWrittenTo = "com.standalone.btle.characteristicWasWrittenTo"
+		public static let characteristicDidFinishWritingBack = "com.standalone.btle.characteristicDidFinishWritingBack"
 	}
 	
 	struct registeredClasses {

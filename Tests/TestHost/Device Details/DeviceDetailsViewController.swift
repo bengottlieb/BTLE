@@ -42,9 +42,19 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 		
 		self.addAsObserver(BTLE.notifications.peripheralDidBeginLoading, selector: "startLoading")
 		self.addAsObserver(BTLE.notifications.peripheralDidFinishLoading, selector: "finishLoading")
+		self.addAsObserver(BTLE.notifications.peripheralDidConnect, selector: "updateConnectedState")
+		self.addAsObserver(BTLE.notifications.peripheralDidDisconnect, selector: "updateConnectedState")
 		self.updateSections()
 		
-		self.title = per.name
+		self.updateConnectedState()
+	}
+	
+	func updateConnectedState() {
+		dispatch_async(dispatch_get_main_queue()) {
+			self.tableView?.alpha = (self.peripheral.state == .Connected) ? 1.0 : 0.5
+			self.title = self.peripheral.name + ((self.peripheral.state == .Connected) ? " Connected" : " Disconnected")
+			self.connectedSwitch.on = (self.peripheral.state == .Connected)
+		}
 	}
 
 	required init(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -60,6 +70,7 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 		
 		self.tableView.registerNib(UINib(nibName: "CharacteristicTableViewCell", bundle: nil), forCellReuseIdentifier: "characteristic")
 		
+		self.updateConnectedState()
         // Do any additional setup after loading the view.
     }
 	
@@ -131,6 +142,15 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 			
 			return cell
 		}
+	}
+	
+	func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+		var label = UILabel(frame: CGRect(x: 0, y: 0, width: 320, height: 22))
+		label.text = self.tableView(tableView, titleForHeaderInSection: section)
+		label.backgroundColor = UIColor.orangeColor()
+		label.textColor = UIColor.blackColor()
+		
+		return label
 	}
 	
 	func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {

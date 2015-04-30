@@ -43,7 +43,7 @@ public class BTLEService: NSObject, Printable {
 	
 	func reload() {
 		if self.loadingState != .Loading && self.loadingState != .Reloading {
-			println("Loading Service: \(self), UUID: \(self.uuid)")
+			//println("Loading Service: \(self), UUID: \(self.uuid)")
 			self.loadingState = (self.loadingState == .Loaded) ? .Reloading : .Loading
 			
 			for chr in self.characteristics {
