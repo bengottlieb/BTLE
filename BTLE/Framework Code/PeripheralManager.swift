@@ -107,7 +107,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	
 	public func peripheralManagerDidStartAdvertising(peripheral: CBPeripheralManager!, error: NSError!) {
 		if let error = error {
-			if BTLE.debugging { println("advertising started with error: \(error)") }
+			if BTLE.debugLevel > .None { println("advertising started with error: \(error)") }
 			BTLE.manager.advertisingState = .Idle
 		}
 	}
@@ -164,7 +164,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 				NSNotification.postNotification(BTLE.notifications.willStartAdvertising)
 				mgr.startAdvertising(self.combinedAdvertisementData)
 				
-				if BTLE.debugging { println("Starting to advertise: \(self.combinedAdvertisementData)") }
+				if BTLE.debugLevel > .Low { println("Starting to advertise: \(self.combinedAdvertisementData)") }
 			}
 		}
 	}

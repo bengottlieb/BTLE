@@ -34,6 +34,7 @@ public class BTLEService: NSObject, Printable {
 	override init() { super.init() }
 	
 	required public init(service svc: CBService, onPeriperhal: BTLEPeripheral) {
+		if BTLE.debugLevel == .High { println("creating service from \(svc)") }
 		cbService = svc
 		peripheral = onPeriperhal
 		super.init()
@@ -152,6 +153,7 @@ public class BTLEMutableService: BTLEService {
 	
 
 	public init(uuid: CBUUID, isPrimary: Bool = true, characteristics chrs: [BTLECharacteristic] = []) {
+		if BTLE.debugLevel == .High { println("creating mutable peripheral from") }
 		super.init()
 		self.cbService = CBMutableService(type: uuid, primary: isPrimary)
 		for svc in chrs { self.addCharacteristic(svc) }

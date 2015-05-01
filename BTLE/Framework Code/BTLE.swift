@@ -10,7 +10,8 @@ import Foundation
 import CoreBluetooth
 import SA_Swift
 
-var BTLE_Debugging = false
+
+public enum DebugLevel: Int { case None, Low, Medium, High }
 
 public class BTLE: NSObject {
 	public class var manager: BTLE { struct s { static let manager = BTLE() }; return s.manager }
@@ -28,10 +29,7 @@ public class BTLE: NSObject {
 		}
 	}
 	
-	public class var debugging: Bool {
-		get { return BTLE_Debugging }
-		set { BTLE_Debugging = newValue }
-	}
+	static public var debugLevel: DebugLevel = .None
 	
 	public var scanningState: State = .Off { didSet {
 		//println("changing scan state to \(self.scanningState.stringValue)")
@@ -153,6 +151,7 @@ public class BTLE: NSObject {
 		}
 	}
 	var authorizer: BTLEAuthorizer?
-
-	
 }
+
+func >(lhs: DebugLevel, rhs: DebugLevel) -> Bool { return lhs.rawValue > rhs.rawValue }
+func <(lhs: DebugLevel, rhs: DebugLevel) -> Bool { return lhs.rawValue < rhs.rawValue }

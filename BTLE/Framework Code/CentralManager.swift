@@ -42,7 +42,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		if self.cbCentral.state == .PoweredOn {
 			NSNotification.postNotification(BTLE.notifications.willStartScan, object: self)
 			var options = BTLE.manager.monitorRSSI ? [CBCentralManagerScanOptionAllowDuplicatesKey: true] : [:]
-			if BTLE.debugging { println(BTLE.manager.services.count > 0 ? "Starting scan for \(BTLE.manager.services)" : "Starting unfiltered scan") }
+			if BTLE.debugLevel > .None { println(BTLE.manager.services.count > 0 ? "Starting scan for \(BTLE.manager.services)" : "Starting unfiltered scan") }
 			self.cbCentral.scanForPeripheralsWithServices(BTLE.manager.services, options: options)
 			if duration != 0.0 {
 				self.searchTimer = NSTimer.scheduledTimerWithTimeInterval(duration, target: self, selector: "stopScanning", userInfo: nil, repeats: false)
@@ -207,7 +207,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	lazy var ignoredPeripheralUUIDs: Set<String> = {
 		let list = NSUserDefaults.keyedObject(self.ignoredPeripheralUUIDsKey) as? [String] ?? []
 		
-		if BTLE.debugging && list.count > 0 && BTLE.debugging { println("Ignored IDs: " + NSArray(array: list).componentsJoinedByString(", ")) }
+		if BTLE.debugLevel > .None && list.count > 0 { println("Ignored IDs: " + NSArray(array: list).componentsJoinedByString(", ")) }
 		
 		return Set(list)
 	}()

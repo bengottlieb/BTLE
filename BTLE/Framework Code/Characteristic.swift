@@ -19,6 +19,7 @@ public class BTLECharacteristic: NSObject {
 	public var writeBackInProgress = false
 
 	init(characteristic chr: CBCharacteristic, ofService svc: BTLEService?) {
+		if BTLE.debugLevel == .High { println("creating characteristic from \(chr)") }
 		cbCharacteristic = chr
 		service = svc
 		
@@ -189,6 +190,7 @@ public class BTLECharacteristic: NSObject {
 
 public class BTLEMutableCharacteristic : BTLECharacteristic {
 	public init(uuid: CBUUID, properties: CBCharacteristicProperties, value: NSData? = nil, permissions: CBAttributePermissions = .Readable) {
+		if BTLE.debugLevel == .High { println("creating mutable characteristic") }
 		var creationData = properties.rawValue & CBCharacteristicProperties.Notify.rawValue != 0 ? nil : value
 		var chr = CBMutableCharacteristic(type: uuid, properties: properties, value: creationData, permissions: permissions)
 		super.init(characteristic: chr, ofService: nil)

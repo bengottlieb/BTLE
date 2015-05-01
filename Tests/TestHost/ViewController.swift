@@ -39,7 +39,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		
 		self.tableView.registerNib(UINib(nibName: "PeripheralCellTableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
 		
-		BTLE.debugging = true
+		BTLE.debugLevel = .High
 		BTLE.registerServiceClass(LockService.self, forServiceID: CBUUID(string: "FFF4"))
 		BTLE.registerPeripheralClass(LockPeripheral.self)
 

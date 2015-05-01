@@ -97,7 +97,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		didSet {
 			if self.loadingState == .Loaded {
 				self.sendNotification(BTLE.notifications.peripheralDidFinishLoading)
-				if BTLE.debugging { println("Loaded device: \(self.fullDescription)") }
+				if BTLE.debugLevel > DebugLevel.Low { println("Loaded device: \(self.fullDescription)") }
 			}
 		}
 	}
@@ -151,18 +151,20 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	public required init(peripheral: CBPeripheral, RSSI: RSSValue?, advertisementData adv: [NSObject: AnyObject]?) {
+		if BTLE.debugLevel == .High { println("creating peripheral from \(peripheral)") }
 		cbPeripheral = peripheral
 		uuid = peripheral.identifier
 		name = peripheral.name ?? "unknown"
 		if let adv = adv { advertisementData = adv }
 		
 		ignored = BTLE.manager.scanner.ignoredPeripheralUUIDs.contains(peripheral.identifier.UUIDString)
-		if ignored && BTLE.debugging { println("Ignoring peripheral: \(name), \(uuid)") }
+		if ignored && BTLE.debugLevel > DebugLevel.Low { println("Ignoring peripheral: \(name), \(uuid)") }
 		super.init()
 		peripheral.delegate = self
 		peripheral.readRSSI()
 		self.rssi = RSSI
 		self.updateVisibilityTimer()
+		
 	}
 	
 	public func connect() {
@@ -330,7 +332,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	public func peripheralDidUpdateName(peripheral: CBPeripheral!) {
 		self.name = peripheral.name
 		self.sendNotification(BTLE.notifications.peripheralDidUpdateName)
-		if BTLE.debugging { println("Updated name for: \(self.name)") }
+		if BTLE.debugLevel > DebugLevel.Low { println("Updated name for: \(self.name)") }
 	}
 
 	//=============================================================================================
