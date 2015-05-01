@@ -114,7 +114,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 			
 		case .Disconnecting: fallthrough
 		case .Discovered:
-			if self.loadingState == .Loading { self.loadingState = .LoadingCancelled }
+			self.cancelLoad()
 			
 		case .Undiscovered:
 			self.disconnect()
@@ -176,6 +176,12 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		BTLE.manager.scanner.cbCentral?.cancelPeripheralConnection(self.cbPeripheral)
 	}
 	
+	func cancelLoad() {
+		if self.loadingState == .Loading { self.loadingState = .LoadingCancelled }
+		
+		for svc in self.services { svc.cancelLoad() }
+	}
+	
 	public var ignored: Bool = false {
 		didSet {
 			if self.ignored {
@@ -207,7 +213,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		var desc = "\(self.summaryDescription)\n\(self.advertisementData)"
 		
 		for svc in self.services {
-			desc = desc + "\n" + svc.description
+			desc = desc + "\n" + svc.fullDescription
 		}
 		
 		return desc
@@ -228,7 +234,8 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	public func reloadServices() {
-		self.loadServices(self.services)
+		//self.loadServices(self.services)
+		self.services = []
 		self.cbPeripheral.discoverServices(nil)
 	}
 	

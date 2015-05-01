@@ -50,6 +50,7 @@ public class BTLECharacteristic: NSObject {
 			return false
 		}
 		if self.centralCanWriteTo {
+			println("************** Writing \(data.length) bytes ***************")
 			self.writeBackInProgress = true
 			self.peripheral.cbPeripheral.writeValue(data, forCharacteristic: self.cbCharacteristic, type: withResponse ? .WithResponse : .WithoutResponse)
 			return true
@@ -75,8 +76,15 @@ public class BTLECharacteristic: NSObject {
 	}
 	
 	public var propertiesAsString: String { return BTLECharacteristic.characteristicPropertiesAsString(self.cbCharacteristic.properties) }
-
 	
+	func cancelLoad() {
+		switch self.loadingState {
+		case .Loading: self.loadingState = .NotLoaded
+		case .Reloading: self.loadingState = .Loaded
+		default: break
+		}
+	}
+
 	//=============================================================================================
 	//MARK: Call backs from Peripheral Delegate
 
@@ -134,6 +142,29 @@ public class BTLECharacteristic: NSObject {
 		
 		return string
 	}
+
+	
+	public var summaryDescription: String {
+		var string = "\(self.cbCharacteristic.UUID): "
+		
+		switch self.loadingState {
+		case .NotLoaded: break
+		case .Loading: string = "Loading " + string
+		case .Loaded: string = "Loaded " + string
+		case .LoadingCancelled: string = "Cancelled " + string
+		case .Reloading: string = "Reloading " + string
+		}
+		
+		return string
+	}
+	
+	
+	public var fullDescription: String {
+		var desc = "\(self.summaryDescription)"
+		
+		return desc
+	}
+	
 
 	//=============================================================================================
 	//MARK: Descriptors

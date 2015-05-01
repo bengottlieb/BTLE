@@ -41,6 +41,16 @@ public class BTLEService: NSObject, Printable {
 		self.reload()
 	}
 	
+	func cancelLoad() {
+		switch self.loadingState {
+		case .Loading: self.loadingState = .NotLoaded
+		case .Reloading: self.loadingState = .Loaded
+		default: break
+		}
+		
+		for chr in self.characteristics { chr.cancelLoad() }
+	}
+	
 	func reload() {
 		if self.loadingState != .Loading && self.loadingState != .Reloading {
 			//println("Loading Service: \(self), UUID: \(self.uuid)")
@@ -99,6 +109,32 @@ public class BTLEService: NSObject, Printable {
 	
 	public override var description: String { return "\(self.cbService): \(self.characteristics)" }
 	
+	public var summaryDescription: String {
+		var string = "\(self.cbService.UUID): "
+
+		switch self.loadingState {
+		case .NotLoaded: break
+		case .Loading: string = "Loading " + string
+		case .Loaded: string = "Loaded " + string
+		case .LoadingCancelled: string = "Cancelled " + string
+		case .Reloading: string = "Reloading " + string
+		}
+		
+		return string
+	}
+	
+
+	public var fullDescription: String {
+		var desc = "\(self.summaryDescription)"
+		
+		for chr in self.characteristics {
+			desc = desc + "\n" + chr.fullDescription
+		}
+		
+		return desc
+	}
+	
+
 	public func characteristicWithUUID(uuid: CBUUID) -> BTLECharacteristic? { return filter(self.characteristics, { $0.cbCharacteristic.UUID == uuid }).last }
 
 	func addToPeripheralManager(mgr: CBPeripheralManager?) { }
