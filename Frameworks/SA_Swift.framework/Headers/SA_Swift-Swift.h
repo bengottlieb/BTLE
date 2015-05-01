@@ -107,8 +107,14 @@ SWIFT_CLASS("_TtC8SA_Swift22FullScreenBlockingView")
 @end
 
 
+@interface NSAttributedString (SWIFT_EXTENSION(SA_Swift))
+@end
+
+
 @interface NSData (SWIFT_EXTENSION(SA_Swift))
 @property (nonatomic, readonly, copy) NSString * __nonnull hexString;
+- (SWIFT_NULLABILITY(nullable) instancetype)initWithHexString:(NSString * __nonnull)hexString;
+@property (nonatomic, readonly, copy) NSString * __nullable string;
 @end
 
 
@@ -168,6 +174,10 @@ SWIFT_CLASS("_TtC8SA_Swift22FullScreenBlockingView")
 - (NSFetchRequest * __nonnull)fetchRequest:(NSString * __nonnull)name;
 - (NSArray * __nonnull)allRecords:(NSString * __nonnull)name predicate:(NSPredicate * __nullable)predicate;
 - (NSManagedObject * __nullable)anyRecord:(NSString * __nonnull)name predicate:(NSPredicate * __nullable)predicate sortBy:(NSArray * __nonnull)sortBy;
+@end
+
+
+@interface NSMutableAttributedString (SWIFT_EXTENSION(SA_Swift))
 @end
 
 @class NSDictionary;
@@ -290,7 +300,6 @@ SWIFT_CLASS("_TtC8SA_Swift11SoundPlayer")
 + (NSInteger)numberOfPendingAlerts;
 @end
 
-@class NSAttributedString;
 
 @interface UIBezierPath (SWIFT_EXTENSION(SA_Swift))
 - (void)appendString:(NSAttributedString * __nonnull)string atPoint:(CGPoint)pt withTransform:(CGAffineTransform)withTransform;
