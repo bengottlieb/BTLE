@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7531" systemVersion="14D131" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7520"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="DeviceDetailsViewController" customModule="TestHost" customModuleProvider="target">
@@ -19,31 +19,6 @@
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="aNE-51-cSw">
                     <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    <view key="tableHeaderView" contentMode="scaleToFill" id="LCG-YD-DIJ">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="58"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ixk-gt-vRL">
-                                <rect key="frame" x="534" y="21" width="51" height="31"/>
-                                <connections>
-                                    <action selector="toggleConnected" destination="-1" eventType="valueChanged" id="X3k-gT-1nn"/>
-                                </connections>
-                            </switch>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Connected" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AK3-5k-lRi">
-                                <rect key="frame" x="526" y="5" width="66" height="16"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="Ixk-gt-vRL" firstAttribute="top" secondItem="AK3-5k-lRi" secondAttribute="bottom" id="PdJ-Ob-e52"/>
-                            <constraint firstAttribute="trailing" secondItem="Ixk-gt-vRL" secondAttribute="trailing" constant="17" id="npK-4w-U6G"/>
-                            <constraint firstItem="AK3-5k-lRi" firstAttribute="top" secondItem="LCG-YD-DIJ" secondAttribute="top" constant="5" id="pDu-Fv-bGV"/>
-                            <constraint firstItem="AK3-5k-lRi" firstAttribute="centerX" secondItem="Ixk-gt-vRL" secondAttribute="centerX" constant="0.5" id="qx3-rV-r8h"/>
-                        </constraints>
-                    </view>
                     <connections>
                         <outlet property="dataSource" destination="-1" id="zRo-Kf-y7d"/>
                         <outlet property="delegate" destination="-1" id="I5O-2a-pUY"/>
@@ -58,5 +33,13 @@
                 <constraint firstItem="aNE-51-cSw" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="f3U-aC-WuI"/>
             </constraints>
         </view>
+        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="Ixk-gt-vRL">
+            <rect key="frame" x="0.0" y="0.0" width="51" height="31"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <connections>
+                <action selector="toggleConnected" destination="-1" eventType="valueChanged" id="X3k-gT-1nn"/>
+            </connections>
+            <point key="canvasLocation" x="604.5" y="-188.5"/>
+        </switch>
     </objects>
 </document>

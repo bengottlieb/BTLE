@@ -62,6 +62,8 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
     override func viewDidLoad() {
         super.viewDidLoad()
 		
+		self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.connectedSwitch)
+		
 		self.refreshControl = UIRefreshControl(frame: CGRectZero)
 		self.tableView.addSubview(self.refreshControl!)
 		self.refreshControl?.addTarget(self, action: "reloadDevice", forControlEvents: .ValueChanged)

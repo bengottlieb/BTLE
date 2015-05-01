@@ -102,7 +102,7 @@
 		B5037E701AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CharacteristicTableViewCell.xib; sourceTree = "<group>"; };
 		B5037E731AE72B18000D2A64 /* Descriptor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Descriptor.swift; sourceTree = "<group>"; };
 		B5037E761AE875FC000D2A64 /* zap.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = zap.caf; sourceTree = "<group>"; };
-		B504E6131A89230F001B414B /* TestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B504E6131A89230F001B414B /* BTLESniffer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BTLESniffer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B504E6461A8968DC001B414B /* BTLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BTLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B504E66A1A896980001B414B /* BuildFramework.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = BuildFramework.sh; path = BTLE/BuildFramework.sh; sourceTree = "<group>"; };
 		B504E6981A896E82001B414B /* BTLE Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BTLE Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -195,7 +195,7 @@
 		B504E6141A89230F001B414B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B504E6131A89230F001B414B /* TestHost.app */,
+				B504E6131A89230F001B414B /* BTLESniffer.app */,
 				B504E6461A8968DC001B414B /* BTLE.framework */,
 				B504E6981A896E82001B414B /* BTLE Tests.xctest */,
 				B504E6AF1A898110001B414B /* BTLE.framework */,
@@ -344,7 +344,7 @@
 			);
 			name = TestHost;
 			productName = BTLE;
-			productReference = B504E6131A89230F001B414B /* TestHost.app */;
+			productReference = B504E6131A89230F001B414B /* BTLESniffer.app */;
 			productType = "com.apple.product-type.application";
 		};
 		B504E6451A8968DC001B414B /* BTLE_iOS */ = {
@@ -686,7 +686,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/TestHost/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = BTLESniffer;
 			};
 			name = Debug;
 		};
@@ -700,7 +700,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/TestHost/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = BTLESniffer;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Release;

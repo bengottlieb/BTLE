@@ -11,8 +11,8 @@ import BTLE
 import CoreBluetooth
 import SA_Swift
 
-let testServiceID = CBUUID(string: "FFF3")
-let filterServiceID = CBUUID(string: "FFF3")
+let testServiceID = CBUUID(string: "45DFE33C-312F-4CEF-A67C-E103D29FA41D")
+let filterServiceID = testServiceID// CBUUID(string: "C9563739-1783-4E81-A3EC-5061D4B2311C")
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 	@IBOutlet var tableView: UITableView!
@@ -51,7 +51,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		
 		//setup advertiser
 		
-		self.writableCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF5"), properties: CBCharacteristicProperties.Write, value: nil)
+		self.writableCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "C9563739-1783-4E81-A3EC-5061D4B2311C"), properties: CBCharacteristicProperties.Write | CBCharacteristicProperties.Read, value: nil, permissions: .Readable | .Writeable)
 		self.notifyCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify, value: self.characteristicData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true))
 		
 		var service = BTLEMutableService(uuid: testServiceID, isPrimary: true, characteristics: [ self.writableCharacteristic! ])

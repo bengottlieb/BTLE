@@ -69,10 +69,10 @@ class CharacteristicTableViewCell: UITableViewCell {
 	}
 	
 	@IBAction func writeTo() {
-		var string = NSDate().localTimeString(timeStyle: .FullStyle).uppercaseString
-		
-		var data = string.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+		var data = NSData(hexString: "935343717a627a743074565a7849435876724867")
 
+		NSLog("%@", self.characteristic!.service!.fullDescription)
+		
 		self.characteristic?.writeBackValue(data!, withResponse: true)
 	}
 }
