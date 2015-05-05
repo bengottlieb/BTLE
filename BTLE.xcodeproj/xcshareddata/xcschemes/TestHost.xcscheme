@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B504E6121A89230F001B414B"
-               BuildableName = "TestHost.app"
+               BuildableName = "BTLESniffer.app"
                BlueprintName = "TestHost"
                ReferencedContainer = "container:BTLE.xcodeproj">
             </BuildableReference>
@@ -57,7 +57,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B504E6121A89230F001B414B"
-            BuildableName = "TestHost.app"
+            BuildableName = "BTLESniffer.app"
             BlueprintName = "TestHost"
             ReferencedContainer = "container:BTLE.xcodeproj">
          </BuildableReference>
@@ -77,7 +77,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B504E6121A89230F001B414B"
-            BuildableName = "TestHost.app"
+            BuildableName = "BTLESniffer.app"
             BlueprintName = "TestHost"
             ReferencedContainer = "container:BTLE.xcodeproj">
          </BuildableReference>
@@ -96,7 +96,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B504E6121A89230F001B414B"
-            BuildableName = "TestHost.app"
+            BuildableName = "BTLESniffer.app"
             BlueprintName = "TestHost"
             ReferencedContainer = "container:BTLE.xcodeproj">
          </BuildableReference>

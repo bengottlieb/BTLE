@@ -252,7 +252,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	func didFinishLoadingService(service: BTLEService) {
-		println("Finished loading \(service.uuid), \(self.numberOfLoadingServices) left")
+		if BTLE.debugLevel > .Low { println("Finished loading \(service.uuid), \(self.numberOfLoadingServices) left") }
 		if self.numberOfLoadingServices == 0 {
 			self.loadingState = .Loaded
 		}

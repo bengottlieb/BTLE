@@ -180,14 +180,18 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	
 	public func centralManager(centralManager: CBCentralManager!, didConnectPeripheral peripheral: CBPeripheral!) {
 		var per = self.addPeripheral(peripheral)
-		per.state = .Connected
-		per.sendNotification(BTLE.notifications.peripheralDidConnect)
+		if per.state != .Connected {
+			per.state = .Connected
+			per.sendNotification(BTLE.notifications.peripheralDidConnect)
+		}
 	}
 	
 	public func centralManager(centralManager: CBCentralManager!, didDisconnectPeripheral peripheral: CBPeripheral!, error: NSError!) {
 		var per = self.addPeripheral(peripheral)
-		per.state = .Discovered
-		per.sendNotification(BTLE.notifications.peripheralDidDisconnect)
+		if per.state != .Discovered {
+			per.state = .Discovered
+			per.sendNotification(BTLE.notifications.peripheralDidDisconnect)
+		}
 	}
 	
 	//=============================================================================================

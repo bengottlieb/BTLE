@@ -47,11 +47,10 @@ public class BTLECharacteristic: NSObject {
 	public var centralCanWriteTo: Bool { return self.propertyEnabled(.Write) || self.propertyEnabled(.WriteWithoutResponse) }
 	public func writeBackValue(data: NSData, withResponse: Bool = false) -> Bool {
 		if self.peripheral.state != .Connected {
-			println("Not currently connected")
+			if BTLE.debugLevel > .None { println("Not currently connected") }
 			return false
 		}
 		if self.centralCanWriteTo {
-			println("************** Writing \(data.length) bytes ***************")
 			self.writeBackInProgress = true
 			self.peripheral.cbPeripheral.writeValue(data, forCharacteristic: self.cbCharacteristic, type: withResponse ? .WithResponse : .WithoutResponse)
 			return true
@@ -99,12 +98,11 @@ public class BTLECharacteristic: NSObject {
 	}
 
 	public func didWriteValue(error: NSError?) {
-		println("************** Write Complete ***************")
 		if let error = error {
 			println("Error while writing to \(self): \(error)")
 		}
 		if self.writeBackInProgress {
-			println("writeBack complete")
+			if BTLE.debugLevel > .Low { println("writeBack complete") }
 			self.writeBackInProgress = false
 		}
 		NSNotification.postNotification(BTLE.notifications.characteristicDidFinishWritingBack, object: self)
