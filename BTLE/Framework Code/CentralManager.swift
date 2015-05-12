@@ -11,8 +11,8 @@ import CoreBluetooth
 import SA_Swift
 
 public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
-	var dispatchQueue = dispatch_queue_create("BTLE.CentralManager queue", DISPATCH_QUEUE_SERIAL)
-	var cbCentral: CBCentralManager!
+	public var dispatchQueue = dispatch_queue_create("BTLE.CentralManager queue", DISPATCH_QUEUE_SERIAL)
+	public var cbCentral: CBCentralManager!
 
 	public var peripherals: Set<BTLEPeripheral> = Set<BTLEPeripheral>()
 	public var ignoredPeripherals: Set<BTLEPeripheral> = Set<BTLEPeripheral>()
