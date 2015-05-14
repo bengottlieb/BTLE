@@ -54,7 +54,7 @@ public struct BTLECharacteristicUUIDs {
 
 public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	deinit {
-		println("BTLE Peripheral: deiniting: \(self)")
+		if BTLE.debugLevel > .High { println("BTLE Peripheral: deiniting: \(self)") }
 	}
 	public enum Ignored: Int { case Not, BlackList, MissingServices }
 	public enum State { case Discovered, Connecting, Connected, Disconnecting, Undiscovered, Unknown }
@@ -191,7 +191,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		self.updateVisibilityTimer()
 		
 		if self.ignored == .Not {
-			println("BTLE Peripheral: not ignored: \(self)")
+			if BTLE.debugLevel > .Low { println("BTLE Peripheral: not ignored: \(self)") }
 		}
 	}
 	
@@ -207,7 +207,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 			}
 			if ignored {
 				self.ignored = .MissingServices
-				println("BTLE Peripheral: ignored \(self.cbPeripheral.name) with advertising info: \(info)")
+				if BTLE.debugLevel > .Medium { println("BTLE Peripheral: ignored \(self.cbPeripheral.name) with advertising info: \(info)") }
 			} else {
 				self.ignored = .Not
 			}
@@ -305,7 +305,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	func didFinishLoadingService(service: BTLEService) {
-		if BTLE.debugLevel > .Low { println("BTLE Peripheral: Finished loading \(service.uuid), \(self.numberOfLoadingServices) left") }
+		if BTLE.debugLevel > .Medium { println("BTLE Peripheral: Finished loading \(service.uuid), \(self.numberOfLoadingServices) left") }
 		if self.numberOfLoadingServices == 0 {
 			self.loadingState = .Loaded
 		}
