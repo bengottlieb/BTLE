@@ -11,7 +11,7 @@ import BTLE
 import CoreBluetooth
 import SA_Swift
 
-let testServiceID = CBUUID(string: "45DFE33C-312F-4CEF-A67C-E103D29FA41D")
+let testServiceID = CBUUID(string: "737CFF0D-7AEC-43B6-A37F-1EC1671307A6") // CBUUID(string: "45DFE33C-312F-4CEF-A67C-E103D29FA41D")
 let filterServiceID = testServiceID// CBUUID(string: "C9563739-1783-4E81-A3EC-5061D4B2311C")
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
@@ -179,7 +179,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
 		var device = self.devices[indexPath.row]
 		
-		device.ignored = true
+		device.ignore()
 		self.devices = Array(BTLE.manager.scanner.peripherals)
 		
 		tableView.endUpdates()

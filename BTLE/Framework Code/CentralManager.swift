@@ -43,7 +43,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 			NSNotification.postNotification(BTLE.notifications.willStartScan, object: self)
 			var options = BTLE.manager.monitorRSSI ? [CBCentralManagerScanOptionAllowDuplicatesKey: true] : [:]
 			if BTLE.debugLevel > .None { println(BTLE.manager.services.count > 0 ? "Starting scan for \(BTLE.manager.services)" : "Starting unfiltered scan") }
-			self.cbCentral.scanForPeripheralsWithServices(BTLE.manager.services, options: options)
+			self.cbCentral.scanForPeripheralsWithServices(BTLE.manager.useCoreBluetoothFilter ? BTLE.manager.services : [], options: options)
 			if duration != 0.0 {
 				self.searchTimer = NSTimer.scheduledTimerWithTimeInterval(duration, target: self, selector: "stopScanning", userInfo: nil, repeats: false)
 			}
@@ -113,6 +113,16 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 
 		for per in self.ignoredPeripherals {
 			if per.uuid == peripheral.identifier {
+				if let info = advertisementData where per.ignored == .MissingServices {
+					per.updateIgnoredWithAdvertisingData(info)
+					
+					if per.ignored == .Not {
+						self.peripherals.insert(per)
+						self.ignoredPeripherals.remove(per)
+						per.sendNotification(BTLE.notifications.peripheralWasDiscovered)
+						return per
+					}
+				}
 				return per
 			}
 		}
@@ -120,7 +130,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		for per in self.oldPeripherals {
 			if per.uuid == peripheral.identifier {
 				self.oldPeripherals.remove(per)
-				if per.ignored {
+				if per.ignored != .Not {
 					self.ignoredPeripherals.insert(per)
 				} else {
 					self.peripherals.insert(per)
@@ -138,7 +148,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		} else {
 			per = BTLEPeripheral(peripheral: peripheral, RSSI: RSSI, advertisementData: advertisementData)
 		}
-		if per.ignored {
+		if per.ignored != .Not {
 			self.ignoredPeripherals.insert(per)
 		} else {
 			self.peripherals.insert(per)

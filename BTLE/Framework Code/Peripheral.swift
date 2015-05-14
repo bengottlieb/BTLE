@@ -56,9 +56,10 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	deinit {
 		println("deiniting: \(self)")
 	}
+	public enum Ignored: Int { case Not, BlackList, MissingServices }
 	public enum State { case Discovered, Connecting, Connected, Disconnecting, Undiscovered, Unknown }
 	public typealias RSSValue = Int
-	public enum Distance { case Touching, VeryClose, Close, Nearby, SameRoom, Around, Far, Unknown
+	public enum Distance: Int { case Touching, VeryClose, Close, Nearby, SameRoom, Around, Far, Unknown
 		init(raw: RSSValue) {
 			if raw > rssi_range_touching { self = .Touching }
 			else if raw > rssi_range_very_close { self = .VeryClose }
@@ -69,7 +70,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 			else { self = .Far }
 		}
 		
-		var toString: String {
+		public var toString: String {
 			switch self {
 			case .Touching: return "touching"
 			case .VeryClose: return "very close"
@@ -79,6 +80,19 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 			case .Around: return "around"
 			case .Far: return "far"
 			case .Unknown: return "unknown"
+			}
+		}
+
+		public var toFloat: Float {
+			switch self {
+			case .Touching: return 0.0
+			case .VeryClose: return 0.1
+			case .Close: return 0.25
+			case .Nearby: return 0.4
+			case .SameRoom: return 0.5
+			case .Around: return 0.75
+			case .Far: return 0.9
+			case .Unknown: return 1.0
 			}
 		}
 	}
@@ -157,14 +171,51 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		name = peripheral.name ?? "unknown"
 		if let adv = adv { advertisementData = adv }
 		
-		ignored = BTLE.manager.scanner.ignoredPeripheralUUIDs.contains(peripheral.identifier.UUIDString)
-		if ignored && BTLE.debugLevel > DebugLevel.Low { println("Ignoring peripheral: \(name), \(uuid)") }
+
 		super.init()
+
+		if BTLE.manager.scanner.ignoredPeripheralUUIDs.contains(peripheral.identifier.UUIDString) {
+			ignored = .BlackList
+			if BTLE.debugLevel > DebugLevel.Low { println("Ignoring peripheral: \(name), \(uuid)") }
+		} else if !BTLE.manager.useCoreBluetoothFilter && BTLE.manager.services.count > 0 {
+			if let info = adv {
+				self.updateIgnoredWithAdvertisingData(info)
+			} else {
+				self.ignored = .MissingServices
+			}
+		}
+		
 		peripheral.delegate = self
 		peripheral.readRSSI()
 		self.rssi = RSSI
 		self.updateVisibilityTimer()
 		
+		if self.ignored == .Not {
+			println("not ignored: \(self)")
+		}
+	}
+	
+	func updateIgnoredWithAdvertisingData(info: [NSObject: AnyObject]) {
+		if !BTLE.manager.useCoreBluetoothFilter && BTLE.manager.services.count > 0 {
+			var ignored = true
+			if let services = info[CBAdvertisementDataServiceUUIDsKey] as? NSArray {
+				for service in services {
+					if let cbid = service as? CBUUID {
+						if BTLE.manager.services.contains(cbid) { ignored = false; break }
+					}
+				}
+			}
+			if ignored {
+				self.ignored = .MissingServices
+				println("ignored device \(self.cbPeripheral.name) with advertising info: \(info)")
+			} else {
+				self.ignored = .Not
+			}
+		}
+	}
+	
+	public func ignore(ignore: Ignored = .BlackList) {
+		self.ignored = ignore
 	}
 	
 	public func connect() {
@@ -184,12 +235,14 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		for svc in self.services { svc.cancelLoad() }
 	}
 	
-	public var ignored: Bool = false {
+	public var ignored: Ignored = .Not {
 		didSet {
-			if self.ignored {
-				BTLE.manager.scanner.addIgnoredPeripheral(self)
-			} else {
-				BTLE.manager.scanner.removeIgnoredPeripheral(self)
+			if oldValue != self.ignored {
+				if self.ignored == .BlackList {
+					BTLE.manager.scanner.addIgnoredPeripheral(self)
+				} else if self.ignored == .Not {
+					BTLE.manager.scanner.removeIgnoredPeripheral(self)
+				}
 			}
 			
 		}
@@ -287,18 +340,20 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		self.visibilityTimer = nil
 		
 		if self.state == .Discovered && BTLE.manager.deviceLifetime > 0 {
-			dispatch_async_main {
-				var timeSinceLastComms = abs(self.lastCommunicatedAt.timeIntervalSinceNow)
-				var a = abs(timeSinceLastComms)
-				if BTLE.manager.deviceLifetime > timeSinceLastComms {
-					var timeoutInverval = (BTLE.manager.deviceLifetime - timeSinceLastComms)
-					
-					// if timeoutInverval < 3 { println("short term timer: \(timeSinceLastComms) sec") }
-					
-					self.visibilityTimer?.invalidate()
-					self.visibilityTimer = NSTimer.scheduledTimerWithTimeInterval(timeoutInverval, target: self, selector: "disconnectDueToTimeout", userInfo: nil, repeats: false)
-				} else if BTLE.manager.deviceLifetime > 0 {
-					self.disconnectDueToTimeout()
+			dispatch_async_main { [weak self] in
+				if let me = self {
+					var timeSinceLastComms = abs(me.lastCommunicatedAt.timeIntervalSinceNow)
+					var a = abs(timeSinceLastComms)
+					if BTLE.manager.deviceLifetime > timeSinceLastComms {
+						var timeoutInverval = (BTLE.manager.deviceLifetime - timeSinceLastComms)
+						
+						// if timeoutInverval < 3 { println("short term timer: \(timeSinceLastComms) sec") }
+						
+						me.visibilityTimer?.invalidate()
+						me.visibilityTimer = NSTimer.scheduledTimerWithTimeInterval(timeoutInverval, target: me, selector: "disconnectDueToTimeout", userInfo: nil, repeats: false)
+					} else if BTLE.manager.deviceLifetime > 0 {
+						me.disconnectDueToTimeout()
+					}
 				}
 			}
 		}
@@ -317,7 +372,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	func sendNotification(name: String) {
-		if !self.ignored { NSNotification.postNotification(name, object: self) }
+		if self.ignored == .Not { NSNotification.postNotification(name, object: self) }
 	}
 
 	//=============================================================================================

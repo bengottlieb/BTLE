@@ -19,7 +19,7 @@ public class BTLECharacteristic: NSObject {
 	public var writeBackInProgress = false
 
 	init(characteristic chr: CBCharacteristic, ofService svc: BTLEService?) {
-		if BTLE.debugLevel == .High { println("creating characteristic from \(chr)") }
+		if BTLE.debugLevel == .High { println("creating characteristic from \((chr.description as NSString).substringToIndex(100))") }
 		cbCharacteristic = chr
 		service = svc
 		

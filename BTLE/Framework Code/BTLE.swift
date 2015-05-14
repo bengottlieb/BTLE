@@ -32,6 +32,7 @@ public class BTLE: NSObject {
 	static public var debugLevel: DebugLevel = .None
 	
 	public var scanningState: State = .Off { didSet {
+		if oldValue == self.scanningState { return }
 		//println("changing scan state to \(self.scanningState.stringValue)")
 		self.scanner.stateChangeCounter++
 		switch self.scanningState {
@@ -53,6 +54,8 @@ public class BTLE: NSObject {
 	}}
 	
 	public var advertisingState: State = .Off { didSet {
+		if oldValue == self.advertisingState { return }
+
 		self.advertiser.stateChangeCounter++
 		
 		switch self.advertisingState {
@@ -74,6 +77,7 @@ public class BTLE: NSObject {
 	//[CBUUID(string: "FFF0")] //[BatteryServiceCBUUID, UserDataServiceCBUUID, GenericServiceCBUUID, GenericAccessServiceCBUUID, CBUUID(string: "1810"), CBUUID(string: "1805"), CBUUID(string: "1818"), CBUUID(string: "1816"), CBUUID(string: "180A"), CBUUID(string: "1808"), CBUUID(string: "1809"), CBUUID(string: "180D"), CBUUID(string: "1812"), CBUUID(string: "1802"), CBUUID(string: "1803"), CBUUID(string: "1819"), CBUUID(string: "1807"), CBUUID(string: "180E"), CBUUID(string: "1806"), CBUUID(string: "1813"), CBUUID(string: "1804")]
 	
 	public var services: [CBUUID] = [] { didSet { self.scanner.updateScan() }}
+	public var useCoreBluetoothFilter = true { didSet { if oldValue != self.useCoreBluetoothFilter { self.cycleScanning() }}}
 	public var monitorRSSI = false { didSet { self.scanner.updateScan() }}
 	public var disableRSSISmoothing = false
 	public var deviceLifetime: NSTimeInterval = 0.0 { didSet {
@@ -124,6 +128,14 @@ public class BTLE: NSObject {
 	public lazy var scanner: BTLECentralManager = { return BTLECentralManager() }()
 	public lazy var advertiser: BTLEPeripheralManager = { return BTLEPeripheralManager() }()
 	
+		
+	public func cycleAdvertising() {
+		
+	}
+	
+	public func cycleScanning() {
+		
+	}
 	
 	//BTLE Authorization status
 	public var isAuthorized: Bool { return CBPeripheralManager.authorizationStatus() == .Authorized }
