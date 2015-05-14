@@ -19,13 +19,13 @@ public class BTLECharacteristic: NSObject {
 	public var writeBackInProgress = false
 
 	init(characteristic chr: CBCharacteristic, ofService svc: BTLEService?) {
-		if BTLE.debugLevel == .High { println("creating characteristic from \((chr.description as NSString).substringToIndex(100))") }
 		cbCharacteristic = chr
 		service = svc
 		
 		dataValue = chr.value
 		super.init()
 		
+		if BTLE.debugLevel == .High { println("BTLE Characteristic: creating \(self.dynamicType) from \((chr.description as NSString).substringToIndex(100))") }
 		if svc != nil { self.reload() }
 	}
 	
@@ -47,7 +47,7 @@ public class BTLECharacteristic: NSObject {
 	public var centralCanWriteTo: Bool { return self.propertyEnabled(.Write) || self.propertyEnabled(.WriteWithoutResponse) }
 	public func writeBackValue(data: NSData, withResponse: Bool = false) -> Bool {
 		if self.peripheral.state != .Connected {
-			if BTLE.debugLevel > .None { println("Not currently connected") }
+			if BTLE.debugLevel > .None { println("BTLE Characteristic: Not currently connected") }
 			return false
 		}
 		if self.centralCanWriteTo {
@@ -55,7 +55,7 @@ public class BTLECharacteristic: NSObject {
 			self.peripheral.cbPeripheral.writeValue(data, forCharacteristic: self.cbCharacteristic, type: withResponse ? .WithResponse : .WithoutResponse)
 			return true
 		} else {
-			println("Trying to write to a read-only characteristic: \(self)")
+			println("BTLE Characteristic: Trying to write to a read-only characteristic: \(self)")
 			return false
 		}
 	}
@@ -99,10 +99,10 @@ public class BTLECharacteristic: NSObject {
 
 	public func didWriteValue(error: NSError?) {
 		if let error = error {
-			println("Error while writing to \(self): \(error)")
+			println("BTLE Characteristic: Error while writing to \(self): \(error)")
 		}
 		if self.writeBackInProgress {
-			if BTLE.debugLevel > .Low { println("writeBack complete") }
+			if BTLE.debugLevel > .Low { println("BTLE Characteristic: writeBack complete") }
 			self.writeBackInProgress = false
 		}
 		NSNotification.postNotification(BTLE.notifications.characteristicDidFinishWritingBack, object: self)
@@ -188,7 +188,6 @@ public class BTLECharacteristic: NSObject {
 
 public class BTLEMutableCharacteristic : BTLECharacteristic {
 	public init(uuid: CBUUID, properties: CBCharacteristicProperties, value: NSData? = nil, permissions: CBAttributePermissions = .Readable) {
-		if BTLE.debugLevel == .High { println("creating mutable characteristic") }
 		var creationData = properties.rawValue & CBCharacteristicProperties.Notify.rawValue != 0 ? nil : value
 		var chr = CBMutableCharacteristic(type: uuid, properties: properties, value: creationData, permissions: permissions)
 		super.init(characteristic: chr, ofService: nil)
@@ -201,10 +200,10 @@ public class BTLEMutableCharacteristic : BTLECharacteristic {
 		if let data = data {
 			let mgr = BTLE.manager.advertiser.cbPeripheralManager!
 			if !mgr.updateValue(data, forCharacteristic: self.cbCharacteristic as! CBMutableCharacteristic, onSubscribedCentrals: nil) {
-				println("Unable to update \(self)")
+				println("BTLE Characteristic: Unable to update \(self)")
 			}
 		} else {
-			println("No data to update \(self)")
+			println("BTLE Characteristic: No data to update \(self)")
 		}
 	}
 }

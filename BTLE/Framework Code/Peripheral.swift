@@ -54,7 +54,7 @@ public struct BTLECharacteristicUUIDs {
 
 public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	deinit {
-		println("deiniting: \(self)")
+		println("BTLE Peripheral: deiniting: \(self)")
 	}
 	public enum Ignored: Int { case Not, BlackList, MissingServices }
 	public enum State { case Discovered, Connecting, Connected, Disconnecting, Undiscovered, Unknown }
@@ -111,7 +111,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		didSet {
 			if self.loadingState == .Loaded {
 				self.sendNotification(BTLE.notifications.peripheralDidFinishLoading)
-				if BTLE.debugLevel > DebugLevel.Low { println("Loaded device: \(self.fullDescription)") }
+				if BTLE.debugLevel > DebugLevel.Low { println("BTLE Peripheral: Loaded: \(self.fullDescription)") }
 			}
 		}
 	}
@@ -165,7 +165,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	public required init(peripheral: CBPeripheral, RSSI: RSSValue?, advertisementData adv: [NSObject: AnyObject]?) {
-		if BTLE.debugLevel == .High { println("creating peripheral from \(peripheral)") }
+		if BTLE.debugLevel == .High { println("BTLE Peripheral: creating from \(peripheral)") }
 		cbPeripheral = peripheral
 		uuid = peripheral.identifier
 		name = peripheral.name ?? "unknown"
@@ -176,7 +176,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 
 		if BTLE.manager.scanner.ignoredPeripheralUUIDs.contains(peripheral.identifier.UUIDString) {
 			ignored = .BlackList
-			if BTLE.debugLevel > DebugLevel.Low { println("Ignoring peripheral: \(name), \(uuid)") }
+			if BTLE.debugLevel > DebugLevel.Low { println("BTLE Peripheral: Ignoring: \(name), \(uuid)") }
 		} else if !BTLE.manager.useCoreBluetoothFilter && BTLE.manager.services.count > 0 {
 			if let info = adv {
 				self.updateIgnoredWithAdvertisingData(info)
@@ -191,7 +191,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		self.updateVisibilityTimer()
 		
 		if self.ignored == .Not {
-			println("not ignored: \(self)")
+			println("BTLE Peripheral: not ignored: \(self)")
 		}
 	}
 	
@@ -207,7 +207,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 			}
 			if ignored {
 				self.ignored = .MissingServices
-				println("ignored device \(self.cbPeripheral.name) with advertising info: \(info)")
+				println("BTLE Peripheral: ignored \(self.cbPeripheral.name) with advertising info: \(info)")
 			} else {
 				self.ignored = .Not
 			}
@@ -305,7 +305,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	func didFinishLoadingService(service: BTLEService) {
-		if BTLE.debugLevel > .Low { println("Finished loading \(service.uuid), \(self.numberOfLoadingServices) left") }
+		if BTLE.debugLevel > .Low { println("BTLE Peripheral: Finished loading \(service.uuid), \(self.numberOfLoadingServices) left") }
 		if self.numberOfLoadingServices == 0 {
 			self.loadingState = .Loaded
 		}
@@ -347,7 +347,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 					if BTLE.manager.deviceLifetime > timeSinceLastComms {
 						var timeoutInverval = (BTLE.manager.deviceLifetime - timeSinceLastComms)
 						
-						// if timeoutInverval < 3 { println("short term timer: \(timeSinceLastComms) sec") }
+						// if timeoutInverval < 3 { println("BTLE Peripheral: short term timer: \(timeSinceLastComms) sec") }
 						
 						me.visibilityTimer?.invalidate()
 						me.visibilityTimer = NSTimer.scheduledTimerWithTimeInterval(timeoutInverval, target: me, selector: "disconnectDueToTimeout", userInfo: nil, repeats: false)
@@ -387,7 +387,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	public func peripheralDidUpdateName(peripheral: CBPeripheral!) {
 		self.name = peripheral.name
 		self.sendNotification(BTLE.notifications.peripheralDidUpdateName)
-		if BTLE.debugLevel > DebugLevel.Low { println("Updated name for: \(self.name)") }
+		if BTLE.debugLevel > DebugLevel.Low { println("BTLE Peripheral: Updated name for: \(self.name)") }
 	}
 
 	//=============================================================================================

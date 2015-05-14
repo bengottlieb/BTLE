@@ -25,12 +25,14 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	
 	//=============================================================================================
 	//MARK: Class vars
-	class var restoreIdentifier: String { return NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? String ?? "ident" }
+	class var restoreIdentifier: String { return (NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? String ?? "btle") + "-scanner" }
 
 	
 	//=============================================================================================
 	//MARK: State changers
 	weak var searchTimer: NSTimer?
+	
+	var coreBluetoothFilteredServices: [CBUUID] { return BTLE.manager.useCoreBluetoothFilter ? BTLE.manager.services : [] }
 	
 	func startScanning(duration: NSTimeInterval = 0.0) {
 		self.setupCBCentral()
@@ -40,13 +42,16 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		self.peripherals = Set<BTLEPeripheral>()
 		
 		if self.cbCentral.state == .PoweredOn {
+			BTLE.manager.scanningState = .Active
 			NSNotification.postNotification(BTLE.notifications.willStartScan, object: self)
 			var options = BTLE.manager.monitorRSSI ? [CBCentralManagerScanOptionAllowDuplicatesKey: true] : [:]
-			if BTLE.debugLevel > .None { println(BTLE.manager.services.count > 0 ? "Starting scan for \(BTLE.manager.services)" : "Starting unfiltered scan") }
-			self.cbCentral.scanForPeripheralsWithServices(BTLE.manager.useCoreBluetoothFilter ? BTLE.manager.services : [], options: options)
+			if BTLE.debugLevel > .None { println(BTLE.manager.services.count > 0 ? "BTLE: Starting scan for \(BTLE.manager.services)" : "BTLE: Starting unfiltered scan") }
+			self.cbCentral.scanForPeripheralsWithServices(self.coreBluetoothFilteredServices, options: options)
 			if duration != 0.0 {
 				self.searchTimer = NSTimer.scheduledTimerWithTimeInterval(duration, target: self, selector: "stopScanning", userInfo: nil, repeats: false)
 			}
+		} else {
+			BTLE.manager.scanningState = .StartingUp
 		}
 	}
 	
@@ -81,6 +86,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	//=============================================================================================
 	//MARK: Timers
 	func cycleScanning() {
+		if BTLE.debugLevel > .None { println("BTLE: Cycling scanning") }
 		self.stateChangeCounter++
 		self.stopScanning()
 		self.startScanning()
@@ -165,6 +171,8 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		case .PoweredOn:
 			if BTLE.manager.scanningState == .PowerInterupted {
 				BTLE.manager.scanningState = .Active
+			} else if BTLE.manager.scanningState == .StartingUp {
+				self.startScanning()
 			}
 			self.fetchConnectedPeripherals()
 
@@ -208,7 +216,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	//MARK: Utility
 	
 	func fetchConnectedPeripherals() {
-		var connected = self.cbCentral.retrieveConnectedPeripheralsWithServices(BTLE.manager.services) as! [CBPeripheral]
+		var connected = self.cbCentral?.retrieveConnectedPeripheralsWithServices(self.coreBluetoothFilteredServices) as! [CBPeripheral]
 		for peripheral in connected {
 			self.addPeripheral(peripheral)
 		}
@@ -221,7 +229,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	lazy var ignoredPeripheralUUIDs: Set<String> = {
 		let list = NSUserDefaults.keyedObject(self.ignoredPeripheralUUIDsKey) as? [String] ?? []
 		
-		if BTLE.debugLevel > .None && list.count > 0 { println("Ignored IDs: " + NSArray(array: list).componentsJoinedByString(", ")) }
+		if BTLE.debugLevel > .None && list.count > 0 { println("BTLE: Ignored IDs: " + NSArray(array: list).componentsJoinedByString(", ")) }
 		
 		return Set(list)
 	}()

@@ -16,7 +16,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	
 	//=============================================================================================
 	//MARK: Class vars
-	class var restoreIdentifier: String { return NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? String ?? "ident" }
+	class var restoreIdentifier: String { return (NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? String ?? "btle") + "-advertiser" }
 
 	
 	//=============================================================================================
@@ -107,7 +107,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	
 	public func peripheralManagerDidStartAdvertising(peripheral: CBPeripheralManager!, error: NSError!) {
 		if let error = error {
-			if BTLE.debugLevel > .None { println("advertising started with error: \(error)") }
+			if BTLE.debugLevel > .None { println("BTLE: advertising started with error: \(error)") }
 			BTLE.manager.advertisingState = .Idle
 		}
 	}
@@ -164,7 +164,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 				NSNotification.postNotification(BTLE.notifications.willStartAdvertising)
 				mgr.startAdvertising(self.combinedAdvertisementData)
 				
-				if BTLE.debugLevel > .Low { println("Starting to advertise: \(self.combinedAdvertisementData)") }
+				if BTLE.debugLevel > .Low { println("BTLE: Starting to advertise: \(self.combinedAdvertisementData)") }
 			}
 		}
 	}

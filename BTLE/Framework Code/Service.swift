@@ -34,7 +34,7 @@ public class BTLEService: NSObject, Printable {
 	override init() { super.init() }
 	
 	required public init(service svc: CBService, onPeriperhal: BTLEPeripheral) {
-		if BTLE.debugLevel == .High { println("creating service from \(svc)") }
+		if BTLE.debugLevel == .High { println("BTLE Service: creating \(self.dynamicType) from \(svc)") }
 		cbService = svc
 		peripheral = onPeriperhal
 		super.init()
@@ -54,7 +54,7 @@ public class BTLEService: NSObject, Printable {
 	
 	func reload() {
 		if self.loadingState != .Loading && self.loadingState != .Reloading {
-			//println("Loading Service: \(self), UUID: \(self.uuid)")
+			//println("BTLE Service: Loading Service: \(self), UUID: \(self.uuid)")
 			self.loadingState = (self.loadingState == .Loaded) ? .Reloading : .Loading
 			
 			for chr in self.characteristics {
@@ -98,7 +98,7 @@ public class BTLEService: NSObject, Printable {
 	}
 	
 	func didLoadCharacteristic(chr: CBCharacteristic, error: NSError?) {
-		//println("Loaded characteristic: \(chr)")
+		//println("BTLE Service: Loaded characteristic: \(chr)")
 		if let char = self.findCharacteristicMatching(chr) {
 			char.didLoadWithError(error)
 			if self.numberOfLoadingCharacteristics == 0 {
@@ -153,7 +153,6 @@ public class BTLEMutableService: BTLEService {
 	
 
 	public init(uuid: CBUUID, isPrimary: Bool = true, characteristics chrs: [BTLECharacteristic] = []) {
-		if BTLE.debugLevel == .High { println("creating mutable peripheral from") }
 		super.init()
 		self.cbService = CBMutableService(type: uuid, primary: isPrimary)
 		for svc in chrs { self.addCharacteristic(svc) }
