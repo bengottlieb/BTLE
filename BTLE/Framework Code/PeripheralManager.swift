@@ -51,15 +51,13 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 			if BTLE.manager.advertisingState == .PowerInterupted {
 				BTLE.manager.scanningState = .Active
 			}
-			for service in self.services {
-				service.addToPeripheralManager(self.cbPeripheralManager)
-			}
 			
 			if BTLE.manager.advertisingState == .StartingUp {
 				self.setupAdvertising()
 			} else {
-				BTLE.manager.advertisingState = .Idle
+				BTLE.manager.advertisingState = .Active
 			}
+			self.updateServices()
 			
 		case .PoweredOff:
 			if BTLE.manager.advertisingState == .Active || BTLE.manager.advertisingState == .StartingUp {
@@ -70,14 +68,36 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		default: break
 		}
 	}
-
 	
 	public func peripheralManager(peripheral: CBPeripheralManager!, willRestoreState dict: [NSObject : AnyObject]!) {
+		var advertised = ((dict["kCBRestoredAdvertisement"] as? [NSObject: AnyObject])?["kCBAdvDataServiceUUIDs"] as? [NSData]) ?? []
+		var advertisedIDs: [CBUUID] = []
+		for data in advertised {
+			if let cbid = CBUUID(data: data) { advertisedIDs.append(cbid) }
+		}
 		
 		
+		if let existingServices = dict["kCBRestoredServices"] as? [CBMutableService] {
+			var servicesToAdd = existingServices
+			
+			for service in self.services {
+				for existingService in existingServices {
+					if service.uuid == existingService.UUID	{
+						service.replaceCBService(existingService)
+						servicesToAdd.remove(existingService)
+					}
+				}
+			}
+			
+			for service in servicesToAdd {
+				var ourService = BTLEMutableService(service: service, isAdvertised: advertisedIDs.contains(service.UUID))
+				self.services.append(ourService)
+			}
+		}
 	}
 	
 	public func peripheralManager(peripheral: CBPeripheralManager!, didReceiveReadRequest request: CBATTRequest!) {
+		if request == nil { return }
 		if let characteristic = self.characteristicWithCBCharacteristic(request.characteristic) {
 			if let data = characteristic.dataValue {
 				var range = NSRange(location: request.offset, length: data.length - request.offset)
@@ -92,6 +112,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	}
 	
 	public func peripheralManager(peripheral: CBPeripheralManager!, didReceiveWriteRequests requests: [AnyObject]!) {
+		if requests == nil || requests.count == 0 { return }
 		if let requests = requests as? [CBATTRequest] where requests.count > 0 {
 			for request in requests {
 				NSNotification.postNotification(BTLE.notifications.characteristicWasWrittenTo, object: self.characteristicWithCBCharacteristic(request.characteristic))
@@ -196,19 +217,27 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		return nil
 	}
 	
-	public var services: [BTLEMutableService] = []
-	
-	public func addService(service: BTLEMutableService) {
-		self.services.append(service)
-		if let mgr = self.cbPeripheralManager where mgr.state == .PoweredOn {
-			mgr.addService(service.cbService as! CBMutableService)
+	func updateServices() {
+		dispatch_async(self.dispatchQueue) {
+			if let mgr = self.cbPeripheralManager where mgr.state == .PoweredOn {
+				for service in self.services { service.addToManager(self.cbPeripheralManager) }
+			}
 		}
 	}
 	
-	public func removeService(service: BTLEMutableService) {
-		if let mgr = self.cbPeripheralManager where mgr.state == .PoweredOn {
-			mgr.removeService(service.cbService as! CBMutableService)
+	public var services: [BTLEMutableService] = []
+	
+	public func addService(service: BTLEMutableService) -> BTLEMutableService {
+		for existing in self.services {
+			if service.uuid == existing.uuid { return existing }
 		}
+		self.services.append(service)
+		self.updateServices()
+		return service
+	}
+	
+	public func removeService(service: BTLEMutableService) {
+		service.removeFromManager(self.cbPeripheralManager)
 		self.services.remove(service)
 	}
 

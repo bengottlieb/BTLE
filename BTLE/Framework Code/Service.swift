@@ -137,8 +137,6 @@ public class BTLEService: NSObject, Printable {
 	
 
 	public func characteristicWithUUID(uuid: CBUUID) -> BTLECharacteristic? { return filter(self.characteristics, { $0.cbCharacteristic.UUID == uuid }).last }
-
-	func addToPeripheralManager(mgr: CBPeripheralManager?) { }
 	
 }
 
@@ -150,7 +148,14 @@ public class BTLEMutableService: BTLEService {
 	public var advertised = false
 	public var addedToManager = false
 	public var isLive = false
+	var hasBeenAdded = false
 	
+	public init(service: CBMutableService, isAdvertised: Bool) {
+		super.init()
+
+		self.advertised = isAdvertised
+		self.cbService = service
+	}
 
 	public init(uuid: CBUUID, isPrimary: Bool = true, characteristics chrs: [BTLECharacteristic] = []) {
 		super.init()
@@ -158,6 +163,26 @@ public class BTLEMutableService: BTLEService {
 		for svc in chrs { self.addCharacteristic(svc) }
 	}
 
+	func addToManager(mgr: CBPeripheralManager?) {
+		if self.hasBeenAdded {
+			return
+		}
+		if let mgr = mgr where mgr.state == .PoweredOn {
+			self.hasBeenAdded = true
+			mgr.addService(self.cbService as! CBMutableService)
+		}
+	}
+	
+	func removeFromManager(mgr: CBPeripheralManager?) {
+		if let mgr = mgr where mgr.state == .PoweredOn {
+			if !self.hasBeenAdded { return }
+			self.hasBeenAdded = false
+			mgr.removeService(self.cbService as! CBMutableService)
+		}
+	}
+	
+
+	
 	public required init(service svc: CBService, onPeriperhal: BTLEPeripheral) { fatalError("init(service:onPeriperhal:) has not been implemented") }
 	
 	public func addCharacteristic(chr: BTLECharacteristic) {
@@ -169,15 +194,10 @@ public class BTLEMutableService: BTLEService {
 		}
 	}
 	
-	override func addToPeripheralManager(mgr: CBPeripheralManager?) {
-		if self.addedToManager { return }
-		if let mgr = mgr {
-			if let mutable = self.cbService as? CBMutableService {
-				mgr.addService(mutable)
-				self.addedToManager = true
-			}
-		}
-	}
 	
+	func replaceCBService(newService: CBMutableService) {
+		self.cbService = newService
+		self.hasBeenAdded = true
+	}
 
 }

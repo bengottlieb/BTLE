@@ -207,7 +207,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 			}
 			if ignored {
 				self.ignored = .MissingServices
-				if BTLE.debugLevel > .Medium { println("BTLE Peripheral: ignored \(self.cbPeripheral.name) with advertising info: \(info)") }
+				if BTLE.debugLevel > .High { println("BTLE Peripheral: ignored \(self.cbPeripheral.name) with advertising info: \(info)") }
 			} else {
 				self.ignored = .Not
 			}

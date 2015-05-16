@@ -11,7 +11,7 @@ import CoreBluetooth
 import SA_Swift
 
 
-public enum DebugLevel: Int { case None, Low, Medium, High }
+public enum DebugLevel: Int { case None, Low, Medium, High, SuperHigh }
 
 public class BTLE: NSObject {
 	public class var manager: BTLE { struct s { static let manager = BTLE() }; return s.manager }
@@ -167,3 +167,11 @@ public class BTLE: NSObject {
 
 func >(lhs: DebugLevel, rhs: DebugLevel) -> Bool { return lhs.rawValue > rhs.rawValue }
 func <(lhs: DebugLevel, rhs: DebugLevel) -> Bool { return lhs.rawValue < rhs.rawValue }
+
+public func btle_delay(delay: Double?, closure: () -> ()) {
+	if let delay = delay {
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), closure)
+	} else {
+		closure()
+	}
+}
