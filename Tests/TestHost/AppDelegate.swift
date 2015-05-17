@@ -49,8 +49,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	func zapped(note: NSNotification) {
 		println("received write requests: \(note.object)")
 		
-		SoundEffect.playSound("zap.caf")
-		UILocalNotification.playSound("zap.caf")
+//		SoundEffect.playSound("zap.caf")
+//		UILocalNotification.playSound("zap.caf")
 		
 	}
 }
