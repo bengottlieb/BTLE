@@ -21,6 +21,8 @@ public class NearbyPeripheralsTableView: UITableView, UITableViewDelegate, UITab
 	
 	public func reload() { dispatch_async_main() { self.reloadData() }}
 	
+	var parentViewController: UIViewController?
+	
 	//=============================================================================================
 	//MARK: Private
 	var actualPeripherals: [BTLEPeripheral] { return self.peripherals ?? self.nearbyPeripherals }
@@ -56,6 +58,20 @@ public class NearbyPeripheralsTableView: UITableView, UITableViewDelegate, UITab
 			return cell
 		}
 		return UITableViewCell()
+	}
+	
+	public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+		var per = self.actualPeripherals[indexPath.row]
+		var advertisingInfo = per.advertisementData
+		var text = advertisingInfo.description
+		var alert = UIAlertController(title: nil, message: text, preferredStyle: .Alert)
+		alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { action in
+			alert.dismissViewControllerAnimated(true, completion: nil)
+		}))
+		self.parentViewController?.presentViewController(alert, animated: true, completion: nil)
+		
+		
+		
 	}
 }
 

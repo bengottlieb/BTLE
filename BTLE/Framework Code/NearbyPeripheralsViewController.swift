@@ -11,7 +11,9 @@ import CoreBluetooth
 
 public class NearbyPeripheralsViewController: UIViewController {
 	public override func loadView() {
-		self.view = NearbyPeripheralsTableView(frame: CGRectZero)
+		var table = NearbyPeripheralsTableView(frame: CGRectZero)
+		self.view = table
+		table.parentViewController = self
 		
 		self.navigationItem.title = "Nearby Peripherals"
 		self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Done, target: self, action: "dismiss")
