@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	
 		//BTLE.manager.services = [CBUUID(string: "01EB2EF1-BF82-4516-81BE-57E119207436")]
 		
-		BTLE.manager.useCoreBluetoothFilter = false
+		BTLE.manager.serviceFilter = .ActualServices
 		self.addAsObserver(BTLE.notifications.characteristicWasWrittenTo, selector: "zapped:")
 		return true
 	}

@@ -32,7 +32,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	//MARK: State changers
 	weak var searchTimer: NSTimer?
 	
-	var coreBluetoothFilteredServices: [CBUUID] { return BTLE.manager.useCoreBluetoothFilter ? BTLE.manager.services : [] }
+	var coreBluetoothFilteredServices: [CBUUID] { return BTLE.manager.serviceFilter == .CoreBluetooth ? BTLE.manager.services : [] }
 	
 	func startScanning(duration: NSTimeInterval = 0.0) {
 		self.setupCBCentral()
@@ -72,28 +72,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 			if self.stateChangeCounter == 0 { BTLE.manager.scanningState = .Off }
 		}
 	}
-	
-	weak var updateScanTimer: NSTimer?
-	func updateScan() {
-		dispatch_async_main {
-			if BTLE.manager.scanningState == .Active {
-				self.updateScanTimer?.invalidate()
-				self.updateScanTimer = NSTimer.scheduledTimerWithTimeInterval(0.0001, target: self, selector: "cycleScanning", userInfo: nil, repeats: false)
-			}
-		}
-	}
-	
-	//=============================================================================================
-	//MARK: Timers
-	func cycleScanning() {
-		if BTLE.debugLevel > .None { println("BTLE: Cycling scanning") }
-		self.stateChangeCounter++
-		self.stopScanning()
-		self.startScanning()
-		self.stateChangeCounter--
-	}
-	
-	
+
 	//=============================================================================================
 	//MARK: setup
 	var stateChangeCounter = 0 { didSet { assert(stateChangeCounter >= 0, "Illegal value for stateChangeCounter") }}

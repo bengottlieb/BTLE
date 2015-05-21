@@ -186,6 +186,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	}
 
 	func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+		if indexPath.row >= self.devices.count { return 0 }
 		var device = self.devices[indexPath.row]
 		
 		return 71.0 + CGFloat(max(device.advertisementData.count - 2, 0)) * 15.0

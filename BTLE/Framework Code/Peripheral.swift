@@ -56,7 +56,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	deinit {
 		if BTLE.debugLevel > .High { println("BTLE Peripheral: deiniting: \(self)") }
 	}
-	public enum Ignored: Int { case Not, BlackList, MissingServices }
+	public enum Ignored: Int { case Not, BlackList, MissingServices, CheckingForServices }
 	public enum State { case Discovered, Connecting, Connected, Disconnecting, Undiscovered, Unknown }
 	public typealias RSSValue = Int
 	public enum Distance: Int { case Touching, VeryClose, Close, Nearby, SameRoom, Around, Far, Unknown
@@ -105,7 +105,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 			self.state = .Discovered
 			self.sendNotification(BTLE.notifications.peripheralDidRegainComms)
 		}
-		self.updateVisibilityTimer()
+		btle_delay(0.001) { self.updateVisibilityTimer() }
 	}}
 	public var loadingState = BTLE.LoadingState.NotLoaded {
 		didSet {
@@ -171,24 +171,28 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		name = peripheral.name ?? "unknown"
 		if let adv = adv { advertisementData = adv }
 		
-
 		super.init()
 
-		if BTLE.manager.scanner.ignoredPeripheralUUIDs.contains(peripheral.identifier.UUIDString) {
-			ignored = .BlackList
-			if BTLE.debugLevel > DebugLevel.Low { println("BTLE Peripheral: Ignoring: \(name), \(uuid)") }
-		} else if !BTLE.manager.useCoreBluetoothFilter && BTLE.manager.services.count > 0 {
-			if let info = adv {
-				self.updateIgnoredWithAdvertisingData(info)
-			} else {
-				self.ignored = .MissingServices
-			}
-		}
-		
 		peripheral.delegate = self
 		peripheral.readRSSI()
 		self.rssi = RSSI
 		self.updateVisibilityTimer()
+
+		if BTLE.manager.scanner.ignoredPeripheralUUIDs.contains(peripheral.identifier.UUIDString) {
+			ignored = .BlackList
+			if BTLE.debugLevel > DebugLevel.Low { println("BTLE Peripheral: Ignoring: \(name), \(uuid)") }
+		} else if BTLE.manager.services.count > 0 {
+			if BTLE.manager.serviceFilter == .AdvertisingData {
+				if let info = adv {
+					self.updateIgnoredWithAdvertisingData(info)
+				} else {
+					self.ignored = .MissingServices
+				}
+			} else if BTLE.manager.serviceFilter == .ActualServices {
+				self.ignored = .CheckingForServices
+				self.connect()
+			}
+		}
 		
 		if self.ignored == .Not {
 			if BTLE.debugLevel > .Low { println("BTLE Peripheral: not ignored: \(self)") }
@@ -196,7 +200,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	func updateIgnoredWithAdvertisingData(info: [NSObject: AnyObject]) {
-		if !BTLE.manager.useCoreBluetoothFilter && BTLE.manager.services.count > 0 {
+		if BTLE.manager.serviceFilter == .AdvertisingData && BTLE.manager.services.count > 0 {
 			var ignored = true
 			if let services = info[CBAdvertisementDataServiceUUIDsKey] as? NSArray {
 				for service in services {
@@ -289,9 +293,13 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	public func reloadServices() {
-		//self.loadServices(self.services)
+		println("Reloading services for \(self)")
 		self.services = []
-		self.cbPeripheral.discoverServices(nil)
+		if self.ignored == .CheckingForServices {
+			self.cbPeripheral.discoverServices(nil)
+		} else {
+			self.cbPeripheral.discoverServices(nil)
+		}
 	}
 	
 	//=============================================================================================
@@ -403,7 +411,21 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	public func peripheral(peripheral: CBPeripheral!, didDiscoverServices error: NSError!) {
+		println("\(self.name) services: \(self.cbPeripheral.services)")
 		if let services = self.cbPeripheral.services as? [CBService] {
+			if self.ignored == .CheckingForServices {
+				for svc in services {
+					if BTLE.manager.services.contains(svc.UUID) {
+						self.ignored = .Not
+						break
+					}
+				}
+				
+				if self.ignored != .Not {
+					self.ignored = .MissingServices
+					return
+				}
+			}
 			for svc in services {
 				if self.shouldLoadService(svc) {
 					self.findOrCreateService(svc)
