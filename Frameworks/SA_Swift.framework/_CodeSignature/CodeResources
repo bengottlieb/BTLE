@@ -6,7 +6,7 @@
 	<dict>
 		<key>Headers/SA_Swift-Swift.h</key>
 		<data>
-		J+9J3H9lTSsXfhOydXUvi4r1yUY=
+		Htd5Z0WhYUignyEBBEPzsv91AUQ=
 		</data>
 		<key>Headers/SA_Swift.h</key>
 		<data>
@@ -14,7 +14,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		3woh+FXFbAhjlp1MzctWFbUMd3g=
+		yY4E2Z6M8CNqiEm2rVVlYXbLgZc=
 		</data>
 		<key>Modules/SA_Swift.swiftmodule/arm.swiftdoc</key>
 		<data>
@@ -22,7 +22,7 @@
 		</data>
 		<key>Modules/SA_Swift.swiftmodule/arm.swiftmodule</key>
 		<data>
-		aCiRfLUC4vY0hejye6OytdL237o=
+		1EuvTRUFXXooWxwH2oSOO0XJi/8=
 		</data>
 		<key>Modules/SA_Swift.swiftmodule/arm64.swiftdoc</key>
 		<data>
@@ -30,7 +30,7 @@
 		</data>
 		<key>Modules/SA_Swift.swiftmodule/arm64.swiftmodule</key>
 		<data>
-		PUekAh6qa2zn6pqHP1z357UFH3Y=
+		maSoGYTLqTJn6xSqLoiyfQd/SGU=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -41,7 +41,7 @@
 	<dict>
 		<key>Headers/SA_Swift-Swift.h</key>
 		<data>
-		J+9J3H9lTSsXfhOydXUvi4r1yUY=
+		Htd5Z0WhYUignyEBBEPzsv91AUQ=
 		</data>
 		<key>Headers/SA_Swift.h</key>
 		<data>
@@ -53,7 +53,7 @@
 		</data>
 		<key>Modules/SA_Swift.swiftmodule/arm.swiftmodule</key>
 		<data>
-		aCiRfLUC4vY0hejye6OytdL237o=
+		1EuvTRUFXXooWxwH2oSOO0XJi/8=
 		</data>
 		<key>Modules/SA_Swift.swiftmodule/arm64.swiftdoc</key>
 		<data>
@@ -61,7 +61,7 @@
 		</data>
 		<key>Modules/SA_Swift.swiftmodule/arm64.swiftmodule</key>
 		<data>
-		PUekAh6qa2zn6pqHP1z357UFH3Y=
+		maSoGYTLqTJn6xSqLoiyfQd/SGU=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
