@@ -8,7 +8,6 @@
 
 import Foundation
 import CoreBluetooth
-import SA_Swift
 
 
 public enum DebugLevel: Int { case None, Low, Medium, High, SuperHigh }
@@ -32,34 +31,6 @@ public class BTLE: NSObject {
 	
 	static public var debugLevel: DebugLevel = .None
 	
-	public var scanningState: State = .Off { didSet {
-		if oldValue == self.scanningState { return }
-		self.scanner.stateChangeCounter++
-		switch self.scanningState {
-		case .Off:
-			if self.cyclingScanning {
-				btle_delay(0.5) {
-					self.cyclingScanning = false
-					self.scanningState = .Active
-				}
-			}
-			break
-			
-		case .StartingUp:
-			break
-			
-		case .Active:
-			self.scanner.startScanning()
-			
-		case .Idle:
-			self.scanner.stopScanning()
-			
-		case .PowerInterupted:
-			break
-		}
-		self.scanner.stateChangeCounter--
-	}}
-	
 	public var advertisingState: State = .Off { didSet {
 		if oldValue == self.advertisingState { return }
 
@@ -67,17 +38,22 @@ public class BTLE: NSObject {
 		
 		switch self.advertisingState {
 		case .Off:
+			if oldValue != .Idle { NSNotification.postNotification(BTLE.notifications.didFinishAdvertising, object: self) }
 			if self.cyclingAdvertising {
 				btle_delay(0.5) {
 					self.cyclingAdvertising = false
 					self.advertisingState = .Active
 				}
 			}
-		case .StartingUp: break
+		case .StartingUp:
+			NSNotification.postNotification(BTLE.notifications.willStartAdvertising, object: self)
+			break
 			
 		case .Active:
 			self.advertiser.startAdvertising()
+
 		case .Idle:
+			NSNotification.postNotification(BTLE.notifications.didFinishAdvertising, object: self)
 			self.advertiser.stopAdvertising()
 			
 		case .PowerInterupted: break
@@ -163,7 +139,7 @@ public class BTLE: NSObject {
 	public func cycleScanning() {
 		if self.cyclingScanning { return }
 		
-		switch self.scanningState {
+		switch self.scanner.state {
 		case .Active: fallthrough
 		case .StartingUp: fallthrough
 		case .PowerInterupted: fallthrough
@@ -172,7 +148,7 @@ public class BTLE: NSObject {
 			self.scanner.turnOff()
 			
 		case .Off:
-			self.scanningState = .Active
+			self.scanner.startScanning()
 		}
 	}
 	

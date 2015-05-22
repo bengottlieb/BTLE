@@ -8,7 +8,6 @@
 
 import Foundation
 import CoreBluetooth
-import SA_Swift
 
 let rssi_range_touching = -25
 let rssi_range_very_close = -30

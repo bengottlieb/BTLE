@@ -37,10 +37,12 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		if self.stateChangeCounter == 0 {
 			if BTLE.manager.advertisingState == .Off { return }
 		}
+		
 		self.cbPeripheralManager?.stopAdvertising()
 
-		BTLE.manager.advertisingState == .Off
-		NSNotification.postNotification(BTLE.notifications.didFinishAdvertising)
+		if BTLE.manager.advertisingState == .Active || BTLE.manager.advertisingState == .StartingUp {
+			BTLE.manager.advertisingState == .Idle
+		}
 	}
 	
 	//=============================================================================================
@@ -49,7 +51,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		switch cbPeripheralManager?.state ?? .Unknown {
 		case .PoweredOn:
 			if BTLE.manager.advertisingState == .PowerInterupted {
-				BTLE.manager.scanningState = .Active
+				BTLE.manager.advertisingState = .Active
 			}
 			
 			if BTLE.manager.advertisingState == .StartingUp {
@@ -181,8 +183,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	
 	func setupAdvertising() {
 		if let mgr = self.cbPeripheralManager {
-			if !mgr.isAdvertising && mgr.state == .PoweredOn {
-				NSNotification.postNotification(BTLE.notifications.willStartAdvertising)
+			if !mgr.isAdvertising && mgr.state == .PoweredOn && BTLE.manager.advertisingState != .Active && BTLE.manager.advertisingState != .StartingUp {
 				mgr.startAdvertising(self.combinedAdvertisementData)
 				
 				if BTLE.debugLevel > .Low { println("BTLE: Starting to advertise: \(self.combinedAdvertisementData)") }
@@ -195,7 +196,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		
 		if let peripheralManager = self.cbPeripheralManager {
 			self.cbPeripheralManager = nil
-			if stateChangeCounter == 0 { BTLE.manager.scanningState = .Off }
+			if stateChangeCounter == 0 { BTLE.manager.advertisingState = .Off }
 		}
 		
 		

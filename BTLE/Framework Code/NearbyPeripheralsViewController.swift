@@ -27,25 +27,25 @@ public class NearbyPeripheralsViewController: UIViewController {
 	public override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
 		if self.appFilters.count > 0 {
-			BTLE.manager.scanningState = .Off
+			BTLE.manager.scanner.turnOff()
 			BTLE.manager.services = self.appFilters
 			self.appFilters = []
-			BTLE.manager.scanningState = .Active
+			BTLE.manager.scanner.startScanning()
 		}
 	}
 	
 	var appFilters: [CBUUID] = []
 	func toggleFilter(toggle: UISwitch) {
 		if BTLE.manager.services.count > 0 {
-			BTLE.manager.scanningState = .Off
+			BTLE.manager.scanner.stopScanning()
 			self.appFilters = BTLE.manager.services
 			BTLE.manager.services = []
-			BTLE.manager.scanningState = .Active
+			BTLE.manager.scanner.startScanning()
 		} else {
-			BTLE.manager.scanningState = .Off
+			BTLE.manager.scanner.stopScanning()
 			BTLE.manager.services = self.appFilters
 			self.appFilters = []
-			BTLE.manager.scanningState = .Active
+			BTLE.manager.scanner.startScanning()
 		}
 	}
 	

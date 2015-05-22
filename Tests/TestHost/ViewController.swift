@@ -45,7 +45,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
 		//setup scanner
 		BTLE.manager.deviceLifetime = 20.0
-		BTLE.manager.scanningState = (NSUserDefaults.keyedBool("scanning") ?? false) ? .Active : .Off
+		if (NSUserDefaults.keyedBool("scanning") ?? false) {
+			BTLE.manager.scanner.startScanning()
+		} else {
+			BTLE.manager.scanner.stopScanning()
+		}
 		BTLE.manager.monitorRSSI = (NSUserDefaults.keyedBool("monitorRSSI") ?? false)
 		BTLE.manager.services = (NSUserDefaults.keyedBool("filterByServices") ?? false) ? [] : [filterServiceID]
 		
@@ -60,7 +64,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		BTLE.manager.advertiser.addService(service)
 		BTLE.manager.advertisingState = (NSUserDefaults.keyedBool("advertising") ?? false) ? .Active : .Off
 		
-		self.scanSwitch.on = BTLE.manager.scanningState == .Active || BTLE.manager.scanningState == .StartingUp
+		self.scanSwitch.on = BTLE.manager.scanner.state == .Active || BTLE.manager.scanner.state == .StartingUp
 		self.advertiseSwitch.on = BTLE.manager.advertisingState == .Active || BTLE.manager.advertisingState == .StartingUp
 		self.filterByServicesSwitch.on = BTLE.manager.services.count > 0
 		self.monitorRSSISwitch.on = BTLE.manager.monitorRSSI
@@ -81,7 +85,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	}
 	
 	func updateStatus() {
-		if BTLE.manager.scanningState == .Active {
+		if BTLE.manager.scanner.state == .Active {
 			self.timer = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: "reload", userInfo: nil, repeats: true)
 		} else {
 			self.timer?.invalidate()
@@ -89,7 +93,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		}
 		
 		self.reload()
-		UIApplication.sharedApplication().idleTimerDisabled = (BTLE.manager.scanningState == .Active || BTLE.manager.advertisingState == .Active)
+		UIApplication.sharedApplication().idleTimerDisabled = (BTLE.manager.scanner.state == .Active || BTLE.manager.advertisingState == .Active)
 	}
 	
 	var timer: NSTimer?
@@ -99,7 +103,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	}
 	
 	@IBAction func toggleScanning() {
-		BTLE.manager.scanningState = self.scanSwitch.on ? .Active : .Idle
+		if (self.scanSwitch.on) {
+			BTLE.manager.scanner.startScanning()
+		} else {
+			BTLE.manager.scanner.stopScanning()
+		}
+
 		NSUserDefaults.setKeyedBool(self.scanSwitch.on, forKey: "scanning")
 
 		self.filterByServicesSwitch.enabled = self.scanSwitch.on
@@ -117,12 +126,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	}
 	
 	@IBAction func toggleFilterByServices() {
-		var active = BTLE.manager.scanningState == .Active || BTLE.manager.scanningState == .StartingUp
-		
-		if (active) { BTLE.manager.scanningState = .Idle }
 		NSUserDefaults.setKeyedBool(self.filterByServicesSwitch.on, forKey: "filterByServices")
 		BTLE.manager.services = self.filterByServicesSwitch.on ? [filterServiceID] : []
-		if (active) { BTLE.manager.scanningState = .Active }
 	}
 	
 	@IBAction func configureServices() {

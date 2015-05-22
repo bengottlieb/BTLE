@@ -18,6 +18,42 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	public var ignoredPeripherals: Set<BTLEPeripheral> = Set<BTLEPeripheral>()
 	public var oldPeripherals: Set<BTLEPeripheral> = Set<BTLEPeripheral>()
 	
+	public var state: BTLE.State { get { return self.internalState }}
+	var internalState: BTLE.State = .Off { didSet {
+		if oldValue == self.internalState { return }
+		self.stateChangeCounter++
+		switch self.internalState {
+		case .Off:
+			if oldValue != .Idle {
+				NSNotification.postNotification(BTLE.notifications.didFinishScan, object: self)
+			}
+			if BTLE.manager.cyclingScanning {
+				btle_delay(0.5) {
+					BTLE.manager.cyclingScanning = false
+					self.internalState = .StartingUp
+				}
+			}
+			break
+			
+		case .StartingUp:
+			if oldValue != .Active {
+				NSNotification.postNotification(BTLE.notifications.willStartScan, object: self)
+			}
+			break
+			
+		case .Active:
+			self.startScanning()
+			
+		case .Idle:
+			NSNotification.postNotification(BTLE.notifications.didFinishScan, object: self)
+			self.stopScanning()
+			
+		case .PowerInterupted:
+			break
+		}
+		self.stateChangeCounter--
+		}}
+	
 
 	//=============================================================================================
 	//MARK: Actions
@@ -34,7 +70,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	
 	var coreBluetoothFilteredServices: [CBUUID] { return BTLE.manager.serviceFilter == .CoreBluetooth ? BTLE.manager.services : [] }
 	
-	func startScanning(duration: NSTimeInterval = 0.0) {
+	public func startScanning(duration: NSTimeInterval = 0.0) {
 		self.setupCBCentral()
 		
 		self.oldPeripherals = self.oldPeripherals.union(self.peripherals.union(self.ignoredPeripherals))
@@ -42,8 +78,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		self.peripherals = Set<BTLEPeripheral>()
 		
 		if self.cbCentral.state == .PoweredOn {
-			BTLE.manager.scanningState = .Active
-			NSNotification.postNotification(BTLE.notifications.willStartScan, object: self)
+			self.internalState = .Active
 			var options = BTLE.manager.monitorRSSI ? [CBCentralManagerScanOptionAllowDuplicatesKey: true] : [:]
 			if BTLE.debugLevel > .None { println(BTLE.manager.services.count > 0 ? "BTLE: Starting scan for \(BTLE.manager.services)" : "BTLE: Starting unfiltered scan") }
 			self.cbCentral.scanForPeripheralsWithServices(self.coreBluetoothFilteredServices, options: options)
@@ -51,25 +86,24 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 				self.searchTimer = NSTimer.scheduledTimerWithTimeInterval(duration, target: self, selector: "stopScanning", userInfo: nil, repeats: false)
 			}
 		} else {
-			BTLE.manager.scanningState = .StartingUp
+			self.internalState = .StartingUp
 		}
 	}
 	
-	func stopScanning() {
+	public func stopScanning() {
 		self.searchTimer?.invalidate()
-		if let centralManager = self.cbCentral {
+		if let centralManager = self.cbCentral where self.internalState == .Active {
 			centralManager.stopScan()
-			NSNotification.postNotification(BTLE.notifications.didFinishScan, object: self)
-			if self.stateChangeCounter == 0 { BTLE.manager.scanningState = .Idle }
+			if self.stateChangeCounter == 0 { self.internalState = .Idle }
 		}
 	}
 	
-	func turnOff() {
+	public func turnOff() {
 		self.stopScanning()
 
 		if let centralManager = self.cbCentral {
 			self.cbCentral = nil
-			if self.stateChangeCounter == 0 { BTLE.manager.scanningState = .Off }
+			if self.stateChangeCounter == 0 { self.internalState = .Off }
 		}
 	}
 
@@ -148,16 +182,16 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	public func centralManagerDidUpdateState(centralManager: CBCentralManager!) {
 		switch centralManager.state {
 		case .PoweredOn:
-			if BTLE.manager.scanningState == .PowerInterupted {
-				BTLE.manager.scanningState = .Active
-			} else if BTLE.manager.scanningState == .StartingUp {
+			if self.internalState == .PowerInterupted {
+				self.internalState = .Active
+			} else if self.internalState == .StartingUp {
 				self.startScanning()
 			}
 			self.fetchConnectedPeripherals()
 
 		case .PoweredOff:
-			if BTLE.manager.scanningState == .Active || BTLE.manager.scanningState == .StartingUp {
-				BTLE.manager.scanningState = .PowerInterupted
+			if self.internalState == .Active || self.internalState == .StartingUp {
+				self.internalState = .PowerInterupted
 				self.stopScanning()
 			}
 		default: break
@@ -199,7 +233,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		for peripheral in connected {
 			self.addPeripheral(peripheral)
 		}
-		BTLE.manager.scanningState = .Active
+		self.internalState = .Active
 	}
 
 	//=============================================================================================
