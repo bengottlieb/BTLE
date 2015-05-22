@@ -37,7 +37,7 @@ class CharacteristicTableViewCell: UITableViewCell {
     }
 	
 	func updateUI() {
-		dispatch_async_main	{
+		btle_dispatch_main	{
 			if let chr = self.characteristic {
 				self.notifySwitch.on = (chr.listeningState == .Listening || chr.listeningState == .StartingToListen)
 				self.notifySwitch.enabled = (chr.listeningState == .Listening || chr.listeningState == .NotListening)

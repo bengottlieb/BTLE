@@ -25,7 +25,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	var devices: [BTLEPeripheral] = []
 	
 	func reload() {
-		self.devices = Array(BTLE.manager.scanner.peripherals)
+		self.devices = Array(BTLE.scanner.peripherals)
 		dispatch_async_main {
 			self.tableView.reloadData()
 		}
@@ -46,9 +46,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		//setup scanner
 		BTLE.manager.deviceLifetime = 20.0
 		if (NSUserDefaults.keyedBool("scanning") ?? false) {
-			BTLE.manager.scanner.startScanning()
+			BTLE.scanner.startScanning()
 		} else {
-			BTLE.manager.scanner.stopScanning()
+			BTLE.scanner.stopScanning()
 		}
 		BTLE.manager.monitorRSSI = (NSUserDefaults.keyedBool("monitorRSSI") ?? false)
 		BTLE.manager.services = (NSUserDefaults.keyedBool("filterByServices") ?? false) ? [] : [filterServiceID]
@@ -61,11 +61,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		var service = BTLEMutableService(uuid: testServiceID, isPrimary: true, characteristics: [ self.writableCharacteristic! ])
 		service.advertised = true
 		
-		BTLE.manager.advertiser.addService(service)
-		BTLE.manager.advertisingState = (NSUserDefaults.keyedBool("advertising") ?? false) ? .Active : .Off
+		BTLE.advertiser.addService(service)
+		if (NSUserDefaults.keyedBool("advertising") ?? false) {
+			BTLE.advertiser.startAdvertising()
+		}
 		
-		self.scanSwitch.on = BTLE.manager.scanner.state == .Active || BTLE.manager.scanner.state == .StartingUp
-		self.advertiseSwitch.on = BTLE.manager.advertisingState == .Active || BTLE.manager.advertisingState == .StartingUp
+		self.scanSwitch.on = BTLE.scanner.state == .Active || BTLE.scanner.state == .StartingUp
+		self.advertiseSwitch.on = BTLE.advertiser.state == .Active || BTLE.advertiser.state == .StartingUp
 		self.filterByServicesSwitch.on = BTLE.manager.services.count > 0
 		self.monitorRSSISwitch.on = BTLE.manager.monitorRSSI
 
@@ -85,7 +87,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	}
 	
 	func updateStatus() {
-		if BTLE.manager.scanner.state == .Active {
+		if BTLE.scanner.state == .Active {
 			self.timer = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: "reload", userInfo: nil, repeats: true)
 		} else {
 			self.timer?.invalidate()
@@ -93,7 +95,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		}
 		
 		self.reload()
-		UIApplication.sharedApplication().idleTimerDisabled = (BTLE.manager.scanner.state == .Active || BTLE.manager.advertisingState == .Active)
+		UIApplication.sharedApplication().idleTimerDisabled = (BTLE.scanner.state == .Active || BTLE.advertiser.state == .Active)
 	}
 	
 	var timer: NSTimer?
@@ -104,9 +106,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	
 	@IBAction func toggleScanning() {
 		if (self.scanSwitch.on) {
-			BTLE.manager.scanner.startScanning()
+			BTLE.scanner.startScanning()
 		} else {
-			BTLE.manager.scanner.stopScanning()
+			BTLE.scanner.stopScanning()
 		}
 
 		NSUserDefaults.setKeyedBool(self.scanSwitch.on, forKey: "scanning")
@@ -121,7 +123,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	}
 	
 	@IBAction func toggleAdvertising() {
-		BTLE.manager.advertisingState = self.advertiseSwitch.on ? .Active : .Idle
+		if self.advertiseSwitch.on {
+			BTLE.advertiser.startAdvertising()
+		} else {
+			BTLE.advertiser.stopAdvertising()
+		}
 		NSUserDefaults.setKeyedBool(self.advertiseSwitch.on, forKey: "advertising")
 	}
 	
@@ -185,7 +191,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		var device = self.devices[indexPath.row]
 		
 		device.ignore()
-		self.devices = Array(BTLE.manager.scanner.peripherals)
+		self.devices = Array(BTLE.scanner.peripherals)
 		
 		tableView.endUpdates()
 	}

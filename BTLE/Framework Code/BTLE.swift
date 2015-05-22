@@ -13,7 +13,10 @@ import CoreBluetooth
 public enum DebugLevel: Int { case None, Low, Medium, High, SuperHigh }
 
 public class BTLE: NSObject {
-	public class var manager: BTLE { struct s { static let manager = BTLE() }; return s.manager }
+	public static var manager = BTLE()
+	public static var scanner = BTLECentralManager()
+	public static var advertiser = BTLEPeripheralManager()
+	
 	public enum LoadingState { case NotLoaded, Loading, Loaded, LoadingCancelled, Reloading }
 	public enum ServiceFilter { case CoreBluetooth, AdvertisingData, ActualServices }
 
@@ -31,38 +34,6 @@ public class BTLE: NSObject {
 	
 	static public var debugLevel: DebugLevel = .None
 	
-	public var advertisingState: State = .Off { didSet {
-		if oldValue == self.advertisingState { return }
-
-		self.advertiser.stateChangeCounter++
-		
-		switch self.advertisingState {
-		case .Off:
-			if oldValue != .Idle { NSNotification.postNotification(BTLE.notifications.didFinishAdvertising, object: self) }
-			if self.cyclingAdvertising {
-				btle_delay(0.5) {
-					self.cyclingAdvertising = false
-					self.advertisingState = .Active
-				}
-			}
-		case .StartingUp:
-			NSNotification.postNotification(BTLE.notifications.willStartAdvertising, object: self)
-			break
-			
-		case .Active:
-			self.advertiser.startAdvertising()
-
-		case .Idle:
-			NSNotification.postNotification(BTLE.notifications.didFinishAdvertising, object: self)
-			self.advertiser.stopAdvertising()
-			
-		case .PowerInterupted: break
-		}
-		
-		self.advertiser.stateChangeCounter--
-	}}
-
-	
 	//[CBUUID(string: "FFF0")] //[BatteryServiceCBUUID, UserDataServiceCBUUID, GenericServiceCBUUID, GenericAccessServiceCBUUID, CBUUID(string: "1810"), CBUUID(string: "1805"), CBUUID(string: "1818"), CBUUID(string: "1816"), CBUUID(string: "180A"), CBUUID(string: "1808"), CBUUID(string: "1809"), CBUUID(string: "180D"), CBUUID(string: "1812"), CBUUID(string: "1802"), CBUUID(string: "1803"), CBUUID(string: "1819"), CBUUID(string: "1807"), CBUUID(string: "180E"), CBUUID(string: "1806"), CBUUID(string: "1813"), CBUUID(string: "1804")]
 	
 	public var services: [CBUUID] = [] { didSet { self.cycleScanning() }}
@@ -70,7 +41,7 @@ public class BTLE: NSObject {
 	public var monitorRSSI = false { didSet { self.cycleScanning() }}
 	public var disableRSSISmoothing = false
 	public var deviceLifetime: NSTimeInterval = 0.0 { didSet {
-		Array(self.scanner.peripherals).map({ $0.updateVisibilityTimer(); })
+		Array(BTLE.scanner.peripherals).map({ $0.updateVisibilityTimer(); })
 	}}
 	public var loadEncryptedCharacteristics = false
 	
@@ -114,41 +85,38 @@ public class BTLE: NSObject {
 		BTLE.registeredClasses.peripheralClass = peripheralClass
 	}
 
-	public lazy var scanner: BTLECentralManager = { return BTLECentralManager() }()
-	public lazy var advertiser: BTLEPeripheralManager = { return BTLEPeripheralManager() }()
-	
 	var cyclingScanning = false
 	var cyclingAdvertising = false
 	
 	public func cycleAdvertising() {
 		if self.cyclingAdvertising { return }
 		
-		switch self.advertisingState {
+		switch BTLE.advertiser.state {
 		case .Active: fallthrough
 		case .StartingUp: fallthrough
 		case .PowerInterupted: fallthrough
 		case .Idle:
 			self.cyclingAdvertising = true
-			self.advertiser.turnOff()
+			BTLE.advertiser.turnOff()
 			
 		case .Off:
-			self.advertisingState = .Active
+			BTLE.advertiser.startAdvertising()
 		}
 	}
 	
 	public func cycleScanning() {
 		if self.cyclingScanning { return }
 		
-		switch self.scanner.state {
+		switch BTLE.scanner.state {
 		case .Active: fallthrough
 		case .StartingUp: fallthrough
 		case .PowerInterupted: fallthrough
 		case .Idle:
 			self.cyclingScanning = true
-			self.scanner.turnOff()
+			BTLE.scanner.turnOff()
 			
 		case .Off:
-			self.scanner.startScanning()
+			BTLE.scanner.startScanning()
 		}
 	}
 	
@@ -189,4 +157,8 @@ public func btle_delay(delay: Double?, closure: () -> ()) {
 	} else {
 		closure()
 	}
+}
+
+public func btle_dispatch_main(closure: () -> ()) {
+	dispatch_async(dispatch_get_main_queue(), closure)
 }

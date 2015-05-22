@@ -22,12 +22,45 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	//=============================================================================================
 	//MARK: Actions
 	
+	public var state: BTLE.State { get { return self.internalState }}
+	var internalState: BTLE.State = .Off { didSet {
+		if oldValue == self.internalState { return }
+		
+		self.stateChangeCounter++
+		
+		switch self.internalState {
+		case .Off:
+			if oldValue != .Idle { NSNotification.postNotification(BTLE.notifications.didFinishAdvertising, object: self) }
+			if BTLE.manager.cyclingAdvertising {
+				btle_delay(0.5) {
+					BTLE.manager.cyclingAdvertising = false
+					self.internalState = .Active
+				}
+			}
+		case .StartingUp:
+			NSNotification.postNotification(BTLE.notifications.willStartAdvertising, object: self)
+			break
+			
+		case .Active:
+			self.startAdvertising()
+			
+		case .Idle:
+			NSNotification.postNotification(BTLE.notifications.didFinishAdvertising, object: self)
+			self.stopAdvertising()
+			
+		case .PowerInterupted: break
+		}
+		
+		self.stateChangeCounter--
+		}}
+	
+	
 	public func startAdvertising() {
 		if let mgr = self.setupCBPeripheralManager() {
 			if mgr.state == .PoweredOn {
 				self.setupAdvertising()
 			} else {
-				BTLE.manager.advertisingState = .StartingUp
+				self.internalState = .StartingUp
 			}
 		}
 	}
@@ -35,13 +68,13 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	
 	public func stopAdvertising() {
 		if self.stateChangeCounter == 0 {
-			if BTLE.manager.advertisingState == .Off { return }
+			if self.internalState == .Off { return }
 		}
 		
 		self.cbPeripheralManager?.stopAdvertising()
 
-		if BTLE.manager.advertisingState == .Active || BTLE.manager.advertisingState == .StartingUp {
-			BTLE.manager.advertisingState == .Idle
+		if self.internalState == .Active || self.internalState == .StartingUp {
+			self.internalState == .Idle
 		}
 	}
 	
@@ -50,20 +83,20 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	public func peripheralManagerDidUpdateState(peripheral: CBPeripheralManager!) {
 		switch cbPeripheralManager?.state ?? .Unknown {
 		case .PoweredOn:
-			if BTLE.manager.advertisingState == .PowerInterupted {
-				BTLE.manager.advertisingState = .Active
+			if self.internalState == .PowerInterupted {
+				self.internalState = .Active
 			}
 			
-			if BTLE.manager.advertisingState == .StartingUp {
+			if self.internalState == .StartingUp {
 				self.setupAdvertising()
 			} else {
-				BTLE.manager.advertisingState = .Active
+				self.internalState = .Active
 			}
 			self.updateServices()
 			
 		case .PoweredOff:
-			if BTLE.manager.advertisingState == .Active || BTLE.manager.advertisingState == .StartingUp {
-				BTLE.manager.advertisingState = .PowerInterupted
+			if self.internalState == .Active || self.internalState == .StartingUp {
+				self.internalState = .PowerInterupted
 				self.stopAdvertising()
 			}
 			
@@ -131,7 +164,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	public func peripheralManagerDidStartAdvertising(peripheral: CBPeripheralManager!, error: NSError!) {
 		if let error = error {
 			if BTLE.debugLevel > .None { println("BTLE: advertising started with error: \(error)") }
-			BTLE.manager.advertisingState = .Idle
+			self.internalState = .Idle
 		}
 	}
 	
@@ -183,7 +216,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	
 	func setupAdvertising() {
 		if let mgr = self.cbPeripheralManager {
-			if !mgr.isAdvertising && mgr.state == .PoweredOn && BTLE.manager.advertisingState != .Active && BTLE.manager.advertisingState != .StartingUp {
+			if !mgr.isAdvertising && mgr.state == .PoweredOn && self.internalState != .Active && self.internalState != .StartingUp {
 				mgr.startAdvertising(self.combinedAdvertisementData)
 				
 				if BTLE.debugLevel > .Low { println("BTLE: Starting to advertise: \(self.combinedAdvertisementData)") }
@@ -196,7 +229,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		
 		if let peripheralManager = self.cbPeripheralManager {
 			self.cbPeripheralManager = nil
-			if stateChangeCounter == 0 { BTLE.manager.advertisingState = .Off }
+			if stateChangeCounter == 0 { self.internalState = .Off }
 		}
 		
 		

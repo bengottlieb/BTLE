@@ -177,7 +177,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		self.rssi = RSSI
 		self.updateVisibilityTimer()
 
-		if BTLE.manager.scanner.ignoredPeripheralUUIDs.contains(peripheral.identifier.UUIDString) {
+		if BTLE.scanner.ignoredPeripheralUUIDs.contains(peripheral.identifier.UUIDString) {
 			ignored = .BlackList
 			if BTLE.debugLevel > DebugLevel.Low { println("BTLE Peripheral: Ignoring: \(name), \(uuid)") }
 		} else if BTLE.manager.services.count > 0 {
@@ -223,13 +223,13 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	
 	public func connect() {
 		self.state = .Connecting
-		BTLE.manager.scanner.cbCentral.connectPeripheral(self.cbPeripheral, options: [CBConnectPeripheralOptionNotifyOnConnectionKey: true])
+		BTLE.scanner.cbCentral.connectPeripheral(self.cbPeripheral, options: [CBConnectPeripheralOptionNotifyOnConnectionKey: true])
 	}
 	
 	public func disconnect() {
 		if self.state == .Connected { self.state = .Disconnecting }
 		
-		BTLE.manager.scanner.cbCentral?.cancelPeripheralConnection(self.cbPeripheral)
+		BTLE.scanner.cbCentral?.cancelPeripheralConnection(self.cbPeripheral)
 	}
 	
 	func cancelLoad() {
@@ -242,9 +242,9 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		didSet {
 			if oldValue != self.ignored {
 				if self.ignored == .BlackList {
-					BTLE.manager.scanner.addIgnoredPeripheral(self)
+					BTLE.scanner.addIgnoredPeripheral(self)
 				} else if self.ignored == .Not {
-					BTLE.manager.scanner.removeIgnoredPeripheral(self)
+					BTLE.scanner.removeIgnoredPeripheral(self)
 				}
 			}
 			
@@ -347,7 +347,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		self.visibilityTimer = nil
 		
 		if self.state == .Discovered && BTLE.manager.deviceLifetime > 0 {
-			dispatch_async_main { [weak self] in
+			btle_dispatch_main { [weak self] in
 				if let me = self {
 					var timeSinceLastComms = abs(me.lastCommunicatedAt.timeIntervalSinceNow)
 					var a = abs(timeSinceLastComms)

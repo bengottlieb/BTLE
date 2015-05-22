@@ -198,7 +198,7 @@ public class BTLEMutableCharacteristic : BTLECharacteristic {
 		self.dataValue = data
 		
 		if let data = data {
-			let mgr = BTLE.manager.advertiser.cbPeripheralManager!
+			let mgr = BTLE.advertiser.cbPeripheralManager!
 			if !mgr.updateValue(data, forCharacteristic: self.cbCharacteristic as! CBMutableCharacteristic, onSubscribedCentrals: nil) {
 				println("BTLE Characteristic: Unable to update \(self)")
 			}

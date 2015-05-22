@@ -29,7 +29,7 @@ public class NearbyPeripheralsTableView: UITableView, UITableViewDelegate, UITab
 	var nearbyPeripherals: [BTLEPeripheral] = []
 	
 	func setup() {
-		self.nearbyPeripherals = Array(BTLE.manager.scanner.peripherals)
+		self.nearbyPeripherals = Array(BTLE.scanner.peripherals)
 		self.delegate = self
 		self.dataSource = self
 		
@@ -41,7 +41,7 @@ public class NearbyPeripheralsTableView: UITableView, UITableViewDelegate, UITab
 	//=============================================================================================
 	//MARK: Notifications
 	public func reloadNearbyPeripherals() {
-		self.nearbyPeripherals = Array(BTLE.manager.scanner.peripherals)
+		self.nearbyPeripherals = Array(BTLE.scanner.peripherals)
 		self.reload()
 	}
 
