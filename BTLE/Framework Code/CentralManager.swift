@@ -229,11 +229,12 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	//MARK: Utility
 	
 	func fetchConnectedPeripherals() {
-		var connected = self.cbCentral?.retrieveConnectedPeripheralsWithServices(self.coreBluetoothFilteredServices) as! [CBPeripheral]
-		for peripheral in connected {
-			self.addPeripheral(peripheral)
+		if let connected = self.cbCentral?.retrieveConnectedPeripheralsWithServices(self.coreBluetoothFilteredServices) as? [CBPeripheral] {
+			for peripheral in connected {
+				self.addPeripheral(peripheral)
+			}
+			self.internalState = .Active
 		}
-		self.internalState = .Active
 	}
 
 	//=============================================================================================

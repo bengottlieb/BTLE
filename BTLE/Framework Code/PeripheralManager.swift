@@ -42,7 +42,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 			break
 			
 		case .Active:
-			self.startAdvertising()
+			break
 			
 		case .Idle:
 			NSNotification.postNotification(BTLE.notifications.didFinishAdvertising, object: self)
@@ -216,7 +216,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	
 	func setupAdvertising() {
 		if let mgr = self.cbPeripheralManager {
-			if !mgr.isAdvertising && mgr.state == .PoweredOn && self.internalState != .Active && self.internalState != .StartingUp {
+			if !mgr.isAdvertising && mgr.state == .PoweredOn && self.internalState != .Active {
 				mgr.startAdvertising(self.combinedAdvertisementData)
 				
 				if BTLE.debugLevel > .Low { println("BTLE: Starting to advertise: \(self.combinedAdvertisementData)") }

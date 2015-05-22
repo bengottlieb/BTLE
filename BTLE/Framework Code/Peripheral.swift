@@ -292,7 +292,6 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	public func reloadServices() {
-		println("Reloading services for \(self)")
 		self.services = []
 		if self.ignored == .CheckingForServices {
 			self.cbPeripheral.discoverServices(nil)
@@ -410,7 +409,6 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	public func peripheral(peripheral: CBPeripheral!, didDiscoverServices error: NSError!) {
-		println("\(self.name) services: \(self.cbPeripheral.services)")
 		if let services = self.cbPeripheral.services as? [CBService] {
 			if self.ignored == .CheckingForServices {
 				for svc in services {
