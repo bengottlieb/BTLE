@@ -85,6 +85,24 @@ public class BTLE: NSObject {
 		BTLE.registeredClasses.peripheralClass = peripheralClass
 	}
 
+	public class var advertiseInBackground: Bool {
+		if let infoDict = NSBundle.mainBundle().infoDictionary, modes = infoDict["UIBackgroundModes"] as? [String] {
+			return modes.contains("bluetooth-peripheral")
+		}
+		
+		return false
+	}
+	
+	public class var browseInBackground: Bool {
+		if let infoDict = NSBundle.mainBundle().infoDictionary, modes = infoDict["UIBackgroundModes"] as? [String] {
+			return modes.contains("bluetooth-central")
+		}
+
+		return false
+	}
+	
+	
+	
 	var cyclingScanning = false
 	var cyclingAdvertising = false
 	

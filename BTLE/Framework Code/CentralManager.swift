@@ -114,7 +114,9 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		if self.cbCentral == nil || rebuild {
 			self.turnOff()
 			
-			var options: [NSObject: AnyObject] = [CBCentralManagerOptionShowPowerAlertKey: true, CBCentralManagerOptionRestoreIdentifierKey: BTLECentralManager.restoreIdentifier]
+			var options: [NSObject: AnyObject] = [CBCentralManagerOptionShowPowerAlertKey: true]
+			
+			if BTLE.browseInBackground { options[CBCentralManagerOptionRestoreIdentifierKey] = BTLECentralManager.restoreIdentifier }
 			
 			self.cbCentral = CBCentralManager(delegate: self, queue: self.dispatchQueue, options: options)
 			if self.cbCentral.state == .PoweredOn { self.fetchConnectedPeripherals() }

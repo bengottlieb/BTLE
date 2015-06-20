@@ -206,7 +206,9 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		if self.cbPeripheralManager == nil || rebuild {
 			self.turnOff()
 			
-			var options: [NSObject: AnyObject] = [CBPeripheralManagerOptionRestoreIdentifierKey: BTLEPeripheralManager.restoreIdentifier]
+			var options: [NSObject: AnyObject] = [:]
+			
+			if BTLE.advertiseInBackground { options[CBPeripheralManagerOptionRestoreIdentifierKey] = BTLEPeripheralManager.restoreIdentifier }
 			
 			self.cbPeripheralManager = CBPeripheralManager(delegate: self, queue: self.dispatchQueue, options: options)
 		}
