@@ -25,7 +25,7 @@ public class BTLECharacteristic: NSObject {
 		dataValue = chr.value
 		super.init()
 		
-		if BTLE.debugLevel == .High { println("BTLE Characteristic: creating \(self.dynamicType) from \((chr.description as NSString).substringToIndex(100))") }
+		BTLE.debugLog(.High, "Characteristic: creating \(self.dynamicType) from \((chr.description as NSString).substringToIndex(50))")
 		if svc != nil { self.reload() }
 	}
 	
@@ -47,7 +47,7 @@ public class BTLECharacteristic: NSObject {
 	public var centralCanWriteTo: Bool { return self.propertyEnabled(.Write) || self.propertyEnabled(.WriteWithoutResponse) }
 	public func writeBackValue(data: NSData, withResponse: Bool = false) -> Bool {
 		if self.peripheral.state != .Connected {
-			if BTLE.debugLevel > .None { println("BTLE Characteristic: Not currently connected") }
+			BTLE.debugLog(.Low, "Characteristic: Not currently connected")
 			return false
 		}
 		if self.centralCanWriteTo {
@@ -55,7 +55,7 @@ public class BTLECharacteristic: NSObject {
 			self.peripheral.cbPeripheral.writeValue(data, forCharacteristic: self.cbCharacteristic, type: withResponse ? .WithResponse : .WithoutResponse)
 			return true
 		} else {
-			println("BTLE Characteristic: Trying to write to a read-only characteristic: \(self)")
+			BTLE.debugLog(.None, "Characteristic: Trying to write to a read-only characteristic: \(self)")
 			return false
 		}
 	}
@@ -89,6 +89,8 @@ public class BTLECharacteristic: NSObject {
 	//MARK: Call backs from Peripheral Delegate
 
 	public func didLoadWithError(error: NSError?) {
+		BTLE.debugLog(.Medium, "Finished reloading \(self.cbCharacteristic.UUID), error: \(error)")
+
 		if error == nil {
 			self.dataValue = self.cbCharacteristic.value
 			self.loadingState = .Loaded
@@ -99,10 +101,10 @@ public class BTLECharacteristic: NSObject {
 
 	public func didWriteValue(error: NSError?) {
 		if let error = error {
-			println("BTLE Characteristic: Error while writing to \(self): \(error)")
+			BTLE.debugLog(.None, "Characteristic: Error while writing to \(self): \(error)")
 		}
 		if self.writeBackInProgress {
-			if BTLE.debugLevel > .Low { println("BTLE Characteristic: writeBack complete") }
+			BTLE.debugLog(.Medium, "Characteristic: writeBack complete")
 			self.writeBackInProgress = false
 		}
 		NSNotification.postNotification(BTLE.notifications.characteristicDidFinishWritingBack, object: self)
@@ -200,10 +202,10 @@ public class BTLEMutableCharacteristic : BTLECharacteristic {
 		if let data = data {
 			let mgr = BTLE.advertiser.cbPeripheralManager!
 			if !mgr.updateValue(data, forCharacteristic: self.cbCharacteristic as! CBMutableCharacteristic, onSubscribedCentrals: nil) {
-				println("BTLE Characteristic: Unable to update \(self)")
+				BTLE.debugLog(.None, "Characteristic: Unable to update \(self)")
 			}
 		} else {
-			println("BTLE Characteristic: No data to update \(self)")
+			BTLE.debugLog(.None, "Characteristic: No data to update \(self)")
 		}
 	}
 }

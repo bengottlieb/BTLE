@@ -53,10 +53,21 @@ public struct BTLECharacteristicUUIDs {
 
 public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	deinit {
-		if BTLE.debugLevel > .High { println("BTLE Peripheral: deiniting: \(self)") }
+		BTLE.debugLog(.SuperHigh, "BTLE Peripheral: deiniting: \(self)")
 	}
 	public enum Ignored: Int { case Not, BlackList, MissingServices, CheckingForServices }
-	public enum State { case Discovered, Connecting, Connected, Disconnecting, Undiscovered, Unknown }
+	public enum State { case Discovered, Connecting, Connected, Disconnecting, Undiscovered, Unknown
+		var description: String {
+			switch self {
+			case .Discovered: return "Discovered"
+			case .Connecting: return "Discovered"
+			case .Connected: return "Connected"
+			case .Disconnecting: return "Disconnecting"
+			case .Undiscovered: return "Undiscovered"
+			case .Unknown: return "Unknown"
+			}
+		}
+	}
 	public typealias RSSValue = Int
 	public enum Distance: Int { case Touching, VeryClose, Close, Nearby, SameRoom, Around, Far, Unknown
 		init(raw: RSSValue) {
@@ -110,7 +121,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		didSet {
 			if self.loadingState == .Loaded {
 				self.sendNotification(BTLE.notifications.peripheralDidFinishLoading)
-				if BTLE.debugLevel > DebugLevel.Low { println("BTLE Peripheral: Loaded: \(self.fullDescription)") }
+				BTLE.debugLog(.Medium, "BTLE Peripheral: Loaded: \(self.fullDescription)")
 			}
 		}
 	}
@@ -164,7 +175,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	public required init(peripheral: CBPeripheral, RSSI: RSSValue?, advertisementData adv: [NSObject: AnyObject]?) {
-		if BTLE.debugLevel == .High { println("BTLE Peripheral: creating from \(peripheral)") }
+		BTLE.debugLog(.High, "Peripheral: creating from \(peripheral)")
 		cbPeripheral = peripheral
 		uuid = peripheral.identifier
 		name = peripheral.name ?? "unknown"
@@ -179,7 +190,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 
 		if BTLE.scanner.ignoredPeripheralUUIDs.contains(peripheral.identifier.UUIDString) {
 			ignored = .BlackList
-			if BTLE.debugLevel > DebugLevel.Low { println("BTLE Peripheral: Ignoring: \(name), \(uuid)") }
+			BTLE.debugLog(.Medium, "Peripheral: Ignoring: \(name), \(uuid)")
 		} else if BTLE.manager.services.count > 0 {
 			if BTLE.manager.serviceFilter == .AdvertisingData {
 				if let info = adv {
@@ -194,7 +205,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		}
 		
 		if self.ignored == .Not {
-			if BTLE.debugLevel > .Low { println("BTLE Peripheral: not ignored: \(self)") }
+			BTLE.debugLog(.Medium, "BTLE Peripheral: not ignored: \(self)")
 		}
 	}
 	
@@ -210,7 +221,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 			}
 			if ignored {
 				self.ignored = .MissingServices
-				if BTLE.debugLevel > .High { println("BTLE Peripheral: ignored \(self.cbPeripheral.name) with advertising info: \(info)") }
+				BTLE.debugLog(.SuperHigh, "BTLE Peripheral: ignored \(self.cbPeripheral.name) with advertising info: \(info)")
 			} else {
 				self.ignored = .Not
 			}
@@ -227,6 +238,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	public func disconnect() {
+		BTLE.debugLog(.Medium, "Disconnecting from \(self.name), current state: \(self.state.description)")
 		if self.state == .Connected { self.state = .Disconnecting }
 		
 		BTLE.scanner.cbCentral?.cancelPeripheralConnection(self.cbPeripheral)
@@ -288,6 +300,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 				return chr
 			}
 		}
+		BTLE.debugLog(.High, "Unabled to find characteristic \(characteristic) \(self.name), current state: \(self.state.description)")
 		return nil
 	}
 	
@@ -311,7 +324,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	func didFinishLoadingService(service: BTLEService) {
-		if BTLE.debugLevel > .Medium { println("BTLE Peripheral: Finished loading \(service.uuid), \(self.numberOfLoadingServices) left") }
+		BTLE.debugLog(.Medium, "BTLE Peripheral: Finished loading \(service.uuid), \(self.numberOfLoadingServices) left")
 		if self.numberOfLoadingServices == 0 {
 			self.loadingState = .Loaded
 		}
@@ -393,7 +406,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	public func peripheralDidUpdateName(peripheral: CBPeripheral!) {
 		self.name = peripheral.name
 		self.sendNotification(BTLE.notifications.peripheralDidUpdateName)
-		if BTLE.debugLevel > DebugLevel.Low { println("BTLE Peripheral: Updated name for: \(self.name)") }
+		BTLE.debugLog(.Medium, "Peripheral: Updated name for: \(self.name)") 
 	}
 
 	//=============================================================================================
@@ -409,6 +422,8 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	public func peripheral(peripheral: CBPeripheral!, didDiscoverServices error: NSError!) {
+		BTLE.debugLog(.Medium, "Discovered \(self.cbPeripheral.services.count) on \(self.name)")
+		
 		if let services = self.cbPeripheral.services as? [CBService] {
 			if self.ignored == .CheckingForServices {
 				for svc in services {

@@ -38,7 +38,7 @@ public class BTLE: NSObject {
 	
 	public var services: [CBUUID] = [] { didSet {
 		if oldValue != self.services {
-			if BTLE.debugLevel != .None { print("Setting services to \(self.services)") }
+			BTLE.debugLog(.Low, "Setting services to \(self.services)") 
 			self.cycleScanning()
 		}
 	}}
@@ -49,6 +49,12 @@ public class BTLE: NSObject {
 		Array(BTLE.scanner.peripherals).map({ $0.updateVisibilityTimer(); })
 	}}
 	public var loadEncryptedCharacteristics = false
+	
+	class func debugLog(requiredLevel: DebugLevel, @autoclosure _ message: () -> String) {
+		if self.debugLevel.rawValue >= requiredLevel.rawValue {
+			println("BTLE: \(message())")
+		}
+	}
 	
 	public struct notifications {
 		public static let willStartScan = "com.standalone.btle.willStartScan"

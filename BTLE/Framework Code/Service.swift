@@ -34,12 +34,12 @@ public class BTLEService: NSObject, Printable {
 	override init() { super.init() }
 	
 	required public init(service svc: CBService, onPeriperhal: BTLEPeripheral) {
-		if BTLE.debugLevel == .High { println("BTLE Service: creating \(self.dynamicType) from \(svc)") }
 		cbService = svc
 		peripheral = onPeriperhal
 		super.init()
 		
 		self.reload()
+		BTLE.debugLog(.Medium, "Service: creating \(self.dynamicType) from \(svc)")
 	}
 	
 	func cancelLoad() {

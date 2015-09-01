@@ -80,7 +80,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		if self.cbCentral.state == .PoweredOn {
 			self.internalState = .Active
 			var options = BTLE.manager.monitorRSSI ? [CBCentralManagerScanOptionAllowDuplicatesKey: true] : [:]
-			if BTLE.debugLevel > .None { println(BTLE.manager.services.count > 0 ? "BTLE: Starting scan for \(BTLE.manager.services)" : "BTLE: Starting unfiltered scan") }
+			BTLE.debugLog(.Low, BTLE.manager.services.count > 0 ? "BTLE: Starting scan for \(BTLE.manager.services)" : "BTLE: Starting unfiltered scan")
 			self.cbCentral.scanForPeripheralsWithServices(self.coreBluetoothFilteredServices, options: options)
 			if duration != 0.0 {
 				self.searchTimer = NSTimer.scheduledTimerWithTimeInterval(duration, target: self, selector: "stopScanning", userInfo: nil, repeats: false)
@@ -245,7 +245,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	lazy var ignoredPeripheralUUIDs: Set<String> = {
 		let list = NSUserDefaults.keyedObject(self.ignoredPeripheralUUIDsKey) as? [String] ?? []
 		
-		if BTLE.debugLevel > .None && list.count > 0 { println("BTLE: Ignored IDs: " + NSArray(array: list).componentsJoinedByString(", ")) }
+		if list.count > 0 { BTLE.debugLog(.Low, "Ignored IDs: " + NSArray(array: list).componentsJoinedByString(", ")) }
 		
 		return Set(list)
 	}()
