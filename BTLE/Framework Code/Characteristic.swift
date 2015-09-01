@@ -134,7 +134,7 @@ public class BTLECharacteristic: NSObject {
 	}
 	
 	public var loadingState = BTLE.LoadingState.NotLoaded
-	public func reload(timout: NSTimeInterval = 10.0, completion: ((NSError?, NSData?) -> ())? = nil) {
+	public func reload(timeout: NSTimeInterval = 10.0, completion: ((NSError?, NSData?) -> ())? = nil) {
 		BTLE.debugLog(.Medium, "Reloading \(self.cbCharacteristic.UUID)")
 
 		if let completion = completion {
@@ -142,9 +142,9 @@ public class BTLECharacteristic: NSObject {
 		}
 
 		self.reloadTimeoutTimer?.invalidate()
-		if timout > 0.0 {
+		if timeout > 0.0 {
 			BTLE.debugLog(.Low, "Reload of \(self.cbCharacteristic.UUID) timed out")
-			self.reloadTimeoutTimer = NSTimer.scheduledTimerWithTimeInterval(timout, target: self, selector: "reloadTimedOut:", userInfo: nil, repeats: false)
+			self.reloadTimeoutTimer = NSTimer.scheduledTimerWithTimeInterval(timeout, target: self, selector: "reloadTimedOut:", userInfo: nil, repeats: false)
 		}
 		
 		self.peripheral.connect(completion: { error in
