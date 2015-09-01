@@ -122,6 +122,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 			if self.loadingState == .Loaded {
 				self.sendNotification(BTLE.notifications.peripheralDidFinishLoading)
 				BTLE.debugLog(.Medium, "BTLE Peripheral: Loaded: \(self.fullDescription)")
+				self.sendConnectionCompletions(nil)
 			}
 		}
 	}
@@ -129,12 +130,35 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	public var advertisementData: [NSObject: AnyObject] = [:] { didSet {
 		self.sendNotification(BTLE.notifications.peripheralDidUpdateAdvertisementData)
 	}}
+	
+	func didFailToConnect(error: NSError?) {
+		BTLE.debugLog(.Medium, "Failed to connect \(self.name): \(error)")
+		self.sendConnectionCompletions(error)
+	}
+	
+	func sendConnectionCompletions(error: NSError?) {
+		BTLE.debugLog(.Medium, "Sending \(self.connectionCompletionBlocks.count) completion messages (\(error))")
+		let completions = self.connectionCompletionBlocks
+		self.connectionCompletionBlocks = []
+		
+		for block in completions {
+			block(error)
+		}
+	}
+	
 	public var state: State = .Discovered { didSet {
+		if self.state == oldValue { return }
+	
+		BTLE.debugLog(.Medium, "Changing state on \(self.name), \(oldValue.description) -> \(self.state.description)")
+	
 		switch self.state {
 		case .Connected:
 			self.updateRSSI()
-			self.reloadServices()
-			
+			if self.loadingState != .Loaded {
+				self.reloadServices()
+			} else {
+				self.sendConnectionCompletions(nil)
+			}
 			
 		case .Disconnecting: fallthrough
 		case .Discovered:
@@ -232,9 +256,25 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		self.ignored = ignore
 	}
 	
-	public func connect() {
-		self.state = .Connecting
-		BTLE.scanner.cbCentral.connectPeripheral(self.cbPeripheral, options: [CBConnectPeripheralOptionNotifyOnConnectionKey: true])
+	var connectionCompletionBlocks: [(NSError?) -> Void] = []
+	
+	public func connect(completion: ((NSError?) -> ())? = nil) {
+		BTLE.debugLog(.Medium, "Attempting to connect to \(self.name), current state: \(self.state.description)")
+		if let completion = completion { self.connectionCompletionBlocks.append(completion) }
+		switch self.state {
+		case .Connecting:
+			break
+			
+		case .Connected:
+			self.sendConnectionCompletions(nil)
+			
+		case .Discovered: fallthrough
+		case .Disconnecting: fallthrough
+		case .Undiscovered: fallthrough
+		case .Unknown:
+			self.state = .Connecting
+			BTLE.scanner.cbCentral.connectPeripheral(self.cbPeripheral, options: [CBConnectPeripheralOptionNotifyOnConnectionKey: true])
+		}
 	}
 	
 	public func disconnect() {
@@ -245,7 +285,11 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	func cancelLoad() {
-		if self.loadingState == .Loading { self.loadingState = .LoadingCancelled }
+		BTLE.debugLog(.Medium, "Canceling load on \(self.name), current state: \(self.state.description)")
+		if self.loadingState == .Loading {
+			BTLE.debugLog(.Medium, "Aborting service load on \(self.name)")
+			self.loadingState = .LoadingCancelled
+		}
 		
 		for svc in self.services { svc.cancelLoad() }
 	}
@@ -305,7 +349,8 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	public func reloadServices() {
-		self.services = []
+		BTLE.debugLog(.Medium, "Reloading services on \(self.name)")
+		//self.services = []
 		if self.ignored == .CheckingForServices {
 			self.cbPeripheral.discoverServices(nil)
 		} else {

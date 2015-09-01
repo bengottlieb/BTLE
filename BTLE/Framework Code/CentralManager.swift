@@ -123,15 +123,22 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		}
 	}
 	
-	func addPeripheral(peripheral: CBPeripheral, RSSI: Int? = nil, advertisementData: [NSObject: AnyObject]? = nil) -> BTLEPeripheral {
+	func existingPeripheral(peripheral: CBPeripheral) -> BTLEPeripheral? {
 		for per in self.peripherals {
 			if per.uuid == peripheral.identifier {
-				if let rssi = RSSI { per.setCurrentRSSI(rssi) }
-				if let advertisementData = advertisementData { per.advertisementData = advertisementData }
 				return per
 			}
 		}
-
+		return nil
+	}
+	
+	func addPeripheral(peripheral: CBPeripheral, RSSI: Int? = nil, advertisementData: [NSObject: AnyObject]? = nil) -> BTLEPeripheral {
+		if let existing = self.existingPeripheral(peripheral) {
+			if let rssi = RSSI { existing.setCurrentRSSI(rssi) }
+			if let advertisementData = advertisementData { existing.advertisementData = advertisementData }
+			return existing
+		}
+		
 		for per in self.ignoredPeripherals {
 			if per.uuid == peripheral.identifier {
 				if let info = advertisementData where per.ignored == .MissingServices {
@@ -209,6 +216,15 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		self.cbCentral = centralManager
 		centralManager.delegate = self
 		if self.cbCentral.state == .PoweredOn { self.fetchConnectedPeripherals() }
+	}
+
+	public func centralManager(central: CBCentralManager!, didFailToConnectPeripheral peripheral: CBPeripheral!, error: NSError!) {
+		if BTLE.debugLevel > .None {
+			BTLE.debugLog(.Medium, "Failed to connect to peripheral: \(peripheral): \(error)")
+		}
+		if let existing = self.existingPeripheral(peripheral) {
+			existing.didFailToConnect(error)
+		}
 	}
 	
 	public func centralManager(centralManager: CBCentralManager!, didConnectPeripheral peripheral: CBPeripheral!) {

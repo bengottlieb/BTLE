@@ -97,6 +97,8 @@ public class BTLECharacteristic: NSObject {
 		} else {
 			self.loadingState = self.loadingState == .Reloading ? .Loaded : .NotLoaded
 		}
+		
+		self.sendReloadCompletions(error)
 	}
 
 	public func didWriteValue(error: NSError?) {
@@ -115,15 +117,47 @@ public class BTLECharacteristic: NSObject {
 		
 	}
 	
-	public var loadingState = BTLE.LoadingState.NotLoaded
-	public func reload() {
-		if self.loadingState == .Loaded || self.loadingState == .NotLoaded  {
-			self.loadingState = (self.loadingState == .Loaded) ? .Reloading : .Loading
-			self.peripheral.cbPeripheral.readValueForCharacteristic(self.cbCharacteristic)
+	var reloadCompletionBlocks: [(NSError?, NSData?) -> Void] = []
+	
+	func reloadTimedOut(timer: NSTimer) {
+		self.reloadTimeoutTimer?.invalidate()
+		self.sendReloadCompletions(NSError(domain: CBErrorDomain, code: CBError.ConnectionTimeout.rawValue, userInfo: nil))
+	}
+	
+	func sendReloadCompletions(error: NSError?) {
+		let completions = self.reloadCompletionBlocks
+		self.reloadCompletionBlocks = []
+		
+		for completion in completions {
+			completion(error, self.dataValue)
 		}
 	}
 	
+	public var loadingState = BTLE.LoadingState.NotLoaded
+	public func reload(timout: NSTimeInterval = 10.0, completion: ((NSError?, NSData?) -> ())? = nil) {
+		BTLE.debugLog(.Medium, "Reloading \(self.cbCharacteristic.UUID)")
+
+		if let completion = completion {
+			self.reloadCompletionBlocks.append(completion)
+		}
+
+		self.reloadTimeoutTimer?.invalidate()
+		if timout > 0.0 {
+			BTLE.debugLog(.Low, "Reload of \(self.cbCharacteristic.UUID) timed out")
+			self.reloadTimeoutTimer = NSTimer.scheduledTimerWithTimeInterval(timout, target: self, selector: "reloadTimedOut:", userInfo: nil, repeats: false)
+		}
+		
+		self.peripheral.connect(completion: { error in
+			if self.loadingState == .Loaded || self.loadingState == .NotLoaded  {
+				self.loadingState = (self.loadingState == .Loaded) ? .Reloading : .Loading
+				let chr = self.cbCharacteristic
+				BTLE.debugLog(.High, "Connected, calling readValue on \(self.cbCharacteristic.UUID)")
+				self.peripheral.cbPeripheral.readValueForCharacteristic(chr)
+			}
+		})
+	}
 	
+	weak var reloadTimeoutTimer: NSTimer?
 
 	var peripheral: BTLEPeripheral { return self.service.peripheral }
 
