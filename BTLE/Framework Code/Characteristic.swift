@@ -120,6 +120,7 @@ public class BTLECharacteristic: NSObject {
 	var reloadCompletionBlocks: [(NSError?, NSData?) -> Void] = []
 	
 	func reloadTimedOut(timer: NSTimer) {
+		BTLE.debugLog(.Low, "Characteristic: reload timed out")
 		self.reloadTimeoutTimer?.invalidate()
 		self.sendReloadCompletions(NSError(domain: CBErrorDomain, code: CBError.ConnectionTimeout.rawValue, userInfo: nil))
 	}
@@ -143,7 +144,6 @@ public class BTLECharacteristic: NSObject {
 
 		self.reloadTimeoutTimer?.invalidate()
 		if timeout > 0.0 {
-			BTLE.debugLog(.Low, "Reload of \(self.cbCharacteristic.UUID) timed out")
 			self.reloadTimeoutTimer = NSTimer.scheduledTimerWithTimeInterval(timeout, target: self, selector: "reloadTimedOut:", userInfo: nil, repeats: false)
 		}
 		
