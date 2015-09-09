@@ -119,7 +119,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}}
 	public var loadingState = BTLE.LoadingState.NotLoaded {
 		didSet {
-			if self.loadingState == .Loaded && self.loadingState != oldValue {
+			if self.loadingState == .Loaded {
 				self.sendNotification(BTLE.notifications.peripheralDidFinishLoading)
 				BTLE.debugLog(.Medium, "BTLE Peripheral: Loaded: \(self.fullDescription)")
 				self.sendConnectionCompletions(nil)
@@ -154,12 +154,8 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		switch self.state {
 		case .Connected:
 			self.updateRSSI()
-			if self.loadingState != .Loaded {
-				self.reloadServices()
-			} else {
-				self.sendNotification(BTLE.notifications.peripheralDidFinishLoading)
-				self.sendConnectionCompletions(nil)
-			}
+			self.reloadServices()
+			
 			
 		case .Disconnecting: fallthrough
 		case .Discovered:
@@ -351,8 +347,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	}
 	
 	public func reloadServices() {
-		BTLE.debugLog(.Medium, "Reloading services on \(self.name)")
-		//self.services = []
+		self.services = []
 		if self.ignored == .CheckingForServices {
 			self.cbPeripheral.discoverServices(nil)
 		} else {
