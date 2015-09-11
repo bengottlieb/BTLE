@@ -12,7 +12,7 @@ import CoreBluetooth
 public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	public var dispatchQueue = dispatch_queue_create("BTLE.PeripheralManager queue", DISPATCH_QUEUE_SERIAL)
 	public var cbPeripheralManager: CBPeripheralManager?
-	var advertisingData: [NSObject: AnyObject] = [CBAdvertisementDataLocalNameKey: UIDevice.currentDevice().name]
+	var advertisingData: [String: AnyObject] = [CBAdvertisementDataLocalNameKey: UIDevice.currentDevice().name]
 	
 	//=============================================================================================
 	//MARK: Class vars
@@ -80,7 +80,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	
 	//=============================================================================================
 	//MARK: BTLEPeripheralDelegate
-	public func peripheralManagerDidUpdateState(peripheral: CBPeripheralManager!) {
+	public func peripheralManagerDidUpdateState(peripheral: CBPeripheralManager) {
 		switch cbPeripheralManager?.state ?? .Unknown {
 		case .PoweredOn:
 			if self.internalState == .PowerInterupted {
@@ -104,11 +104,11 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		}
 	}
 	
-	public func peripheralManager(peripheral: CBPeripheralManager!, willRestoreState dict: [NSObject : AnyObject]!) {
-		var advertised = ((dict["kCBRestoredAdvertisement"] as? [NSObject: AnyObject])?["kCBAdvDataServiceUUIDs"] as? [NSData]) ?? []
+	public func peripheralManager(peripheral: CBPeripheralManager, willRestoreState dict: [String : AnyObject]) {
+		let advertised = ((dict["kCBRestoredAdvertisement"] as? [NSObject: AnyObject])?["kCBAdvDataServiceUUIDs"] as? [NSData]) ?? []
 		var advertisedIDs: [CBUUID] = []
 		for data in advertised {
-			if let cbid = CBUUID(data: data) { advertisedIDs.append(cbid) }
+			advertisedIDs.append(CBUUID(data: data))
 		}
 		
 		
@@ -125,17 +125,16 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 			}
 			
 			for service in servicesToAdd {
-				var ourService = BTLEMutableService(service: service, isAdvertised: advertisedIDs.contains(service.UUID))
+				let ourService = BTLEMutableService(service: service, isAdvertised: advertisedIDs.contains(service.UUID))
 				self.services.append(ourService)
 			}
 		}
 	}
 	
-	public func peripheralManager(peripheral: CBPeripheralManager!, didReceiveReadRequest request: CBATTRequest!) {
-		if request == nil { return }
+	public func peripheralManager(peripheral: CBPeripheralManager, didReceiveReadRequest request: CBATTRequest) {
 		if let characteristic = self.characteristicWithCBCharacteristic(request.characteristic) {
 			if let data = characteristic.dataValue {
-				var range = NSRange(location: request.offset, length: data.length - request.offset)
+				let range = NSRange(location: request.offset, length: data.length - request.offset)
 				request.value = characteristic.dataValue?.subdataWithRange(range)
 				self.cbPeripheralManager?.respondToRequest(request, withResult: .Success)
 			} else {
@@ -146,29 +145,26 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		self.cbPeripheralManager?.respondToRequest(request, withResult: .AttributeNotFound)
 	}
 	
-	public func peripheralManager(peripheral: CBPeripheralManager!, didReceiveWriteRequests requests: [AnyObject]!) {
-		if requests == nil || requests.count == 0 { return }
-		if let requests = requests as? [CBATTRequest] where requests.count > 0 {
-			for request in requests {
-				NSNotification.postNotification(BTLE.notifications.characteristicWasWrittenTo, object: self.characteristicWithCBCharacteristic(request.characteristic))
-			}
-			self.cbPeripheralManager?.respondToRequest(requests[0], withResult: .Success)
+	public func peripheralManager(peripheral: CBPeripheralManager, didReceiveWriteRequests requests: [CBATTRequest]) {
+		if requests.count == 0 { return }
+		for request in requests {
+			NSNotification.postNotification(BTLE.notifications.characteristicWasWrittenTo, object: self.characteristicWithCBCharacteristic(request.characteristic))
 		}
-		
+		self.cbPeripheralManager?.respondToRequest(requests[0], withResult: .Success)
 	}
 	
 	//=============================================================================================
 	//MARK: Delegate - status
 
 	
-	public func peripheralManagerDidStartAdvertising(peripheral: CBPeripheralManager!, error: NSError!) {
+	public func peripheralManagerDidStartAdvertising(peripheral: CBPeripheralManager, error: NSError?) {
 		if let error = error {
 			BTLE.debugLog(.Low, "advertising started with error: \(error)")
 			self.internalState = .Idle
 		}
 	}
 	
-	public func peripheralManager(peripheral: CBPeripheralManager!, didAddService service: CBService!, error: NSError!) {
+	public func peripheralManager(peripheral: CBPeripheralManager, didAddService service: CBService, error: NSError?) {
 		self.serviceWithCBService(service)?.isLive = true
 	}
 	
@@ -176,17 +172,17 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	//MARK: Delegate - Characteristic
 
 	
-	public func peripheralManager(peripheral: CBPeripheralManager!, central: CBCentral!, didSubscribeToCharacteristic characteristic: CBCharacteristic!) {
+	public func peripheralManager(peripheral: CBPeripheralManager, central: CBCentral, didSubscribeToCharacteristic characteristic: CBCharacteristic) {
 		
 	}
 	
-	public func peripheralManager(peripheral: CBPeripheralManager!, central: CBCentral!, didUnsubscribeFromCharacteristic characteristic: CBCharacteristic!) {
+	public func peripheralManager(peripheral: CBPeripheralManager, central: CBCentral, didUnsubscribeFromCharacteristic characteristic: CBCharacteristic) {
 		
 	}
 	
 	//=============================================================================================
 	//MARK: Private
-	var combinedAdvertisementData: [NSObject: AnyObject] {
+	var combinedAdvertisementData: [String: AnyObject] {
 		var data = self.advertisingData
 		var services: [CBUUID] = []
 		
@@ -206,7 +202,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		if self.cbPeripheralManager == nil || rebuild {
 			self.turnOff()
 			
-			var options: [NSObject: AnyObject] = [:]
+			var options: [String: AnyObject] = [:]
 			
 			if BTLE.advertiseInBackground { options[CBPeripheralManagerOptionRestoreIdentifierKey] = BTLEPeripheralManager.restoreIdentifier }
 			
@@ -229,7 +225,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	func turnOff() {
 		self.stopAdvertising()
 		
-		if let peripheralManager = self.cbPeripheralManager {
+		if self.cbPeripheralManager != nil {
 			self.cbPeripheralManager = nil
 			if stateChangeCounter == 0 { self.internalState = .Off }
 		}

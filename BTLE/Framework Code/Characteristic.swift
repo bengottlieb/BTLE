@@ -195,7 +195,7 @@ public class BTLECharacteristic: NSObject {
 	
 	
 	public var fullDescription: String {
-		var desc = "\(self.summaryDescription)"
+		let desc = "\(self.summaryDescription)"
 		
 		return desc
 	}
@@ -205,7 +205,7 @@ public class BTLECharacteristic: NSObject {
 	//MARK: Descriptors
 
 	func loadDescriptors() {
-		if let descr = self.cbCharacteristic.descriptors as? [CBDescriptor] {
+		if let descr = self.cbCharacteristic.descriptors {
 			self.descriptors = descr.map({ return BTLEDescriptor(descriptor: $0)})
 		}
 	}
@@ -224,8 +224,8 @@ public class BTLECharacteristic: NSObject {
 
 public class BTLEMutableCharacteristic : BTLECharacteristic {
 	public init(uuid: CBUUID, properties: CBCharacteristicProperties, value: NSData? = nil, permissions: CBAttributePermissions = .Readable) {
-		var creationData = properties.rawValue & CBCharacteristicProperties.Notify.rawValue != 0 ? nil : value
-		var chr = CBMutableCharacteristic(type: uuid, properties: properties, value: creationData, permissions: permissions)
+		let creationData = properties.rawValue & CBCharacteristicProperties.Notify.rawValue != 0 ? nil : value
+		let chr = CBMutableCharacteristic(type: uuid, properties: properties, value: creationData, permissions: permissions)
 		super.init(characteristic: chr, ofService: nil)
 		self.dataValue = value
 	}

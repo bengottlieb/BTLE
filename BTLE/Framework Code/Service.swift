@@ -14,7 +14,7 @@ protocol BTLEServiceProtocol {
 	init(service svc: CBService, onPeriperhal: BTLEPeripheral);
 }
 
-public class BTLEService: NSObject, Printable {
+public class BTLEService: NSObject {
 	public var cbService: CBService!
 	var peripheral: BTLEPeripheral!
 	var loadingState = BTLE.LoadingState.NotLoaded
@@ -24,7 +24,7 @@ public class BTLEService: NSObject, Printable {
 	
 	class func createService(service svc: CBService, onPeriperhal: BTLEPeripheral) -> BTLEService {
 		if let serviceClass: BTLEService.Type = BTLE.registeredClasses.services[svc.UUID] {
-			return serviceClass(service: svc, onPeriperhal: onPeriperhal)
+			return serviceClass.init(service: svc, onPeriperhal: onPeriperhal)
 		} else {
 			return BTLEService(service: svc, onPeriperhal: onPeriperhal)
 		}
@@ -65,10 +65,10 @@ public class BTLEService: NSObject, Printable {
 	}
 	
 	func updateCharacteristics() {
-		if let characteristics = self.cbService.characteristics as? [CBCharacteristic] {
+		if let characteristics = self.cbService.characteristics {
 			for chr in characteristics {
 				if self.findCharacteristicMatching(chr) == nil && self.shouldLoadCharacteristic(chr) {
-					var characteristic = BTLECharacteristic(characteristic: chr, ofService: self)
+					let characteristic = BTLECharacteristic(characteristic: chr, ofService: self)
 					self.characteristics.append(characteristic)
 				}
 			}
@@ -85,7 +85,7 @@ public class BTLEService: NSObject, Printable {
 	}
 	
 	func findCharacteristicMatching(chr: CBCharacteristic) -> BTLECharacteristic? {
-		return filter(self.characteristics, { $0.cbCharacteristic == chr }).last
+		return self.characteristics.filter({ $0.cbCharacteristic == chr }).last
 	}
 	
 	var numberOfLoadingCharacteristics: Int {
@@ -136,7 +136,7 @@ public class BTLEService: NSObject, Printable {
 	}
 	
 
-	public func characteristicWithUUID(uuid: CBUUID) -> BTLECharacteristic? { return filter(self.characteristics, { $0.cbCharacteristic.UUID == uuid }).last }
+	public func characteristicWithUUID(uuid: CBUUID) -> BTLECharacteristic? { return self.characteristics.filter({ $0.cbCharacteristic.UUID == uuid }).last }
 	
 }
 
@@ -190,7 +190,7 @@ public class BTLEMutableService: BTLEService {
 		chr.service = self
 		if let svc = self.cbService as? CBMutableService {
 			if svc.characteristics == nil { svc.characteristics = [] }
-			svc.characteristics.append(chr.cbCharacteristic)
+			svc.characteristics?.append(chr.cbCharacteristic)
 		}
 	}
 	

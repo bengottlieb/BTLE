@@ -13,9 +13,9 @@ extension Array {
 		return self.indexOf(obj) != nil
 	}
 
-	mutating func remove<U: Equatable>(object: U) -> [T] {
+	mutating func remove<U: Equatable>(object: U) -> [Element] {
 		var index: Int?
-		for (idx, objectToCompare) in enumerate(self) {
+		for (idx, objectToCompare) in self.enumerate() {
 			if let to = objectToCompare as? U {
 				if object == to {
 					index = idx
@@ -34,7 +34,7 @@ extension Array {
 		return nil
 	}
 	
-	func shuffled() -> [T] {
+	func shuffled() -> [Element] {
 		var list = self
 		for i in 0..<(list.count - 1) {
 			let j = Int(arc4random_uniform(UInt32(list.count - i))) + i
@@ -46,7 +46,7 @@ extension Array {
 }
 
 extension Set {
-	func map<U>(transform: (T) -> U) -> Set<U> {
-		return Set<U>(Swift.map(self, transform))
+	func map<U>(transform: (Element) -> U) -> Set<U> {
+		return Set<U>(self.map(transform))
 	}
 }

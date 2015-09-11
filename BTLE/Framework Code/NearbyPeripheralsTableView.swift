@@ -13,8 +13,8 @@ import SA_Swift
 public class NearbyPeripheralsTableView: UITableView, UITableViewDelegate, UITableViewDataSource {
 	deinit { self.removeAsObserver() }
 
-	public required init(coder aDecoder: NSCoder) { super.init(coder: aDecoder); self.setup() }
-	public override init(frame: CGRect) { super.init(frame: frame); self.setup() }
+	public required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder); self.setup() }
+	public init(frame: CGRect) { super.init(frame: frame, style: .Plain); self.setup() }
 	public override init(frame: CGRect, style: UITableViewStyle) { super.init(frame: frame, style: style); self.setup() }
 	
 	public var peripherals: [BTLEPeripheral]? { didSet { self.reload() }}
@@ -61,10 +61,10 @@ public class NearbyPeripheralsTableView: UITableView, UITableViewDelegate, UITab
 	}
 	
 	public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-		var per = self.actualPeripherals[indexPath.row]
-		var advertisingInfo = per.advertisementData
-		var text = advertisingInfo.description
-		var alert = UIAlertController(title: nil, message: text, preferredStyle: .Alert)
+		let per = self.actualPeripherals[indexPath.row]
+		let advertisingInfo = per.advertisementData
+		let text = advertisingInfo.description
+		let alert = UIAlertController(title: nil, message: text, preferredStyle: .Alert)
 		alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { action in
 			alert.dismissViewControllerAnimated(true, completion: nil)
 		}))

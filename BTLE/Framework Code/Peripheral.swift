@@ -51,7 +51,7 @@ public struct BTLECharacteristicUUIDs {
 
 
 
-public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
+public class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	deinit {
 		BTLE.debugLog(.SuperHigh, "BTLE Peripheral: deiniting: \(self)")
 	}
@@ -335,7 +335,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		self.cbPeripheral.readRSSI()
 	}
 	
-	public func serviceWithUUID(uuid: CBUUID) -> BTLEService? { return filter(self.services, { $0.cbService.UUID == uuid }).last }
+	public func serviceWithUUID(uuid: CBUUID) -> BTLEService? { return self.services.filter({ $0.cbService.UUID == uuid }).last }
 	public func characteristicFromCBCharacteristic(characteristic: CBCharacteristic) -> BTLECharacteristic? {
 		if let service = self.serviceWithUUID(characteristic.service.UUID) {
 			if let chr = service.characteristicWithUUID(characteristic.UUID) {
@@ -386,7 +386,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 			return service
 		}
 		
-		var service = BTLEService.createService(service: cbService, onPeriperhal: self)
+		let service = BTLEService.createService(service: cbService, onPeriperhal: self)
 		self.services.append(service)
 
 		return service
@@ -403,10 +403,9 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 		if self.state == .Discovered && BTLE.manager.deviceLifetime > 0 {
 			btle_dispatch_main { [weak self] in
 				if let me = self {
-					var timeSinceLastComms = abs(me.lastCommunicatedAt.timeIntervalSinceNow)
-					var a = abs(timeSinceLastComms)
+					let timeSinceLastComms = abs(me.lastCommunicatedAt.timeIntervalSinceNow)
 					if BTLE.manager.deviceLifetime > timeSinceLastComms {
-						var timeoutInverval = (BTLE.manager.deviceLifetime - timeSinceLastComms)
+						let timeoutInverval = (BTLE.manager.deviceLifetime - timeSinceLastComms)
 						
 						// if timeoutInverval < 3 { println("BTLE Peripheral: short term timer: \(timeSinceLastComms) sec") }
 						
@@ -439,13 +438,11 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	//=============================================================================================
 	//MARK: Delegate - Peripheral
 	
-	public func peripheral(peripheral: CBPeripheral!, didReadRSSI RSSI: NSNumber!, error: NSError!) {
-		if let rssi = RSSI {
-			self.rssi = rssi.integerValue
-		}
+	public func peripheral(peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: NSError?) {
+		self.rssi = RSSI.integerValue
 	}
 
-	public func peripheralDidUpdateName(peripheral: CBPeripheral!) {
+	public func peripheralDidUpdateName(peripheral: CBPeripheral) {
 		self.name = peripheral.name
 		self.sendNotification(BTLE.notifications.peripheralDidUpdateName)
 		BTLE.debugLog(.Medium, "Peripheral: Updated name for: \(self.name)") 
@@ -453,20 +450,18 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 
 	//=============================================================================================
 	//MARK: Delegate - Service
-	public func peripheral(peripheral: CBPeripheral!, didModifyServices invalidatedServices: [AnyObject]!) {
-		var remainingServices = self.services
-		
-		for invalidated in invalidatedServices as! [CBService] {
+	public func peripheral(peripheral: CBPeripheral, didModifyServices invalidatedServices: [CBService]) {
+		for invalidated in invalidatedServices {
 			if self.shouldLoadService(invalidated) {
 				self.findOrCreateService(invalidated).reload()
 			}
 		}
 	}
 	
-	public func peripheral(peripheral: CBPeripheral!, didDiscoverServices error: NSError!) {
-		BTLE.debugLog(.Medium, "Discovered \(self.cbPeripheral.services.count) on \(self.name)")
+	public func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
+		BTLE.debugLog(.Medium, "Discovered \(self.cbPeripheral.services?.count ?? 0) on \(self.name)")
 		
-		if let services = self.cbPeripheral.services as? [CBService] {
+		if let services = self.cbPeripheral.services {
 			if self.ignored == .CheckingForServices {
 				for svc in services {
 					if BTLE.manager.services.contains(svc.UUID) {
@@ -496,35 +491,35 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate, Printable {
 	//=============================================================================================
 	//MARK:	 Delegate - Characteristic
 
-	public func peripheral(peripheral: CBPeripheral!, didDiscoverCharacteristicsForService service: CBService!, error: NSError!) {
+	public func peripheral(peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
 		if self.shouldLoadService(service) {
 			self.findOrCreateService(service).updateCharacteristics()
 		}
 	}
 	
-	public func peripheral(peripheral: CBPeripheral!, didUpdateValueForCharacteristic characteristic: CBCharacteristic!, error: NSError!) {
+	public func peripheral(peripheral: CBPeripheral, didUpdateValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
 		if self.shouldLoadService(characteristic.service) {
 			self.findOrCreateService(characteristic.service).didLoadCharacteristic(characteristic, error: error)
 		}
 	}
 	
-	public func peripheral(peripheral: CBPeripheral!, didWriteValueForCharacteristic characteristic: CBCharacteristic!, error: NSError!) {
+	public func peripheral(peripheral: CBPeripheral, didWriteValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
 		self.characteristicFromCBCharacteristic(characteristic)?.didWriteValue(error)
 	}
 	
-	public func peripheral(peripheral: CBPeripheral!, didUpdateNotificationStateForCharacteristic characteristic: CBCharacteristic!, error: NSError!) {
+	public func peripheral(peripheral: CBPeripheral, didUpdateNotificationStateForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
 		self.characteristicFromCBCharacteristic(characteristic)?.didUpdateNotifyValue()
 	}
 	
-	public func peripheral(peripheral: CBPeripheral!, didDiscoverDescriptorsForCharacteristic characteristic: CBCharacteristic!, error: NSError!) {
+	public func peripheral(peripheral: CBPeripheral, didDiscoverDescriptorsForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
 		self.characteristicFromCBCharacteristic(characteristic)?.loadDescriptors()
 	}
 	
-	public func peripheral(peripheral: CBPeripheral!, didUpdateValueForDescriptor descriptor: CBDescriptor!, error: NSError!) {
+	public func peripheral(peripheral: CBPeripheral, didUpdateValueForDescriptor descriptor: CBDescriptor, error: NSError?) {
 		self.characteristicFromCBCharacteristic(descriptor.characteristic)?.didUpdateValueForDescriptor(descriptor)
 	}
 	
-	public func peripheral(peripheral: CBPeripheral!, didWriteValueForDescriptor descriptor: CBDescriptor!, error: NSError!) {
+	public func peripheral(peripheral: CBPeripheral, didWriteValueForDescriptor descriptor: CBDescriptor, error: NSError?) {
 		self.characteristicFromCBCharacteristic(descriptor.characteristic)?.didWriteValueForDescriptor(descriptor)
 	}
 	

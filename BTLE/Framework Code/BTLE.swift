@@ -52,7 +52,7 @@ public class BTLE: NSObject {
 	
 	class func debugLog(requiredLevel: DebugLevel, @autoclosure _ message: () -> String) {
 		if self.debugLevel.rawValue >= requiredLevel.rawValue {
-			println("BTLE: \(message())")
+			print("BTLE: \(message())")
 		}
 	}
 	
@@ -162,7 +162,7 @@ public class BTLE: NSObject {
 		}
 		let completion: (Bool) -> Void
 		var manager: CBPeripheralManager!
-		func peripheralManagerDidUpdateState(peripheral: CBPeripheralManager!) {
+		func peripheralManagerDidUpdateState(peripheral: CBPeripheralManager) {
 			if CBPeripheralManager.authorizationStatus() == .Denied {
 				self.completion(false)
 				self.manager.stopAdvertising()

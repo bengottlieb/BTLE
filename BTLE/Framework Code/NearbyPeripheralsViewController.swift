@@ -11,7 +11,7 @@ import CoreBluetooth
 
 public class NearbyPeripheralsViewController: UIViewController {
 	public override func loadView() {
-		var table = NearbyPeripheralsTableView(frame: CGRectZero)
+		let table = NearbyPeripheralsTableView(frame: CGRectZero)
 		self.view = table
 		table.parentViewController = self
 		
