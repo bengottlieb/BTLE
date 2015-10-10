@@ -49,6 +49,8 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 			self.stopAdvertising()
 			
 		case .PowerInterupted: break
+		case .Cycling: break
+		case .ShuttingDown: break
 		}
 		
 		self.stateChangeCounter--

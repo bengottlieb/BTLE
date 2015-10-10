@@ -20,6 +20,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	@IBOutlet var monitorRSSISwitch: UISwitch!
 	@IBOutlet var advertiseSwitch: UISwitch!
 	@IBOutlet var filterByServicesSwitch: UISwitch!
+	@IBOutlet var scanningLabel: UILabel!
 
 	var characteristicData = NSDate().localTimeString(timeStyle: .FullStyle)
 	var devices: [BTLEPeripheral] = []
@@ -28,11 +29,22 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		self.devices = Array(BTLE.scanner.peripherals)
 		dispatch_async_main {
 			self.tableView.reloadData()
+			self.updateScanningLabel()
+			self.scanSwitch.on = BTLE.scanner.state == .Active || BTLE.scanner.state == .StartingUp
 		}
 	}
 	
 	var notifyCharacteristic: BTLEMutableCharacteristic?
 	var writableCharacteristic: BTLEMutableCharacteristic?
+	
+	func updateScanningLabel() {
+		var text = BTLE.scanner.state.stringValue
+		let count = self.devices.count
+		
+		text += " \(count) found"
+		
+		self.scanningLabel.text = text
+	}
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -40,18 +52,19 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		self.tableView.registerNib(UINib(nibName: "PeripheralCellTableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
 		
 		BTLE.debugLevel = .High
-		BTLE.registerServiceClass(LockService.self, forServiceID: CBUUID(string: "FFF4"))
-		BTLE.registerPeripheralClass(LockPeripheral.self)
+//		BTLE.registerServiceClass(LockService.self, forServiceID: CBUUID(string: "FFF4"))
+//		BTLE.registerPeripheralClass(LockPeripheral.self)
 
 		//setup scanner
 		BTLE.manager.deviceLifetime = 20.0
+		BTLE.manager.monitorRSSI = (NSUserDefaults.get(DefaultsKey<Bool>("monitorRSSI")) ?? false)
+		BTLE.manager.services = (NSUserDefaults.get(DefaultsKey<Bool>("filterByServices")) ?? false) ? [filterServiceID] : []
+
 		if (NSUserDefaults.get(DefaultsKey<Bool>("scanning")) ?? false) {
 			BTLE.scanner.startScanning()
 		} else {
 			BTLE.scanner.stopScanning()
 		}
-		BTLE.manager.monitorRSSI = (NSUserDefaults.get(DefaultsKey<Bool>("monitorRSSI")) ?? false)
-		BTLE.manager.services = (NSUserDefaults.get(DefaultsKey<Bool>("filterByServices")) ?? false) ? [] : [filterServiceID]
 		
 		//setup advertiser
 		
@@ -71,10 +84,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		self.filterByServicesSwitch.on = BTLE.manager.services.count > 0
 		self.monitorRSSISwitch.on = BTLE.manager.monitorRSSI
 
-		self.filterByServicesSwitch.enabled = self.scanSwitch.on
-		self.monitorRSSISwitch.enabled = self.scanSwitch.on
+		//self.filterByServicesSwitch.enabled = self.scanSwitch.on
+		//self.monitorRSSISwitch.enabled = self.scanSwitch.on
 
 		self.addAsObserver(BTLE.notifications.willStartScan, selector: "updateStatus", object: nil)
+		self.addAsObserver(BTLE.notifications.didStartScan, selector: "updateStatus", object: nil)
 		self.addAsObserver(BTLE.notifications.didFinishScan, selector: "updateStatus", object: nil)
 
 		self.addAsObserver(BTLE.notifications.willStartAdvertising, selector: "updateStatus", object: nil)

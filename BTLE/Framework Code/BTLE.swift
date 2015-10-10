@@ -20,14 +20,16 @@ public class BTLE: NSObject {
 	public enum LoadingState { case NotLoaded, Loading, Loaded, LoadingCancelled, Reloading }
 	public enum ServiceFilter { case CoreBluetooth, AdvertisingData, ActualServices }
 
-	public enum State: Int { case Off, StartingUp, Active, Idle, PowerInterupted
-		var stringValue: String {
+	public enum State: Int { case Off, StartingUp, Active, Idle, PowerInterupted, ShuttingDown, Cycling
+		public var stringValue: String {
 			switch (self) {
 			case .Off: return "off"
 			case .StartingUp: return "starting up"
 			case .Active: return "active"
 			case .Idle: return "idle"
 			case .PowerInterupted: return "interupted by power-off"
+			case .ShuttingDown: return "Shutting Down"
+			case .Cycling: return "Cycling"
 			}
 		}
 	}
@@ -58,6 +60,7 @@ public class BTLE: NSObject {
 	
 	public struct notifications {
 		public static let willStartScan = "com.standalone.btle.willStartScan"
+		public static let didStartScan = "com.standalone.btle.didStartScan"
 		public static let didFinishScan = "com.standalone.btle.didFinishScan"
 
 		public static let willStartAdvertising = "com.standalone.btle.willStartAdvertising"
@@ -128,25 +131,16 @@ public class BTLE: NSObject {
 			self.cyclingAdvertising = true
 			BTLE.advertiser.turnOff()
 			
+		case .ShuttingDown: break
+		case .Cycling: break
+			
 		case .Off:
 			BTLE.advertiser.startAdvertising()
 		}
 	}
 	
 	public func cycleScanning() {
-		if self.cyclingScanning { return }
-		
-		switch BTLE.scanner.state {
-		case .Active: fallthrough
-		case .StartingUp: fallthrough
-		case .PowerInterupted: fallthrough
-		case .Idle:
-			self.cyclingScanning = true
-			BTLE.scanner.turnOff()
-			
-		case .Off:
-			BTLE.scanner.startScanning()
-		}
+		BTLE.scanner.internalState = .Cycling
 	}
 	
 	//BTLE Authorization status
