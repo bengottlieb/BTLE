@@ -34,7 +34,6 @@
 		B57CA3C11AEAD51700B0125F /* NearbyPeripheralsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B57CA3C01AEAD51700B0125F /* NearbyPeripheralsTableView.swift */; };
 		B57CA3C41AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B57CA3C21AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift */; };
 		B57CA3C51AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B57CA3C31AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib */; };
-		B582A2BB1ADDB1FB00736517 /* SA_Swift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B582A2BA1ADDB1FB00736517 /* SA_Swift.framework */; };
 		B58D64791A898F89005A0002 /* BTLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B58D64681A898F81005A0002 /* BTLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B58D647F1A898FBD005A0002 /* BTLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D64751A898F81005A0002 /* BTLE.swift */; };
 		B58D64831A898FBE005A0002 /* BTLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D64751A898F81005A0002 /* BTLE.swift */; };
@@ -47,14 +46,13 @@
 		B5A4823E1AE3F1E8001636BE /* DeviceDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A4823C1AE3F1E8001636BE /* DeviceDetailsViewController.swift */; };
 		B5A4823F1AE3F1E8001636BE /* DeviceDetailsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5A4823D1AE3F1E8001636BE /* DeviceDetailsViewController.xib */; };
 		B5BCEC091AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BCEC081AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift */; };
+		B5CC3B931BC98A7900DB75DD /* Gulliver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5CC3B921BC98A7900DB75DD /* Gulliver.framework */; settings = {ASSET_TAGS = (); }; };
+		B5CC3B941BC98ACD00DB75DD /* Gulliver.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B5CC3B921BC98A7900DB75DD /* Gulliver.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B5D6083E1ADBF4F6004DC9AC /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */; };
 		B5D6083F1ADBF4F6004DC9AC /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */; };
 		B5D608411ADBFD4C004DC9AC /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D608401ADBFD4C004DC9AC /* Peripheral.swift */; };
 		B5D608421ADBFD4C004DC9AC /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D608401ADBFD4C004DC9AC /* Peripheral.swift */; };
-		B5D608451ADC097E004DC9AC /* SA_Swift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5D608441ADC097E004DC9AC /* SA_Swift.framework */; };
 		B5D608461ADC0C84004DC9AC /* SA_Swift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5D608441ADC097E004DC9AC /* SA_Swift.framework */; };
-		B5D608471ADC0C8D004DC9AC /* SA_Swift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B5D608441ADC097E004DC9AC /* SA_Swift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B5D608481ADC0CB9004DC9AC /* SA_Swift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5D608441ADC097E004DC9AC /* SA_Swift.framework */; };
 		B5D6084A1ADC4486004DC9AC /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D608491ADC4486004DC9AC /* Service.swift */; };
 		B5D6084B1ADC4486004DC9AC /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D608491ADC4486004DC9AC /* Service.swift */; };
 		B5D6084D1ADC44A5004DC9AC /* Characteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6084C1ADC44A5004DC9AC /* Characteristic.swift */; };
@@ -90,7 +88,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B504E6A41A897017001B414B /* BTLE.framework in Embed Frameworks */,
-				B5D608471ADC0C8D004DC9AC /* SA_Swift.framework in Embed Frameworks */,
+				B5CC3B941BC98ACD00DB75DD /* Gulliver.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -114,7 +112,6 @@
 		B57CA3C21AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPeripheralsTableViewCell.swift; sourceTree = "<group>"; };
 		B57CA3C31AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NearbyPeripheralsTableViewCell.xib; sourceTree = "<group>"; };
 		B57CA3C71AEB2B9A00B0125F /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = MyPlayground.playground; path = BTLE/MyPlayground.playground; sourceTree = SOURCE_ROOT; };
-		B582A2BA1ADDB1FB00736517 /* SA_Swift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SA_Swift.framework; sourceTree = "<group>"; };
 		B58D64671A898F81005A0002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B58D64681A898F81005A0002 /* BTLE.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BTLE.h; sourceTree = "<group>"; };
 		B58D646A1A898F81005A0002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -129,9 +126,10 @@
 		B5A4823C1AE3F1E8001636BE /* DeviceDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DeviceDetailsViewController.swift; path = "Device Details/DeviceDetailsViewController.swift"; sourceTree = "<group>"; };
 		B5A4823D1AE3F1E8001636BE /* DeviceDetailsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DeviceDetailsViewController.xib; path = "Device Details/DeviceDetailsViewController.xib"; sourceTree = "<group>"; };
 		B5BCEC081AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPeripheralsViewController.swift; sourceTree = "<group>"; };
+		B5CC3B921BC98A7900DB75DD /* Gulliver.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Gulliver.framework; sourceTree = "<group>"; };
 		B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManager.swift; sourceTree = "<group>"; };
 		B5D608401ADBFD4C004DC9AC /* Peripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
-		B5D608441ADC097E004DC9AC /* SA_Swift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SA_Swift.framework; sourceTree = "<group>"; };
+		B5D608441ADC097E004DC9AC /* SA_Swift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SA_Swift.framework; path = /Users/ben/Documents/ManagedProjects/Frameworks/BTLE/Frameworks/SA_Swift.framework; sourceTree = "<absolute>"; };
 		B5D608491ADC4486004DC9AC /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		B5D6084C1ADC44A5004DC9AC /* Characteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Characteristic.swift; sourceTree = "<group>"; };
 		B5DAB3311AE40B3800D49D44 /* PeripheralCellTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralCellTableViewCell.swift; sourceTree = "<group>"; };
@@ -146,6 +144,7 @@
 			files = (
 				B5D608461ADC0C84004DC9AC /* SA_Swift.framework in Frameworks */,
 				B504E65D1A8968DC001B414B /* BTLE.framework in Frameworks */,
+				B5CC3B931BC98A7900DB75DD /* Gulliver.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -153,7 +152,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B5D608451ADC097E004DC9AC /* SA_Swift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -161,7 +159,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B5D608481ADC0CB9004DC9AC /* SA_Swift.framework in Frameworks */,
 				B504E6A51A897087001B414B /* BTLE.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -170,7 +167,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B582A2BB1ADDB1FB00736517 /* SA_Swift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,7 +221,6 @@
 		B582A2B91ADDB1FB00736517 /* Mac Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B582A2BA1ADDB1FB00736517 /* SA_Swift.framework */,
 			);
 			path = "Mac Frameworks";
 			sourceTree = "<group>";
@@ -301,7 +296,7 @@
 		B5D608431ADC097E004DC9AC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B5D608441ADC097E004DC9AC /* SA_Swift.framework */,
+				B5CC3B921BC98A7900DB75DD /* Gulliver.framework */,
 			);
 			path = Frameworks;
 			sourceTree = "<group>";

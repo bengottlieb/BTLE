@@ -8,7 +8,7 @@
 
 import UIKit
 import BTLE
-import SA_Swift
+import Gulliver
 
 class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 	deinit {
@@ -126,18 +126,18 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 	
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		if let service = self.sections[indexPath.section] {
-			var cell = tableView.dequeueReusableCellWithIdentifier("characteristic", forIndexPath: indexPath) as! CharacteristicTableViewCell
-			var chr = service.characteristics[indexPath.row]
+			let cell = tableView.dequeueReusableCellWithIdentifier("characteristic", forIndexPath: indexPath) as! CharacteristicTableViewCell
+			let chr = service.characteristics[indexPath.row]
 			
 			cell.characteristic = chr
 			
 			return cell
  		} else {
-			var cell = UITableViewCell(style: .Value1, reuseIdentifier: "cell")
+			let cell = UITableViewCell(style: .Value1, reuseIdentifier: "cell")
 			var info = self.peripheral.advertisementData
-			var keys = sorted((info as NSDictionary).allKeys as! [String], <)
-			var key = keys[indexPath.row]
-			var value = info[key] as? Printable
+			var keys = ((info as NSDictionary).allKeys as! [String]).sort(<)
+			let key = keys[indexPath.row]
+			let value = info[key] as? CustomStringConvertible
 			
 			cell.textLabel?.text = key
 			cell.detailTextLabel?.text = (value?.description ?? "").stringByReplacingOccurrencesOfString("\n", withString: "")
@@ -147,7 +147,7 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 	}
 	
 	func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-		var label = UILabel(frame: CGRect(x: 0, y: 0, width: 320, height: 22))
+		let label = UILabel(frame: CGRect(x: 0, y: 0, width: 320, height: 22))
 		label.text = self.tableView(tableView, titleForHeaderInSection: section)
 		label.backgroundColor = UIColor.orangeColor()
 		label.textColor = UIColor.blackColor()
@@ -171,17 +171,17 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 	
 	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 		if let service = self.sections[indexPath.section] {
-			var chr = service.characteristics[indexPath.row]
+			let chr = service.characteristics[indexPath.row]
 			
 			chr.reload()
-			println("\(chr)")
+			print("\(chr)")
 		} else {
 			var info = self.peripheral.advertisementData
-			var keys = sorted((info as NSDictionary).allKeys as! [String], <)
-			var key = keys[indexPath.row]
-			var value = info[key] as? Printable
+			var keys = ((info as NSDictionary).allKeys as! [String]).sort(<)
+			let key = keys[indexPath.row]
+			let value = info[key] as? CustomStringConvertible
 			
-			println("\(value)")
+			print("\(value)")
 		}
 	}
 }

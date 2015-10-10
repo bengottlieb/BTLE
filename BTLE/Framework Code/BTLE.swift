@@ -46,7 +46,7 @@ public class BTLE: NSObject {
 	public var monitorRSSI = false { didSet { self.cycleScanning() }}
 	public var disableRSSISmoothing = false
 	public var deviceLifetime: NSTimeInterval = 0.0 { didSet {
-		Array(BTLE.scanner.peripherals).map({ $0.updateVisibilityTimer(); })
+		Array(BTLE.scanner.peripherals).forEach { $0.updateVisibilityTimer(); }
 	}}
 	public var loadEncryptedCharacteristics = false
 	

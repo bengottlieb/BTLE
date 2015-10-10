@@ -8,7 +8,7 @@
 
 import UIKit
 import BTLE
-import SA_Swift
+import Gulliver
 import CoreBluetooth
 
 class CharacteristicTableViewCell: UITableViewCell {
@@ -41,7 +41,7 @@ class CharacteristicTableViewCell: UITableViewCell {
 			if let chr = self.characteristic {
 				self.notifySwitch.on = (chr.listeningState == .Listening || chr.listeningState == .StartingToListen)
 				self.notifySwitch.enabled = (chr.listeningState == .Listening || chr.listeningState == .NotListening)
-				var desc = chr.cbCharacteristic.UUID.description
+				let desc = chr.cbCharacteristic.UUID.description
 				self.nameAndPropertiesLabel?.text = desc.substringToIndex(desc.index(20)) + ": " + chr.propertiesAsString
 				
 				self.notifySwitch.hidden = !chr.canNotify
@@ -69,7 +69,7 @@ class CharacteristicTableViewCell: UITableViewCell {
 	}
 	
 	@IBAction func writeTo() {
-		var data = NSData(hexString: "935343717a627a743074565a7849435876724867")
+		let data = NSData(hexString: "935343717a627a743074565a7849435876724867")
 
 		NSLog("%@", self.characteristic!.service!.fullDescription)
 		

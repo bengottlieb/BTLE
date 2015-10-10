@@ -9,7 +9,7 @@
 import UIKit
 import CoreBluetooth
 import BTLE
-import SA_Swift
+import Gulliver
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 		// Override point for customization after application launch
 		
-		var settings = UIUserNotificationSettings(forTypes: .Alert | .Sound | .Badge, categories: nil)
+		let settings = UIUserNotificationSettings(forTypes: [.Alert, .Sound, .Badge], categories: nil)
 		application.registerUserNotificationSettings(settings)
 		application.registerForRemoteNotifications()
 	
@@ -47,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	}
 
 	func zapped(note: NSNotification) {
-		println("received write requests: \(note.object)")
+		print("received write requests: \(note.object)")
 		
 //		SoundEffect.playSound("zap.caf")
 //		UILocalNotification.playSound("zap.caf")
@@ -70,18 +70,18 @@ class LockService: BTLEService {
 	}
 	
 	override func didFinishLoading() {
-		var lockStatus = self.characteristicWithUUID(LockStatusCharacteristic)
-		var data = lockStatus?.dataValue
+//		let lockStatus = self.characteristicWithUUID(LockStatusCharacteristic)
+//		let data = lockStatus?.dataValue
 		//lockStatus?.listenForUpdates = true
 		
 		
-		//println("BTLEService: \(lockStatus), Data: \(data)")
+		//print("BTLEService: \(lockStatus), Data: \(data)")
 	}
 }
 
 extension UILocalNotification {
 	class func playSound(soundName: String) {
-		var note = UILocalNotification()
+		let note = UILocalNotification()
 		
 		note.fireDate = NSDate(timeIntervalSinceNow: 0.01)
 		note.soundName = soundName

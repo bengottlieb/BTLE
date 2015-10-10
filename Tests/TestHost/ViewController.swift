@@ -9,7 +9,7 @@
 import UIKit
 import BTLE
 import CoreBluetooth
-import SA_Swift
+import Gulliver
 
 let testServiceID = CBUUID(string: "737CFF0D-7AEC-43B6-A37F-1EC1671307A6") // CBUUID(string: "45DFE33C-312F-4CEF-A67C-E103D29FA41D")
 let filterServiceID = testServiceID// CBUUID(string: "C9563739-1783-4E81-A3EC-5061D4B2311C")
@@ -45,24 +45,24 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
 		//setup scanner
 		BTLE.manager.deviceLifetime = 20.0
-		if (NSUserDefaults.keyedBool("scanning") ?? false) {
+		if (NSUserDefaults.get(DefaultsKey<Bool>("scanning")) ?? false) {
 			BTLE.scanner.startScanning()
 		} else {
 			BTLE.scanner.stopScanning()
 		}
-		BTLE.manager.monitorRSSI = (NSUserDefaults.keyedBool("monitorRSSI") ?? false)
-		BTLE.manager.services = (NSUserDefaults.keyedBool("filterByServices") ?? false) ? [] : [filterServiceID]
+		BTLE.manager.monitorRSSI = (NSUserDefaults.get(DefaultsKey<Bool>("monitorRSSI")) ?? false)
+		BTLE.manager.services = (NSUserDefaults.get(DefaultsKey<Bool>("filterByServices")) ?? false) ? [] : [filterServiceID]
 		
 		//setup advertiser
 		
-		self.writableCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "C9563739-1783-4E81-A3EC-5061D4B2311C"), properties: CBCharacteristicProperties.Write | CBCharacteristicProperties.Read, value: nil, permissions: .Readable | .Writeable)
-		self.notifyCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify, value: self.characteristicData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true))
+		self.writableCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "C9563739-1783-4E81-A3EC-5061D4B2311C"), properties: [CBCharacteristicProperties.Write, CBCharacteristicProperties.Read], value: nil, permissions: [.Readable, .Writeable])
+		self.notifyCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: [CBCharacteristicProperties.Read, CBCharacteristicProperties.Notify], value: self.characteristicData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true))
 		
-		var service = BTLEMutableService(uuid: testServiceID, isPrimary: true, characteristics: [ self.writableCharacteristic! ])
+		let service = BTLEMutableService(uuid: testServiceID, isPrimary: true, characteristics: [ self.writableCharacteristic! ])
 		service.advertised = true
 		
 		BTLE.advertiser.addService(service)
-		if (NSUserDefaults.keyedBool("advertising") ?? false) {
+		if (NSUserDefaults.get(DefaultsKey<Bool>("advertising")) ?? false) {
 			BTLE.advertiser.startAdvertising()
 		}
 		
@@ -111,7 +111,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 			BTLE.scanner.stopScanning()
 		}
 
-		NSUserDefaults.setKeyedBool(self.scanSwitch.on, forKey: "scanning")
+		NSUserDefaults.set(self.scanSwitch.on, forKey: DefaultsKey<Bool>("scanning"))
 
 		self.filterByServicesSwitch.enabled = self.scanSwitch.on
 		self.monitorRSSISwitch.enabled = self.scanSwitch.on
@@ -119,7 +119,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
 	@IBAction func toggleRSSIMonitoring() {
 		BTLE.manager.monitorRSSI = self.monitorRSSISwitch.on
-		NSUserDefaults.setKeyedBool(self.monitorRSSISwitch.on, forKey: "monitorRSSI")
+		NSUserDefaults.set(self.monitorRSSISwitch.on, forKey: DefaultsKey<Bool>("monitorRSSI"))
 	}
 	
 	@IBAction func toggleAdvertising() {
@@ -128,24 +128,24 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		} else {
 			BTLE.advertiser.stopAdvertising()
 		}
-		NSUserDefaults.setKeyedBool(self.advertiseSwitch.on, forKey: "advertising")
+		NSUserDefaults.set(self.advertiseSwitch.on, forKey: DefaultsKey<Bool>("advertising"))
 	}
 	
 	@IBAction func toggleFilterByServices() {
-		NSUserDefaults.setKeyedBool(self.filterByServicesSwitch.on, forKey: "filterByServices")
+		NSUserDefaults.set(self.filterByServicesSwitch.on, forKey: DefaultsKey<Bool>("filterByServices"))
 		BTLE.manager.services = self.filterByServicesSwitch.on ? [filterServiceID] : []
 	}
 	
 	@IBAction func configureServices() {
 		self.characteristicData = NSDate().localTimeString(timeStyle: .FullStyle)
 		
-		var published = self.characteristicData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+		let published = self.characteristicData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
 		
 		self.notifyCharacteristic!.updateDataValue(published)
 	}
 	
 	func connectToggled(toggle: UISwitch) {
-		var device = self.devices[toggle.tag]
+		let device = self.devices[toggle.tag]
 		
 		if toggle.on {
 			device.connect()
@@ -166,8 +166,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	}
 	
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		var cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! PeripheralCellTableViewCell
-		var device = self.devices[indexPath.row]
+		let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! PeripheralCellTableViewCell
+		let device = self.devices[indexPath.row]
 		
 		cell.peripheral = device
 		
@@ -175,12 +175,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	}
 	
 	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-		var device = self.devices[indexPath.row]
+		let device = self.devices[indexPath.row]
 		
 		self.navigationController?.pushViewController(DeviceDetailsViewController(peripheral: device), animated: true)
 	}
 	
-	func tableView(tableView: UITableView, titleForDeleteConfirmationButtonForRowAtIndexPath indexPath: NSIndexPath) -> String! {
+	func tableView(tableView: UITableView, titleForDeleteConfirmationButtonForRowAtIndexPath indexPath: NSIndexPath) -> String? {
 		return "Ignore"
 	}
 	
@@ -188,7 +188,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		tableView.beginUpdates()
 		
 		tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
-		var device = self.devices[indexPath.row]
+		let device = self.devices[indexPath.row]
 		
 		device.ignore()
 		self.devices = Array(BTLE.scanner.peripherals)
@@ -198,13 +198,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
 	func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
 		if indexPath.row >= self.devices.count { return 0 }
-		var device = self.devices[indexPath.row]
+		let device = self.devices[indexPath.row]
 		
 		return 71.0 + CGFloat(max(device.advertisementData.count - 2, 0)) * 15.0
 	}
 	
 	@IBAction func nearby() {
-		self.presentViewController(NearbyPeripheralsViewController().navigationWrappedController(hideNavigationBar: false), animated: true, completion: nil)
+		self.presentViewController(NearbyPeripheralsViewController().navigationWrappedController(false), animated: true, completion: nil)
 	}
 }
 

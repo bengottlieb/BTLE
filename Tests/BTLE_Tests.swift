@@ -8,7 +8,7 @@
 
 import UIKit
 import XCTest
-import SA_Swift
+import Gulliver
 import BTLE
 
 class BTLE_Tests: XCTestCase {

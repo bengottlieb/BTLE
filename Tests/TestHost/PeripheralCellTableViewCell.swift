@@ -8,7 +8,7 @@
 
 import UIKit
 import BTLE
-import SA_Swift
+import Gulliver
 
 class PeripheralCellTableViewCell: UITableViewCell {
 	var peripheral: BTLEPeripheral? { didSet { self.setupNotificationsForPeripheral(self.peripheral); self.updateUI() }}
@@ -37,11 +37,11 @@ class PeripheralCellTableViewCell: UITableViewCell {
 				self.detailsLabel.text = per.summaryDescription
 				self.rssiLabel.text = "\(per.rssi ?? 0)"
 				
-				var seconds = Int(abs(per.lastCommunicatedAt.timeIntervalSinceNow))
+				let seconds = Int(abs(per.lastCommunicatedAt.timeIntervalSinceNow))
 				var text = ""
 				for (key, value) in per.advertisementData {
-					if let describable = value as? Printable {
-						var line = describable.description.stringByReplacingOccurrencesOfString("\n", withString: "")
+					if let describable = value as? CustomStringConvertible {
+						let line = describable.description.stringByReplacingOccurrencesOfString("\n", withString: "")
 						text += "\n\(key): \(line)"
 					} else {
 						text += "\n\(key): \(value)"
@@ -49,7 +49,7 @@ class PeripheralCellTableViewCell: UITableViewCell {
 					
 				}
 				
-				var string = NSMutableAttributedString(string: "\(seconds) sec since last ping, \(per.services.count) services", attributes: [NSFontAttributeName: UIFont.boldSystemFontOfSize(12)])
+				let string = NSMutableAttributedString(string: "\(seconds) sec since last ping, \(per.services.count) services", attributes: [NSFontAttributeName: UIFont.boldSystemFontOfSize(12)])
 				string.appendAttributedString(NSAttributedString(string: text, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(12)]))
 				self.detailsLabel?.attributedText = string
 

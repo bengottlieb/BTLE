@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import SA_Swift
+import Gulliver
 
 
 public class NearbyPeripheralsTableViewCell: UITableViewCell {
