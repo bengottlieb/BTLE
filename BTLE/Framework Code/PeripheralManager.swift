@@ -12,7 +12,7 @@ import CoreBluetooth
 public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	public var dispatchQueue = dispatch_queue_create("BTLE.PeripheralManager queue", DISPATCH_QUEUE_SERIAL)
 	public var cbPeripheralManager: CBPeripheralManager?
-	var advertisingData: [String: AnyObject] = [CBAdvertisementDataLocalNameKey: UIDevice.currentDevice().name]
+	public var advertisingData: [String: AnyObject] = [CBAdvertisementDataLocalNameKey: UIDevice.currentDevice().name]
 	
 	//=============================================================================================
 	//MARK: Class vars

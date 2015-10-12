@@ -21,6 +21,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		B50143281BCAE66C00FA3A79 /* BeaconSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50143261BCAE66C00FA3A79 /* BeaconSettingsViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		B50143291BCAE66C00FA3A79 /* BeaconSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B50143271BCAE66C00FA3A79 /* BeaconSettingsViewController.xib */; settings = {ASSET_TAGS = (); }; };
 		B5037E711AE6F9BF000D2A64 /* CharacteristicTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5037E6F1AE6F9BF000D2A64 /* CharacteristicTableViewCell.swift */; };
 		B5037E721AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5037E701AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib */; };
 		B5037E741AE72B18000D2A64 /* Descriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5037E731AE72B18000D2A64 /* Descriptor.swift */; };
@@ -95,6 +97,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B50143261BCAE66C00FA3A79 /* BeaconSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconSettingsViewController.swift; sourceTree = "<group>"; };
+		B50143271BCAE66C00FA3A79 /* BeaconSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BeaconSettingsViewController.xib; sourceTree = "<group>"; };
 		B5037E6F1AE6F9BF000D2A64 /* CharacteristicTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicTableViewCell.swift; sourceTree = "<group>"; };
 		B5037E701AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CharacteristicTableViewCell.xib; sourceTree = "<group>"; };
 		B5037E731AE72B18000D2A64 /* Descriptor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Descriptor.swift; sourceTree = "<group>"; };
@@ -268,6 +272,8 @@
 				B58D648D1A899094005A0002 /* Images.xcassets */,
 				B58D648E1A899094005A0002 /* Info.plist */,
 				B58D648F1A899094005A0002 /* ViewController.swift */,
+				B50143261BCAE66C00FA3A79 /* BeaconSettingsViewController.swift */,
+				B50143271BCAE66C00FA3A79 /* BeaconSettingsViewController.xib */,
 				B5DAB3311AE40B3800D49D44 /* PeripheralCellTableViewCell.swift */,
 				B5DAB3321AE40B3800D49D44 /* PeripheralCellTableViewCell.xib */,
 				B5A4823C1AE3F1E8001636BE /* DeviceDetailsViewController.swift */,
@@ -454,6 +460,7 @@
 			files = (
 				B5037E721AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib in Resources */,
 				B58D64931A899094005A0002 /* Images.xcassets in Resources */,
+				B50143291BCAE66C00FA3A79 /* BeaconSettingsViewController.xib in Resources */,
 				B5A4823F1AE3F1E8001636BE /* DeviceDetailsViewController.xib in Resources */,
 				B5DAB3341AE40B3800D49D44 /* PeripheralCellTableViewCell.xib in Resources */,
 				B5037E771AE875FC000D2A64 /* zap.caf in Resources */,
@@ -510,6 +517,7 @@
 				B5A4823E1AE3F1E8001636BE /* DeviceDetailsViewController.swift in Sources */,
 				B5DAB3331AE40B3800D49D44 /* PeripheralCellTableViewCell.swift in Sources */,
 				B58D64951A899094005A0002 /* ViewController.swift in Sources */,
+				B50143281BCAE66C00FA3A79 /* BeaconSettingsViewController.swift in Sources */,
 				B58D64901A899094005A0002 /* AppDelegate.swift in Sources */,
 				B5037E711AE6F9BF000D2A64 /* CharacteristicTableViewCell.swift in Sources */,
 			);

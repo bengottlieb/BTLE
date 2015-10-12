@@ -26,7 +26,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	var devices: [BTLEPeripheral] = []
 	
 	func reload() {
-		self.devices = Array(BTLE.scanner.peripherals)
+		self.devices = Array(BTLE.scanner.peripherals).sort { $0.rssi > $1.rssi }
+		
 		dispatch_async_main {
 			self.tableView.reloadData()
 			self.updateScanningLabel()
@@ -49,6 +50,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
+		if self.tableView.tableHeaderView == nil { self.tableView.tableHeaderView = self.tableView.tableFooterView }
 		self.tableView.registerNib(UINib(nibName: "PeripheralCellTableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
 		
 		BTLE.debugLevel = .High
@@ -68,16 +70,17 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		
 		//setup advertiser
 		
-		self.writableCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "C9563739-1783-4E81-A3EC-5061D4B2311C"), properties: [CBCharacteristicProperties.Write, CBCharacteristicProperties.Read], value: nil, permissions: [.Readable, .Writeable])
-		self.notifyCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: [CBCharacteristicProperties.Read, CBCharacteristicProperties.Notify], value: self.characteristicData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true))
 		
-		let service = BTLEMutableService(uuid: testServiceID, isPrimary: true, characteristics: [ self.writableCharacteristic! ])
-		service.advertised = true
-		
-		BTLE.advertiser.addService(service)
-		if (NSUserDefaults.get(DefaultsKey<Bool>("advertising")) ?? false) {
-			BTLE.advertiser.startAdvertising()
-		}
+//		self.writableCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "C9563739-1783-4E81-A3EC-5061D4B2311C"), properties: [CBCharacteristicProperties.Write, CBCharacteristicProperties.Read], value: nil, permissions: [.Readable, .Writeable])
+//		self.notifyCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: [CBCharacteristicProperties.Read, CBCharacteristicProperties.Notify], value: self.characteristicData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true))
+//		
+//		let service = BTLEMutableService(uuid: testServiceID, isPrimary: true, characteristics: [ self.writableCharacteristic! ])
+//		service.advertised = true
+//		
+//		BTLE.advertiser.addService(service)
+//		if (NSUserDefaults.get(DefaultsKey<Bool>("advertising")) ?? false) {
+//			BTLE.advertiser.startAdvertising()
+//		}
 		
 		self.scanSwitch.on = BTLE.scanner.state == .Active || BTLE.scanner.state == .StartingUp
 		self.advertiseSwitch.on = BTLE.advertiser.state == .Active || BTLE.advertiser.state == .StartingUp
@@ -219,6 +222,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	
 	@IBAction func nearby() {
 		self.presentViewController(NearbyPeripheralsViewController().navigationWrappedController(false), animated: true, completion: nil)
+	}
+	
+	@IBAction func showBeaconSettings() {
+		BeaconSettingsViewController.presentInController(self)
 	}
 }
 

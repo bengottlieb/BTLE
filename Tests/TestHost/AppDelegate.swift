@@ -10,15 +10,24 @@ import UIKit
 import CoreBluetooth
 import BTLE
 import Gulliver
+import CoreLocation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+	static var instance: AppDelegate!
+	
+	static let beaconProximityIDKey = DefaultsKey<String>("bcn-proximityID")
+	static let beaconMajorIDKey = DefaultsKey<String>("bcn-majorID")
+	static let beaconMinorIDKey = DefaultsKey<String>("bcn-minorID")
+	static let beaconEnabledKey = DefaultsKey<Bool>("bcn-enabled")
+	
 	var window: UIWindow?
 
 
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 		// Override point for customization after application launch
+		
+		AppDelegate.instance = self
 		
 		let settings = UIUserNotificationSettings(forTypes: [.Alert, .Sound, .Badge], categories: nil)
 		application.registerUserNotificationSettings(settings)
@@ -28,7 +37,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
 		BTLE.manager.serviceFilter = .ActualServices
 		self.addAsObserver(BTLE.notifications.characteristicWasWrittenTo, selector: "zapped:")
+		
+		self.setupBeacon()
 		return true
+	}
+	
+	var beacon: CLBeaconRegion?
+	
+	func setupBeacon() {
+		if NSUserDefaults.get(AppDelegate.beaconEnabledKey) ?? false {
+			guard let uuid = NSUUID(UUIDString: NSUserDefaults.get(AppDelegate.beaconProximityIDKey)) else {
+				NSUserDefaults.set(false, forKey: AppDelegate.beaconEnabledKey)
+				UIAlertController.showAlert("Unable to Start an iBeacon: Invalid UUID")
+				return
+			}
+			
+			let major = CLBeaconMajorValue(NSUserDefaults.get(AppDelegate.beaconMajorIDKey)) ?? 0
+			let minor = CLBeaconMajorValue(NSUserDefaults.get(AppDelegate.beaconMinorIDKey)) ?? 0
+			let name = UIDevice.currentDevice().name
+			
+			self.beacon = CLBeaconRegion(proximityUUID:  uuid, major: major, minor: minor, identifier: name)
+			
+			if let data = self.beacon!.peripheralDataWithMeasuredPower(nil) as? [String: AnyObject] {
+				print("Starting to advertise (\(uuid)) beacon: \(data)")
+				BTLE.advertiser.advertisingData = data
+			}
+			BTLE.advertiser.startAdvertising()
+		} else if self.beacon != nil {
+			BTLE.advertiser.stopAdvertising()
+			self.beacon = nil
+		}
 	}
 
 	func applicationWillResignActive(application: UIApplication) {

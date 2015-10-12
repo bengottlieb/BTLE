@@ -63,7 +63,7 @@
                                 </constraints>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="71" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="iiv-YA-evf">
-                                <rect key="frame" x="20" y="70" width="560" height="530"/>
+                                <rect key="frame" x="20" y="70" width="560" height="486"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <view key="tableFooterView" contentMode="scaleToFill" id="0eS-RQ-2H7">
                                     <rect key="frame" x="0.0" y="0.0" width="560" height="56"/>
@@ -156,13 +156,29 @@
                                     <outlet property="delegate" destination="vXZ-lx-hvc" id="rAA-kA-je6"/>
                                 </connections>
                             </tableView>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZC0-iq-h3V">
+                                <rect key="frame" x="0.0" y="556" width="600" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="D3n-Qe-Mj0"/>
+                                </constraints>
+                                <items>
+                                    <barButtonItem title="iBeacon" id="FDv-LO-zYW">
+                                        <connections>
+                                            <action selector="showBeaconSettings" destination="vXZ-lx-hvc" id="sHI-lh-KfJ"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="iiv-YA-evf" secondAttribute="bottom" id="3oR-an-MUv"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="iiv-YA-evf" secondAttribute="bottom" constant="44" id="3oR-an-MUv"/>
                             <constraint firstItem="e81-rY-poL" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="topMargin" constant="20" id="8xJ-Ue-ZmU"/>
                             <constraint firstItem="iiv-YA-evf" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="AXI-Di-tAV"/>
                             <constraint firstItem="iiv-YA-evf" firstAttribute="top" secondItem="e81-rY-poL" secondAttribute="bottom" id="Mmv-mA-KjO"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="ZC0-iq-h3V" secondAttribute="bottom" id="Oph-6Y-gCR"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="ZC0-iq-h3V" secondAttribute="trailing" constant="-20" id="Rbb-rl-VUL"/>
+                            <constraint firstItem="ZC0-iq-h3V" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" constant="-20" id="TvU-Vl-tbr"/>
                             <constraint firstAttribute="trailingMargin" secondItem="iiv-YA-evf" secondAttribute="trailing" id="VKc-2i-VRz"/>
                             <constraint firstItem="e81-rY-poL" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="dd3-Ot-6zp"/>
                             <constraint firstAttribute="trailingMargin" secondItem="e81-rY-poL" secondAttribute="trailing" id="rrm-wU-tFd"/>
