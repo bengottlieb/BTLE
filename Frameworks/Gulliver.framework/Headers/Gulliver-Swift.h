@@ -290,6 +290,10 @@ SWIFT_CLASS("_TtC8Gulliver8Notifier")
 @end
 
 
+@interface Notifier (SWIFT_EXTENSION(Gulliver))
+@end
+
+
 SWIFT_PROTOCOL("_TtP8Gulliver19ProgressDisplayable_")
 @protocol ProgressDisplayable
 @property (nonatomic) double fractionCompleted;
