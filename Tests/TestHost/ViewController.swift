@@ -21,6 +21,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	@IBOutlet var advertiseSwitch: UISwitch!
 	@IBOutlet var filterByServicesSwitch: UISwitch!
 	@IBOutlet var scanningLabel: UILabel!
+	@IBOutlet var beaconButton: UIBarButtonItem!
 
 	var characteristicData = NSDate().localTimeString(timeStyle: .FullStyle)
 	var devices: [BTLEPeripheral] = []
@@ -45,6 +46,16 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		text += " \(count) found"
 		
 		self.scanningLabel.text = text
+	}
+	
+	override func viewDidAppear(animated: Bool) {
+		super.viewDidAppear(animated)
+		
+		if NSUserDefaults.get(AppDelegate.beaconEnabledKey) {
+			self.beaconButton.title  = "iBeacon: On"
+		} else {
+			self.beaconButton.title  = "iBeacon…"
+		}
 	}
 	
 	override func viewDidLoad() {

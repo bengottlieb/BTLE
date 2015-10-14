@@ -189,6 +189,7 @@
                     <nil key="simulatedStatusBarMetrics"/>
                     <connections>
                         <outlet property="advertiseSwitch" destination="xeh-gK-om9" id="t3i-NT-6uY"/>
+                        <outlet property="beaconButton" destination="FDv-LO-zYW" id="aFH-h4-MQD"/>
                         <outlet property="filterByServicesSwitch" destination="Ryj-5n-bQ1" id="WPV-Cg-Ufp"/>
                         <outlet property="monitorRSSISwitch" destination="MoG-04-uKt" id="AVI-sh-0uI"/>
                         <outlet property="scanSwitch" destination="Ufd-SF-acF" id="5aD-JJ-CQw"/>

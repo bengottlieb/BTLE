@@ -23,6 +23,8 @@
 /* Begin PBXBuildFile section */
 		B50143281BCAE66C00FA3A79 /* BeaconSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50143261BCAE66C00FA3A79 /* BeaconSettingsViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		B50143291BCAE66C00FA3A79 /* BeaconSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B50143271BCAE66C00FA3A79 /* BeaconSettingsViewController.xib */; settings = {ASSET_TAGS = (); }; };
+		B50143301BCBF17C00FA3A79 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B501432F1BCBF17C00FA3A79 /* Beacon.swift */; settings = {ASSET_TAGS = (); }; };
+		B50143311BCBF17C00FA3A79 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B501432F1BCBF17C00FA3A79 /* Beacon.swift */; settings = {ASSET_TAGS = (); }; };
 		B5037E711AE6F9BF000D2A64 /* CharacteristicTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5037E6F1AE6F9BF000D2A64 /* CharacteristicTableViewCell.swift */; };
 		B5037E721AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5037E701AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib */; };
 		B5037E741AE72B18000D2A64 /* Descriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5037E731AE72B18000D2A64 /* Descriptor.swift */; };
@@ -99,6 +101,7 @@
 /* Begin PBXFileReference section */
 		B50143261BCAE66C00FA3A79 /* BeaconSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconSettingsViewController.swift; sourceTree = "<group>"; };
 		B50143271BCAE66C00FA3A79 /* BeaconSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BeaconSettingsViewController.xib; sourceTree = "<group>"; };
+		B501432F1BCBF17C00FA3A79 /* Beacon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Beacon.swift; sourceTree = "<group>"; };
 		B5037E6F1AE6F9BF000D2A64 /* CharacteristicTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicTableViewCell.swift; sourceTree = "<group>"; };
 		B5037E701AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CharacteristicTableViewCell.xib; sourceTree = "<group>"; };
 		B5037E731AE72B18000D2A64 /* Descriptor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Descriptor.swift; sourceTree = "<group>"; };
@@ -251,6 +254,7 @@
 			children = (
 				B58D64751A898F81005A0002 /* BTLE.swift */,
 				B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */,
+				B501432F1BCBF17C00FA3A79 /* Beacon.swift */,
 				B5345B3E1AE1F20F0074F337 /* PeripheralManager.swift */,
 				B5D608401ADBFD4C004DC9AC /* Peripheral.swift */,
 				B5D608491ADC4486004DC9AC /* Service.swift */,
@@ -406,6 +410,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftMigration = 0700;
+				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = "Stand Alone, inc.";
 				TargetAttributes = {
@@ -538,6 +543,7 @@
 				B58D647F1A898FBD005A0002 /* BTLE.swift in Sources */,
 				B5DAB3361AE418FE00D49D44 /* Array+SA_Additions.swift in Sources */,
 				B5D6084A1ADC4486004DC9AC /* Service.swift in Sources */,
+				B50143301BCBF17C00FA3A79 /* Beacon.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -560,6 +566,7 @@
 				B5D6084E1ADC44A5004DC9AC /* Characteristic.swift in Sources */,
 				B5D608421ADBFD4C004DC9AC /* Peripheral.swift in Sources */,
 				B5D6083F1ADBF4F6004DC9AC /* CentralManager.swift in Sources */,
+				B50143311BCBF17C00FA3A79 /* Beacon.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

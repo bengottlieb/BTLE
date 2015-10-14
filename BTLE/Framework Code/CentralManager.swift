@@ -101,7 +101,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		self.internalState = .Active
 		let options = BTLE.manager.monitorRSSI ? [CBCentralManagerScanOptionAllowDuplicatesKey: true] : [:]
 		BTLE.debugLog(.Medium, BTLE.manager.services.count > 0 ? "Starting scan for \(BTLE.manager.services)" : "Starting unfiltered scan")
-		self.cbCentral.scanForPeripheralsWithServices(self.coreBluetoothFilteredServices, options: options)
+		self.cbCentral.scanForPeripheralsWithServices(self.coreBluetoothFilteredServices.count > 0 ? self.coreBluetoothFilteredServices : nil, options: options)
 		if self.pendingDuration != 0.0 {
 			self.searchTimer = NSTimer.scheduledTimerWithTimeInterval(self.pendingDuration, target: self, selector: "stopScanning", userInfo: nil, repeats: false)
 		}
@@ -161,7 +161,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		return nil
 	}
 	
-	func addPeripheral(peripheral: CBPeripheral, RSSI: Int? = nil, advertisementData: [NSObject: AnyObject]? = nil) -> BTLEPeripheral {
+	func addPeripheral(peripheral: CBPeripheral, RSSI: Int? = nil, advertisementData: [NSObject: AnyObject]? = nil) -> BTLEPeripheral? {
 		if let existing = self.existingPeripheral(peripheral) {
 			if let rssi = RSSI { existing.setCurrentRSSI(rssi) }
 			if let advertisementData = advertisementData { existing.advertisementData = advertisementData }
@@ -203,6 +203,14 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		if let perClass = BTLE.registeredClasses.peripheralClass {
 			per = perClass.init(peripheral: peripheral, RSSI: RSSI, advertisementData: advertisementData)
 		} else {
+			if let mfrData = advertisementData?[CBAdvertisementDataManufacturerDataKey] as? NSData {
+				print("\(advertisementData)")
+				if let beacon = BTLEBeacon.beaconWithData(mfrData) {
+					print("Found beacon: \(beacon)")
+				}
+				return nil
+			}
+			
 			per = BTLEPeripheral(peripheral: peripheral, RSSI: RSSI, advertisementData: advertisementData)
 		}
 		if per.ignored != .Not {
@@ -260,16 +268,14 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	}
 	
 	public func centralManager(centralManager: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
-		let per = self.addPeripheral(peripheral)
-		if per.state != .Connected {
+		if let per = self.addPeripheral(peripheral) where per.state != .Connected {
 			per.state = .Connected
 			per.sendNotification(BTLE.notifications.peripheralDidConnect)
 		}
 	}
 	
 	public func centralManager(centralManager: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
-		let per = self.addPeripheral(peripheral)
-		if per.state != .Discovered {
+		if let per = self.addPeripheral(peripheral) where per.state != .Discovered {
 			per.state = .Discovered
 			per.sendNotification(BTLE.notifications.peripheralDidDisconnect)
 		}

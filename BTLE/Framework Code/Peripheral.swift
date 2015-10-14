@@ -197,6 +197,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	
 	public required init(peripheral: CBPeripheral, RSSI: RSSValue?, advertisementData adv: [NSObject: AnyObject]?) {
 		BTLE.debugLog(.High, "Peripheral: creating from \(peripheral)")
+		
 		cbPeripheral = peripheral
 		uuid = peripheral.identifier
 		name = peripheral.name ?? "unknown"

@@ -33,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		application.registerUserNotificationSettings(settings)
 		application.registerForRemoteNotifications()
 	
-		//BTLE.manager.services = [CBUUID(string: "01EB2EF1-BF82-4516-81BE-57E119207436")]
+		//BTLE.manager.services = [CBUUID(string: "01EB2EF1-BF82-4516-81BE-57E119207437")]
 		
 		BTLE.manager.serviceFilter = .ActualServices
 		self.addAsObserver(BTLE.notifications.characteristicWasWrittenTo, selector: "zapped:")
@@ -45,6 +45,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	var beacon: CLBeaconRegion?
 	
 	func setupBeacon() {
+		NSUserDefaults.set("51A34644-6841-4CCE-8254-606129E08207", forKey: AppDelegate.beaconProximityIDKey)
+		
 		if NSUserDefaults.get(AppDelegate.beaconEnabledKey) ?? false {
 			guard let uuid = NSUUID(UUIDString: NSUserDefaults.get(AppDelegate.beaconProximityIDKey)) else {
 				NSUserDefaults.set(false, forKey: AppDelegate.beaconEnabledKey)
