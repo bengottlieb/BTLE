@@ -8,6 +8,7 @@
 
 import UIKit
 import Gulliver
+import CoreImage
 
 class BeaconSettingsViewController: UIViewController {
 	
@@ -15,6 +16,7 @@ class BeaconSettingsViewController: UIViewController {
 	@IBOutlet var majorField: UITextField!
 	@IBOutlet var minorField: UITextField!
 	@IBOutlet var enabledSwitch: UISwitch!
+	@IBOutlet var imageView: UIImageView!
 
 	class func presentInController(parent: UIViewController) {
 		let controller = self.controller() as! BeaconSettingsViewController
@@ -32,6 +34,37 @@ class BeaconSettingsViewController: UIViewController {
 		AppDelegate.instance.setupBeacon()
 		self.dismiss()
 	}
+	
+	override func viewDidAppear(animated: Bool) {
+		super.viewDidAppear(animated)
+		
+		self.updateQRCodeImage()
+	}
+	
+	func updateQRCodeImage() {
+		if let data = self.uuidField.text?.dataUsingEncoding(NSISOLatin1StringEncoding, allowLossyConversion: false), let filter = CIFilter(name: "CIQRCodeGenerator") {
+			filter.setValue(data, forKey: "inputMessage")
+			filter.setValue("Q", forKey: "inputCorrectionLevel")
+			
+			if let image = filter.outputImage {
+				self.imageView.image = UIImage(CIImage: image)
+			}
+		}
+	}
+	
+	weak var timer: NSTimer?
+	override func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+		self.timer?.invalidate()
+		self.timer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "updateQRCodeImage", userInfo: nil, repeats: false)
+		
+		return true
+	}
+	
+	override func textFieldShouldReturn(textField: UITextField) -> Bool {
+		textField.resignFirstResponder()
+		return false
+	}
+	
 	
 	func cancel() {
 		self.dismiss()

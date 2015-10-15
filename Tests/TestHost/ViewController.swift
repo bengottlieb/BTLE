@@ -35,7 +35,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 			self.scanSwitch.on = BTLE.scanner.state == .Active || BTLE.scanner.state == .StartingUp
 		}
 	}
-	
+		
 	var notifyCharacteristic: BTLEMutableCharacteristic?
 	var writableCharacteristic: BTLEMutableCharacteristic?
 	
