@@ -45,7 +45,6 @@ class BeaconSettingsViewController: UIViewController {
 		if let data = self.uuidField.text?.dataUsingEncoding(NSISOLatin1StringEncoding, allowLossyConversion: false), let filter = CIFilter(name: "CIQRCodeGenerator") {
 			filter.setValue(data, forKey: "inputMessage")
 			filter.setValue("Q", forKey: "inputCorrectionLevel")
-			
 			if let image = filter.outputImage {
 				self.imageView.image = UIImage(CIImage: image)
 			}
@@ -74,6 +73,11 @@ class BeaconSettingsViewController: UIViewController {
 		self.dismissViewControllerAnimated(true, completion: nil)
 	}
 	
+	@IBAction func cycleUUID() {
+		self.uuidField.text = NSUUID().UUIDString
+		self.updateQRCodeImage()
+	}
+	
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -82,7 +86,7 @@ class BeaconSettingsViewController: UIViewController {
 		self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Done, target: self, action: "done")
 
 		var label = NSUserDefaults.get(AppDelegate.beaconProximityIDKey) ?? ""
-		if label.length == 0 { label = "6EA439F2-846F-46C0-9860-28AEBA9B0A67" }
+		if label.length == 0 { label = NSUUID().UUIDString }
 		
 		self.uuidField.text = label
 		self.majorField.text = NSUserDefaults.get(AppDelegate.beaconMajorIDKey)

@@ -45,8 +45,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	var beacon: CLBeaconRegion?
 	
 	func setupBeacon() {
-		NSUserDefaults.set("51A34644-6841-4CCE-8254-606129E08207", forKey: AppDelegate.beaconProximityIDKey)
-		
 		if NSUserDefaults.get(AppDelegate.beaconEnabledKey) ?? false {
 			guard let uuid = NSUUID(UUIDString: NSUserDefaults.get(AppDelegate.beaconProximityIDKey)) else {
 				NSUserDefaults.set(false, forKey: AppDelegate.beaconEnabledKey)

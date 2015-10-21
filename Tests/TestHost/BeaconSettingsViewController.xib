@@ -21,7 +21,7 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="533"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="omi-mj-b85">
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="omi-mj-b85">
                     <rect key="frame" x="8" y="85" width="304" height="30"/>
                     <animations/>
                     <constraints>
@@ -91,6 +91,19 @@
                     <color key="textColor" red="0.32897238760000003" green="0.32897238760000003" blue="0.32897238760000003" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ivg-Cb-Q9L">
+                    <rect key="frame" x="274" y="186" width="30" height="30"/>
+                    <animations/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="30" id="2e8-Hr-ng2"/>
+                        <constraint firstAttribute="height" constant="30" id="mw4-9n-pGS"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                    <state key="normal" title="🔄"/>
+                    <connections>
+                        <action selector="cycleUUID" destination="-1" eventType="touchUpInside" id="D6T-U1-RxJ"/>
+                    </connections>
+                </button>
             </subviews>
             <animations/>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -108,8 +121,10 @@
                 <constraint firstItem="i1a-bG-axr" firstAttribute="top" secondItem="3Z5-WG-85I" secondAttribute="bottom" id="Xh6-Xb-KVg"/>
                 <constraint firstItem="3Z5-WG-85I" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="ZiN-KZ-8Pd"/>
                 <constraint firstItem="hvu-Ml-RBL" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="cft-tR-ckF"/>
+                <constraint firstAttribute="trailing" secondItem="Ivg-Cb-Q9L" secondAttribute="trailing" constant="16" id="cuU-HI-64B"/>
                 <constraint firstItem="omi-mj-b85" firstAttribute="top" secondItem="kpr-81-Ypn" secondAttribute="bottom" id="deK-8p-pio"/>
                 <constraint firstItem="i1a-bG-axr" firstAttribute="centerY" secondItem="1q6-b6-nu7" secondAttribute="centerY" id="doP-Dt-XDR"/>
+                <constraint firstItem="Ivg-Cb-Q9L" firstAttribute="centerY" secondItem="ffO-qR-Hrd" secondAttribute="centerY" id="iCA-RK-dYY"/>
                 <constraint firstItem="i1a-bG-axr" firstAttribute="leading" secondItem="3Z5-WG-85I" secondAttribute="leading" id="ith-DL-9an"/>
                 <constraint firstItem="1q6-b6-nu7" firstAttribute="leading" secondItem="i1a-bG-axr" secondAttribute="trailing" constant="24" id="iun-ce-7TM"/>
                 <constraint firstItem="1q6-b6-nu7" firstAttribute="top" secondItem="C3P-2X-b0G" secondAttribute="bottom" id="jeW-V0-SLF"/>
