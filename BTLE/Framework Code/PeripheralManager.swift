@@ -76,7 +76,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		self.cbPeripheralManager?.stopAdvertising()
 
 		if self.internalState == .Active || self.internalState == .StartingUp {
-			self.internalState == .Idle
+			self.internalState = .Idle
 		}
 	}
 	
