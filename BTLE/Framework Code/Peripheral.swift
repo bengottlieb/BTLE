@@ -128,7 +128,9 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	}
 	public var services: [BTLEService] = []
 	public var advertisementData: [NSObject: AnyObject] = [:] { didSet {
-		self.sendNotification(BTLE.notifications.peripheralDidUpdateAdvertisementData)
+		if (self.advertisementData as NSDictionary) != oldValue {
+			self.sendNotification(BTLE.notifications.peripheralDidUpdateAdvertisementData)
+		}
 	}}
 	
 	func didFailToConnect(error: NSError?) {
@@ -201,7 +203,9 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		cbPeripheral = peripheral
 		uuid = peripheral.identifier
 		name = peripheral.name ?? "unknown"
-		if let adv = adv { advertisementData = adv }
+		if let adv = adv {
+			advertisementData = adv
+		}
 		
 		super.init()
 
@@ -348,6 +352,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	}
 	
 	public func reloadServices() {
+		BTLE.debugLog(.High, "Loading services on \(self.name)")
 		self.services = []
 		if self.ignored == .CheckingForServices {
 			self.cbPeripheral.discoverServices(nil)
@@ -467,13 +472,9 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 				for svc in services {
 					if BTLE.manager.services.contains(svc.UUID) {
 						self.ignored = .Not
+						BTLE.scanner.pendingPeripheralFinishLoadingServices(self)
 						break
 					}
-				}
-				
-				if self.ignored != .Not {
-					self.ignored = .MissingServices
-					return
 				}
 			}
 			for svc in services {
@@ -484,6 +485,10 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 			
 			if self.numberOfLoadingServices == 0 {
 				self.loadingState = .Loaded
+				if self.ignored == .CheckingForServices {
+					self.ignored = .MissingServices
+					BTLE.scanner.pendingPeripheralFinishLoadingServices(self)
+				}
 			}
 		}
 	}

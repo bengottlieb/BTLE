@@ -17,6 +17,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	public var peripherals: Set<BTLEPeripheral> = Set<BTLEPeripheral>()
 	public var ignoredPeripherals: Set<BTLEPeripheral> = Set<BTLEPeripheral>()
 	public var oldPeripherals: Set<BTLEPeripheral> = Set<BTLEPeripheral>()
+	var pendingPeripherals: Set<BTLEPeripheral> = Set<BTLEPeripheral>()
 	
 	public var state: BTLE.State { get { return self.internalState }}
 	var internalState: BTLE.State = .Off { didSet {
@@ -153,11 +154,14 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	}
 	
 	func existingPeripheral(peripheral: CBPeripheral) -> BTLEPeripheral? {
-		for per in self.peripherals {
-			if per.uuid == peripheral.identifier {
-				return per
+		for perGroup in [self.peripherals, self.ignoredPeripherals, self.pendingPeripherals] {
+			for per in perGroup {
+				if per.uuid == peripheral.identifier {
+					return per
+				}
 			}
 		}
+
 		return nil
 	}
 	
@@ -168,32 +172,32 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 			return existing
 		}
 		
-		for per in self.ignoredPeripherals {
-			if per.uuid == peripheral.identifier {
-				if let info = advertisementData where per.ignored == .MissingServices {
-					per.updateIgnoredWithAdvertisingData(info)
+		for ignoredPer in self.ignoredPeripherals {
+			if ignoredPer.uuid == peripheral.identifier {
+				if let info = advertisementData where ignoredPer.ignored == .MissingServices {
+					ignoredPer.updateIgnoredWithAdvertisingData(info)
 					
-					if per.ignored == .Not {
-						self.peripherals.insert(per)
-						self.ignoredPeripherals.remove(per)
-						per.sendNotification(BTLE.notifications.peripheralWasDiscovered)
-						return per
+					if ignoredPer.ignored == .Not {
+						self.peripherals.insert(ignoredPer)
+						self.ignoredPeripherals.remove(ignoredPer)
+						ignoredPer.sendNotification(BTLE.notifications.peripheralWasDiscovered)
+						return ignoredPer
 					}
 				}
-				return per
+				return ignoredPer
 			}
 		}
 
-		for per in self.oldPeripherals {
-			if per.uuid == peripheral.identifier {
-				self.oldPeripherals.remove(per)
-				if per.ignored != .Not {
-					self.ignoredPeripherals.insert(per)
+		for oldPer in self.oldPeripherals {
+			if oldPer.uuid == peripheral.identifier {
+				self.oldPeripherals.remove(oldPer)
+				if oldPer.ignored != .Not {
+					self.ignoredPeripherals.insert(oldPer)
 				} else {
-					self.peripherals.insert(per)
-					if let rssi = RSSI { per.setCurrentRSSI(rssi) }
-					if let advertisementData = advertisementData { per.advertisementData = advertisementData }
-					return per
+					self.peripherals.insert(oldPer)
+					if let rssi = RSSI { oldPer.setCurrentRSSI(rssi) }
+					if let advertisementData = advertisementData { oldPer.advertisementData = advertisementData }
+					return oldPer
 				}
 			}
 		}
@@ -214,7 +218,12 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 			per = BTLEPeripheral(peripheral: peripheral, RSSI: RSSI, advertisementData: advertisementData)
 		}
 		if per.ignored != .Not {
-			self.ignoredPeripherals.insert(per)
+			if per.ignored != .CheckingForServices {
+				self.ignoredPeripherals.insert(per)
+			} else {
+				self.pendingPeripherals.insert(per)
+			}
+			return per
 		} else {
 			self.peripherals.insert(per)
 		}
@@ -223,6 +232,18 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		return per
 	}
 
+	func pendingPeripheralFinishLoadingServices(peripheral: BTLEPeripheral) {
+		if peripheral.ignored == .MissingServices {
+			self.ignoredPeripherals.insert(peripheral)
+			peripheral.sendNotification(BTLE.notifications.peripheralWasDiscovered)
+			self.pendingPeripherals.remove(peripheral)
+		} else if peripheral.ignored == .Not {
+			self.peripherals.insert(peripheral)
+			peripheral.sendNotification(BTLE.notifications.peripheralWasDiscovered)
+			self.pendingPeripherals.remove(peripheral)
+		}
+	}
+	
 	//=============================================================================================
 	//MARK: CBCentralManagerDelegate
 	public func centralManagerDidUpdateState(centralManager: CBCentralManager) {
