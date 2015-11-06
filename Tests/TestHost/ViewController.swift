@@ -153,6 +153,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	
 	@IBAction func toggleAdvertising() {
 		if self.advertiseSwitch.on {
+			self.writableCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "C9563739-1783-4E81-A3EC-5061D4B2311C"), properties: [CBCharacteristicProperties.Write, CBCharacteristicProperties.Read], value: nil, permissions: [.Readable, .Writeable])
+			self.notifyCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: [CBCharacteristicProperties.Read, CBCharacteristicProperties.Notify], value: self.characteristicData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true))
+
+			let service = BTLEMutableService(uuid: testServiceID, isPrimary: true, characteristics: [ self.writableCharacteristic! ])
+			service.advertised = true
+			BTLE.advertiser.addService(service)
 			BTLE.advertiser.startAdvertising()
 		} else {
 			BTLE.advertiser.stopAdvertising()

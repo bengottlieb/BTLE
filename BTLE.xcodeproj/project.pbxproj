@@ -21,10 +21,10 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		B50143281BCAE66C00FA3A79 /* BeaconSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50143261BCAE66C00FA3A79 /* BeaconSettingsViewController.swift */; settings = {ASSET_TAGS = (); }; };
-		B50143291BCAE66C00FA3A79 /* BeaconSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B50143271BCAE66C00FA3A79 /* BeaconSettingsViewController.xib */; settings = {ASSET_TAGS = (); }; };
-		B50143301BCBF17C00FA3A79 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B501432F1BCBF17C00FA3A79 /* Beacon.swift */; settings = {ASSET_TAGS = (); }; };
-		B50143311BCBF17C00FA3A79 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B501432F1BCBF17C00FA3A79 /* Beacon.swift */; settings = {ASSET_TAGS = (); }; };
+		B50143281BCAE66C00FA3A79 /* BeaconSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50143261BCAE66C00FA3A79 /* BeaconSettingsViewController.swift */; };
+		B50143291BCAE66C00FA3A79 /* BeaconSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B50143271BCAE66C00FA3A79 /* BeaconSettingsViewController.xib */; };
+		B50143301BCBF17C00FA3A79 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B501432F1BCBF17C00FA3A79 /* Beacon.swift */; };
+		B50143311BCBF17C00FA3A79 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B501432F1BCBF17C00FA3A79 /* Beacon.swift */; };
 		B5037E711AE6F9BF000D2A64 /* CharacteristicTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5037E6F1AE6F9BF000D2A64 /* CharacteristicTableViewCell.swift */; };
 		B5037E721AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5037E701AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib */; };
 		B5037E741AE72B18000D2A64 /* Descriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5037E731AE72B18000D2A64 /* Descriptor.swift */; };
@@ -50,7 +50,7 @@
 		B5A4823E1AE3F1E8001636BE /* DeviceDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A4823C1AE3F1E8001636BE /* DeviceDetailsViewController.swift */; };
 		B5A4823F1AE3F1E8001636BE /* DeviceDetailsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5A4823D1AE3F1E8001636BE /* DeviceDetailsViewController.xib */; };
 		B5BCEC091AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BCEC081AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift */; };
-		B5CC3B931BC98A7900DB75DD /* Gulliver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5CC3B921BC98A7900DB75DD /* Gulliver.framework */; settings = {ASSET_TAGS = (); }; };
+		B5CC3B931BC98A7900DB75DD /* Gulliver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5CC3B921BC98A7900DB75DD /* Gulliver.framework */; };
 		B5CC3B941BC98ACD00DB75DD /* Gulliver.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B5CC3B921BC98A7900DB75DD /* Gulliver.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B5D6083E1ADBF4F6004DC9AC /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */; };
 		B5D6083F1ADBF4F6004DC9AC /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */; };
@@ -411,7 +411,7 @@
 			attributes = {
 				LastSwiftMigration = 0700;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = "Stand Alone, inc.";
 				TargetAttributes = {
 					B504E6121A89230F001B414B = {
@@ -626,6 +626,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -694,6 +695,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/TestHost/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = BTLESniffer;
 			};
 			name = Debug;
@@ -708,6 +710,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/TestHost/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = BTLESniffer;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -733,6 +736,7 @@
 				INFOPLIST_FILE = BTLE/iOS/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = BTLE;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -757,6 +761,7 @@
 				INFOPLIST_FILE = BTLE/iOS/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = BTLE;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -794,6 +799,7 @@
 				);
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestHost.app/TestHost";
 			};
@@ -809,6 +815,7 @@
 				);
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestHost.app/TestHost";
 			};
@@ -838,6 +845,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = BTLE;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -867,6 +875,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = BTLE;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;

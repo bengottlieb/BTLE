@@ -78,6 +78,7 @@ public class BTLECharacteristic: NSObject {
 	public var propertiesAsString: String { return BTLECharacteristic.characteristicPropertiesAsString(self.cbCharacteristic.properties) }
 	
 	func cancelLoad() {
+		BTLE.debugLog(.Medium, "Canceling load on \(self.cbCharacteristic)")
 		switch self.loadingState {
 		case .Loading: self.loadingState = .NotLoaded
 		case .Reloading: self.loadingState = .Loaded
@@ -87,7 +88,7 @@ public class BTLECharacteristic: NSObject {
 
 	//=============================================================================================
 	//MARK: Call backs from Peripheral Delegate
-
+	
 	public func didLoadWithError(error: NSError?) {
 		BTLE.debugLog(.Medium, "Finished reloading \(self.cbCharacteristic.UUID), error: \(error)")
 
@@ -98,6 +99,11 @@ public class BTLECharacteristic: NSObject {
 			self.loadingState = self.loadingState == .Reloading ? .Loaded : .NotLoaded
 		}
 		
+		if self.service.numberOfLoadingCharacteristics == 0 {
+			self.service.didFinishLoading()
+		}
+		NSNotification.postNotification(BTLE.notifications.characteristicDidUpdate, object: self, userInfo: nil)
+
 		self.sendReloadCompletions(error)
 	}
 
@@ -136,6 +142,12 @@ public class BTLECharacteristic: NSObject {
 	
 	public var loadingState = BTLE.LoadingState.NotLoaded
 	public func reload(timeout: NSTimeInterval = 10.0, completion: ((NSError?, NSData?) -> ())? = nil) {
+		if !self.propertyEnabled(.Read) {
+			let error = NSError(domain: CBErrorDomain, code: CBError.InvalidParameters.rawValue, userInfo: nil)
+			self.didLoadWithError(error)
+			completion?(error, nil)
+			return
+		}
 		BTLE.debugLog(.Medium, "Reloading \(self.cbCharacteristic.UUID)")
 
 		if let completion = completion {

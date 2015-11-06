@@ -46,6 +46,7 @@ public class BTLEService: NSObject {
 		switch self.loadingState {
 		case .Loading: self.loadingState = .NotLoaded
 		case .Reloading: self.loadingState = .Loaded
+		case .Loaded: return
 		default: break
 		}
 		
@@ -101,10 +102,6 @@ public class BTLEService: NSObject {
 		//println("BTLE Service: Loaded characteristic: \(chr)")
 		if let char = self.findCharacteristicMatching(chr) {
 			char.didLoadWithError(error)
-			if self.numberOfLoadingCharacteristics == 0 {
-				self.didFinishLoading()
-			}
-			NSNotification.postNotification(BTLE.notifications.characteristicDidUpdate, object: char, userInfo: nil)
 		}
 	}
 	
