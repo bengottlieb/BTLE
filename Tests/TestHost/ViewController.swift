@@ -11,8 +11,8 @@ import BTLE
 import CoreBluetooth
 import Gulliver
 
-let testServiceID = CBUUID(string: "737CFF0D-7AEC-43B6-A37F-1EC1671307A6") // CBUUID(string: "45DFE33C-312F-4CEF-A67C-E103D29FA41D")
-let filterServiceID = CBUUID(string: "FEAA")//testServiceID// CBUUID(string: "C9563739-1783-4E81-A3EC-5061D4B2311C")
+let testServiceID = CBUUID(string: "45DFE33C-312F-4CEF-A67C-E103D29FA41D") // CBUUID(string: "737CFF0D-7AEC-43B6-A37F-1EC1671307A6")
+let filterServiceID = CBUUID(string: "45DFE33C-312F-4CEF-A67C-E103D29FA41D")//CBUUID(string: "FEAA")//testServiceID// CBUUID(string: "C9563739-1783-4E81-A3EC-5061D4B2311C")
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 	@IBOutlet var tableView: UITableView!
