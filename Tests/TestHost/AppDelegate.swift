@@ -58,9 +58,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			
 			self.beacon = CLBeaconRegion(proximityUUID:  uuid, major: major, minor: minor, identifier: name)
 			
-			if let data = self.beacon!.peripheralDataWithMeasuredPower(nil) as? [String: AnyObject] {
+			let data = self.beacon!.peripheralDataWithMeasuredPower(nil)
+			if data.count > 0 {
 				print("Starting to advertise (\(uuid)) beacon: \(data)")
-				BTLE.advertiser.advertisingData = data
+				BTLE.advertiser.advertisingData = NSDictionary(dictionary: data) as? [String: AnyObject] ?? [:]
 			}
 			BTLE.advertiser.startAdvertising()
 		} else if self.beacon != nil {

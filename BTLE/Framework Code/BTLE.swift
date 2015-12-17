@@ -51,6 +51,7 @@ public class BTLE: NSObject {
 		Array(BTLE.scanner.peripherals).forEach { $0.updateVisibilityTimer(); }
 	}}
 	public var loadEncryptedCharacteristics = false
+	public var ignoreBeaconLikeDevices = true
 	
 	class func debugLog(requiredLevel: DebugLevel, @autoclosure _ message: () -> String) {
 		if self.debugLevel.rawValue >= requiredLevel.rawValue {

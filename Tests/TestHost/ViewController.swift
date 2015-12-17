@@ -11,7 +11,7 @@ import BTLE
 import CoreBluetooth
 import Gulliver
 
-let testServiceID = CBUUID(string: "45DFE33C-312F-4CEF-A67C-E103D29FA41D") // CBUUID(string: "737CFF0D-7AEC-43B6-A37F-1EC1671307A6")
+let testServiceID = CBUUID(string: "01EB2EF1-BF82-4516-81BE-57E119207436") // CBUUID(string: "737CFF0D-7AEC-43B6-A37F-1EC1671307A6")
 let filterServiceID = CBUUID(string: "45DFE33C-312F-4CEF-A67C-E103D29FA41D")//CBUUID(string: "FEAA")//testServiceID// CBUUID(string: "C9563739-1783-4E81-A3EC-5061D4B2311C")
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
@@ -70,6 +70,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
 		//setup scanner
 		BTLE.manager.deviceLifetime = 20.0
+		BTLE.manager.ignoreBeaconLikeDevices = false
 		BTLE.manager.monitorRSSI = (NSUserDefaults.get(DefaultsKey<Bool>("monitorRSSI")) ?? false)
 		BTLE.manager.services = (NSUserDefaults.get(DefaultsKey<Bool>("filterByServices")) ?? false) ? [filterServiceID] : []
 		BTLE.manager.serviceFilter = .AdvertisingData

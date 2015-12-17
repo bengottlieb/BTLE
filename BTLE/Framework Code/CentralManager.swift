@@ -172,6 +172,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	}
 	
 	func addPeripheral(peripheral: CBPeripheral, RSSI: Int? = nil, advertisementData: [NSObject: AnyObject]? = nil) -> BTLEPeripheral? {
+		print("Discovered: \(advertisementData)")
 		if let existing = self.existingPeripheral(peripheral) {
 			if let rssi = RSSI { existing.setCurrentRSSI(rssi) }
 			if let advertisementData = advertisementData { existing.advertisementData = advertisementData }
@@ -213,7 +214,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		if let perClass = BTLE.registeredClasses.peripheralClass {
 			per = perClass.init(peripheral: peripheral, RSSI: RSSI, advertisementData: advertisementData)
 		} else {
-			if let _ = advertisementData?[CBAdvertisementDataManufacturerDataKey] as? NSData {
+			if BTLE.manager.ignoreBeaconLikeDevices, let _ = advertisementData?[CBAdvertisementDataManufacturerDataKey] as? NSData {
 //				print("\(advertisementData)")
 //				if let beacon = BTLEBeacon.beaconWithData(mfrData) {
 //					print("Found beacon: \(beacon)")
