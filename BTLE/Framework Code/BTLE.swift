@@ -47,6 +47,7 @@ public class BTLE: NSObject {
 	public var serviceFilter = ServiceFilter.CoreBluetooth { didSet { if oldValue != self.serviceFilter { self.cycleScanning() }}}
 	public var monitorRSSI = false { didSet { self.cycleScanning() }}
 	public var disableRSSISmoothing = false
+	public var rssiSmoothingHistoryDepth = 10
 	public var deviceLifetime: NSTimeInterval = 0.0 { didSet {
 		Array(BTLE.scanner.peripherals).forEach { $0.updateVisibilityTimer(); }
 	}}

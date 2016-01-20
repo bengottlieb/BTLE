@@ -186,7 +186,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 			self.rssi = newRSSI
 		} else {
 			self.rssiHistory.append(newRSSI)
-			if self.rssiHistory.count > 10 { self.rssiHistory.removeAtIndex(0) }
+			if self.rssiHistory.count > BTLE.manager.rssiSmoothingHistoryDepth { self.rssiHistory.removeAtIndex(0) }
 			
 			self.rssi = self.rssiHistory.reduce(0, combine: +) / self.rssiHistory.count
 		}
