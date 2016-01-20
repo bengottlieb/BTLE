@@ -9,6 +9,7 @@
 import Foundation
 import CoreBluetooth
 import Gulliver
+import GulliverEXT
 
 public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	public var dispatchQueue = dispatch_queue_create("BTLE.CentralManager queue", DISPATCH_QUEUE_SERIAL)

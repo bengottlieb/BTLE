@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Gulliver
+import GulliverEXT
 
 public class NearbyPeripheralsTableView: UITableView, UITableViewDelegate, UITableViewDataSource {
 	deinit { self.removeAsObserver() }

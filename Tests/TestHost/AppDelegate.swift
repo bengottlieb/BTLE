@@ -11,6 +11,7 @@ import CoreBluetooth
 import BTLE
 import Gulliver
 import CoreLocation
+import GulliverEXT
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

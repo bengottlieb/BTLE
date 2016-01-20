@@ -6,7 +6,7 @@
 	<dict>
 		<key>Headers/Gulliver-Swift.h</key>
 		<data>
-		/BQePrlLWCPNbXwlYqNheyw33ek=
+		8Xc2eDFJdjLVQQZr4ElKD+JXYKM=
 		</data>
 		<key>Headers/Gulliver.h</key>
 		<data>
@@ -14,23 +14,23 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		EaPYwpWKM58J3R9OiGduf+QpVlU=
+		ecRjnzMpBKkrVEWTkZJWW/arvbQ=
 		</data>
 		<key>Modules/Gulliver.swiftmodule/arm.swiftdoc</key>
 		<data>
-		xW9yEUcSTe0QyKKTk9q8M0Exh90=
+		ddSu8w5sV2hS/Pj5/5QRPOpHbHk=
 		</data>
 		<key>Modules/Gulliver.swiftmodule/arm.swiftmodule</key>
 		<data>
-		bPtSLOusq7U18a8FALoyVt+LWfM=
+		fdhcdj4wkpZwfRfgOyb9aruaTSE=
 		</data>
 		<key>Modules/Gulliver.swiftmodule/arm64.swiftdoc</key>
 		<data>
-		JJpSEZVbwCwxrePq3sHlBD1ADg8=
+		LYz0XrXdhytuvStIqzCsMjixIy8=
 		</data>
 		<key>Modules/Gulliver.swiftmodule/arm64.swiftmodule</key>
 		<data>
-		DrlbeaTRUWs0LLcP045FdJH9y7A=
+		yw/GoJsvOMcsTMakfreHR1vFAIU=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -41,7 +41,7 @@
 	<dict>
 		<key>Headers/Gulliver-Swift.h</key>
 		<data>
-		/BQePrlLWCPNbXwlYqNheyw33ek=
+		8Xc2eDFJdjLVQQZr4ElKD+JXYKM=
 		</data>
 		<key>Headers/Gulliver.h</key>
 		<data>
@@ -49,19 +49,19 @@
 		</data>
 		<key>Modules/Gulliver.swiftmodule/arm.swiftdoc</key>
 		<data>
-		xW9yEUcSTe0QyKKTk9q8M0Exh90=
+		ddSu8w5sV2hS/Pj5/5QRPOpHbHk=
 		</data>
 		<key>Modules/Gulliver.swiftmodule/arm.swiftmodule</key>
 		<data>
-		bPtSLOusq7U18a8FALoyVt+LWfM=
+		fdhcdj4wkpZwfRfgOyb9aruaTSE=
 		</data>
 		<key>Modules/Gulliver.swiftmodule/arm64.swiftdoc</key>
 		<data>
-		JJpSEZVbwCwxrePq3sHlBD1ADg8=
+		LYz0XrXdhytuvStIqzCsMjixIy8=
 		</data>
 		<key>Modules/Gulliver.swiftmodule/arm64.swiftmodule</key>
 		<data>
-		DrlbeaTRUWs0LLcP045FdJH9y7A=
+		yw/GoJsvOMcsTMakfreHR1vFAIU=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>

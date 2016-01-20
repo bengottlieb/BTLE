@@ -9,6 +9,7 @@
 import UIKit
 import BTLE
 import Gulliver
+import GulliverEXT
 
 class PeripheralCellTableViewCell: UITableViewCell {
 	var peripheral: BTLEPeripheral? { didSet { self.setupNotificationsForPeripheral(self.peripheral); self.updateUI() }}

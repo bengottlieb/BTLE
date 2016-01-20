@@ -8,6 +8,7 @@
 
 import UIKit
 import Gulliver
+import GulliverEXT
 
 
 public class NearbyPeripheralsTableViewCell: UITableViewCell {

@@ -64,6 +64,7 @@
 		B5DAB3341AE40B3800D49D44 /* PeripheralCellTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5DAB3321AE40B3800D49D44 /* PeripheralCellTableViewCell.xib */; };
 		B5DAB3361AE418FE00D49D44 /* Array+SA_Additions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5DAB3351AE418FE00D49D44 /* Array+SA_Additions.swift */; };
 		B5DAB3371AE418FE00D49D44 /* Array+SA_Additions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5DAB3351AE418FE00D49D44 /* Array+SA_Additions.swift */; };
+		B5FCDCD41C4FEE3B00F6F20C /* GulliverEXT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5FCDCD31C4FEE3B00F6F20C /* GulliverEXT.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -140,6 +141,7 @@
 		B5DAB3311AE40B3800D49D44 /* PeripheralCellTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralCellTableViewCell.swift; sourceTree = "<group>"; };
 		B5DAB3321AE40B3800D49D44 /* PeripheralCellTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PeripheralCellTableViewCell.xib; sourceTree = "<group>"; };
 		B5DAB3351AE418FE00D49D44 /* Array+SA_Additions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+SA_Additions.swift"; sourceTree = "<group>"; };
+		B5FCDCD31C4FEE3B00F6F20C /* GulliverEXT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GulliverEXT.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,6 +151,7 @@
 			files = (
 				B504E65D1A8968DC001B414B /* BTLE.framework in Frameworks */,
 				B5CC3B931BC98A7900DB75DD /* Gulliver.framework in Frameworks */,
+				B5FCDCD41C4FEE3B00F6F20C /* GulliverEXT.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,6 +306,7 @@
 		B5D608431ADC097E004DC9AC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B5FCDCD31C4FEE3B00F6F20C /* GulliverEXT.framework */,
 				B5CC3B921BC98A7900DB75DD /* Gulliver.framework */,
 			);
 			path = Frameworks;
