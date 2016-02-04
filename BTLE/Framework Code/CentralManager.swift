@@ -61,7 +61,23 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 
 	//=============================================================================================
 	//MARK: Actions
-
+	public enum ClearWhichCacheItems { case Old, AllIncludingConnected }
+	public func clearCachedDevices(which: ClearWhichCacheItems) {
+		var count = self.oldPeripherals.count
+		self.oldPeripherals = []
+		
+		count += self.ignoredPeripherals.count
+		self.ignoredPeripherals = []
+		
+		if which == .AllIncludingConnected {
+			count += self.pendingPeripherals.count
+			self.pendingPeripherals = []
+			
+			count += self.peripherals.count
+			self.peripherals = []
+		}
+		BTLE.debugLog(.Medium, "Cleared out \(count) devices")
+	}
 	
 	//=============================================================================================
 	//MARK: Class vars
