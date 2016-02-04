@@ -173,7 +173,6 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	}
 	
 	func addPeripheral(peripheral: CBPeripheral, RSSI: Int? = nil, advertisementData: [NSObject: AnyObject]? = nil) -> BTLEPeripheral? {
-		print("Discovered: \(advertisementData)")
 		if let existing = self.existingPeripheral(peripheral) {
 			if let rssi = RSSI { existing.setCurrentRSSI(rssi) }
 			if let advertisementData = advertisementData { existing.advertisementData = advertisementData }

@@ -177,7 +177,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	
 	public var distance: Distance { if let rssi = self.rssi { return Distance(raw: rssi) }; return .Unknown }
 	
-	public var rssiHistory: [RSSValue] = []
+	public var rssiHistory: [(NSDate, RSSValue)] = []
 	func setCurrentRSSI(newRSSI: RSSValue) {
 		if abs(newRSSI) == 127 { return }
 		
@@ -185,10 +185,10 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		if BTLE.manager.disableRSSISmoothing {
 			self.rssi = newRSSI
 		} else {
-			self.rssiHistory.append(newRSSI)
+			self.rssiHistory.append((NSDate(), newRSSI))
 			if self.rssiHistory.count > BTLE.manager.rssiSmoothingHistoryDepth { self.rssiHistory.removeAtIndex(0) }
 			
-			self.rssi = self.rssiHistory.reduce(0, combine: +) / self.rssiHistory.count
+			self.rssi = self.rssiHistory.reduce(0, combine: { $0 + $1.1 }) / self.rssiHistory.count
 		}
 		self.lastCommunicatedAt = NSDate()
 	}
