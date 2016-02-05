@@ -10,13 +10,13 @@ import Foundation
 import CoreBluetooth
 
 public class BTLECharacteristic: NSObject {
-	public enum ListeningState { case NotListening, StartingToListen, Listening, FinishingListening }
+	public enum State { case NotListening, StartingToListen, Listening, FinishingListening, Updated }
 	public var cbCharacteristic: CBCharacteristic!
 	public var service: BTLEService!
 	public var descriptors: [BTLEDescriptor] = []
-	public var listeningState = ListeningState.NotListening { didSet { NSNotification.postNotification(BTLE.notifications.characteristicListeningChanged, object: self) }}
+	public var state = State.NotListening { didSet { NSNotification.postNotification(BTLE.notifications.characteristicListeningChanged, object: self) }}
 	public override var description: String { return "\(self.cbCharacteristic)" }
-	public var writeBackInProgress = false
+	public var writeBackInProgress: Bool { return self.writeBackCompletion != nil }
 
 	init(characteristic chr: CBCharacteristic, ofService svc: BTLEService?) {
 		cbCharacteristic = chr
@@ -29,35 +29,48 @@ public class BTLECharacteristic: NSObject {
 		if svc != nil { self.reload() }
 	}
 	
-	public func listenForUpdates(listen: Bool) {
-		if self.canNotify {
-			switch self.listeningState {
-			case .NotListening: fallthrough
-			case .FinishingListening:
-				if listen { self.peripheral.cbPeripheral.setNotifyValue(true, forCharacteristic: self.cbCharacteristic) }
-				
-			case .Listening: fallthrough
-			case .StartingToListen:
-				if !listen { self.peripheral.cbPeripheral.setNotifyValue(false, forCharacteristic: self.cbCharacteristic) }
-			}
+	public func stopListeningForUpdates() {
+		if self.canNotify && (self.state == .Listening || self.state == .StartingToListen) {
+			self.peripheral.cbPeripheral.setNotifyValue(false, forCharacteristic: self.cbCharacteristic)
+			self.updateListeners(.FinishingListening)
+			self.updateClosures = []
+		}
+	}
+	
+	var updateClosures: [(State, BTLECharacteristic) -> Void] = []
+	public func listenForUpdates(closure: (State, BTLECharacteristic) -> Void) {
+		if self.canNotify && (self.state == .NotListening || self.state == .FinishingListening) {
+			self.peripheral.cbPeripheral.setNotifyValue(true, forCharacteristic: self.cbCharacteristic)
+			self.updateClosures.append(closure)
 		}
 	}
 	
 	public var canNotify: Bool { return self.propertyEnabled(.Notify) || self.propertyEnabled(.Indicate) }
 	public var centralCanWriteTo: Bool { return self.propertyEnabled(.Write) || self.propertyEnabled(.WriteWithoutResponse) }
-	public func writeBackValue(data: NSData, withResponse: Bool = false) -> Bool {
+	
+	var writeBackCompletion: ((BTLECharacteristic, NSError?) -> Void)?
+	public func writeBackValue(data: NSData, completion: ((BTLECharacteristic, NSError?) -> Void)? = nil) -> Bool {
 		if self.peripheral.state != .Connected {
-			BTLE.debugLog(.Low, "Characteristic: Not currently connected")
+			completion?(self, NSError(type: .CharacteristicNotConnected))
+			return false
+		}
+		if self.writeBackCompletion != nil {
+			completion?(self, NSError(type: .CharacteristicHasPendingWriteInProgress))
 			return false
 		}
 		if self.centralCanWriteTo {
-			self.writeBackInProgress = true
-			self.peripheral.cbPeripheral.writeValue(data, forCharacteristic: self.cbCharacteristic, type: withResponse ? .WithResponse : .WithoutResponse)
+			self.writeBackCompletion = completion
+			self.peripheral.cbPeripheral.writeValue(data, forCharacteristic: self.cbCharacteristic, type: completion != nil ? .WithResponse : .WithoutResponse)
 			return true
 		} else {
 			BTLE.debugLog(.None, "Characteristic: Trying to write to a read-only characteristic: \(self)")
+			completion?(self, NSError(type: .CharacteristicNotWritable))
 			return false
 		}
+	}
+	
+	func updateListeners(newState: State) {
+		self.updateClosures.forEach { $0(newState, self) }
 	}
 	
 	public func propertyEnabled(prop: CBCharacteristicProperties) -> Bool {
@@ -102,6 +115,7 @@ public class BTLECharacteristic: NSObject {
 		if self.service.numberOfLoadingCharacteristics == 0 {
 			self.service.didFinishLoading()
 		}
+		self.updateListeners(.Updated)
 		NSNotification.postNotification(BTLE.notifications.characteristicDidUpdate, object: self, userInfo: nil)
 
 		self.sendReloadCompletions(error)
@@ -111,15 +125,15 @@ public class BTLECharacteristic: NSObject {
 		if let error = error {
 			BTLE.debugLog(.None, "Characteristic: Error while writing to \(self): \(error)")
 		}
-		if self.writeBackInProgress {
-			BTLE.debugLog(.Medium, "Characteristic: writeBack complete")
-			self.writeBackInProgress = false
-		}
+		self.writeBackCompletion?(self, error)
+		self.writeBackCompletion = nil
+
 		NSNotification.postNotification(BTLE.notifications.characteristicDidFinishWritingBack, object: self)
 	}
 	
 	func didUpdateNotifyValue() {
-		self.listeningState = self.cbCharacteristic.isNotifying ? .Listening : .NotListening
+		self.state = self.cbCharacteristic.isNotifying ? .Listening : .NotListening
+		self.updateListeners(self.state)
 		
 	}
 	
