@@ -53,6 +53,7 @@ public struct BTLECharacteristicUUIDs {
 
 public class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	deinit {
+		self.connectionTimeoutTimer?.invalidate()
 		BTLE.debugLog(.SuperHigh, "BTLE Peripheral: deiniting: \(self)")
 	}
 	public enum Ignored: Int { case Not, BlackList, MissingServices, CheckingForServices }
@@ -139,6 +140,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	}
 	
 	func sendConnectionCompletions(error: NSError?) {
+		self.connectionTimeoutTimer?.invalidate()
 		BTLE.debugLog(.Medium, "Sending \(self.connectionCompletionBlocks.count) completion messages (\(error))")
 		let completions = self.connectionCompletionBlocks
 		self.connectionCompletionBlocks = []
@@ -261,8 +263,14 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	}
 	
 	var connectionCompletionBlocks: [(NSError?) -> Void] = []
+	weak var connectionTimeoutTimer: NSTimer?
+	 
+	public func connectionTimedOut() {
+		self.state = .Discovered
+		self.sendConnectionCompletions(NSError(type: .PeripheralConnectionTimedOut))
+	}
 	
-	public func connect(reloadServices: Bool = false, completion: ((NSError?) -> ())? = nil) {
+	public func connect(reloadServices: Bool = false, timeout: NSTimeInterval? = nil, completion: ((NSError?) -> ())? = nil) {
 		dispatch_async(BTLE.scanner.dispatchQueue) {
 			if let completion = completion { self.connectionCompletionBlocks.append(completion) }
 			switch self.state {
@@ -276,6 +284,11 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 			case .Disconnecting: fallthrough
 			case .Undiscovered: fallthrough
 			case .Unknown:
+				if let timeout = timeout {
+					btle_dispatch_main {
+						self.connectionTimeoutTimer = NSTimer.scheduledTimerWithTimeInterval(timeout, target: self, selector: "connectionTimedOut", userInfo: nil, repeats: false)
+					}
+				}
 				if (reloadServices) { self.loadingState = .Reloading }
 				BTLE.debugLog(.Medium, "Attempting to connect to \(self.name), current state: \(self.state.description)")
 				self.state = .Connecting
