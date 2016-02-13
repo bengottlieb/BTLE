@@ -170,7 +170,9 @@ public class BTLECharacteristic: NSObject {
 
 		self.reloadTimeoutTimer?.invalidate()
 		if timeout > 0.0 {
-			self.reloadTimeoutTimer = NSTimer.scheduledTimerWithTimeInterval(timeout, target: self, selector: "reloadTimedOut:", userInfo: nil, repeats: false)
+			btle_dispatch_main {
+				self.reloadTimeoutTimer = NSTimer.scheduledTimerWithTimeInterval(timeout, target: self, selector: "reloadTimedOut:", userInfo: nil, repeats: false)
+			}
 		}
 		
 		self.peripheral.connect(completion: { error in

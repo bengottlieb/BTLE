@@ -65,7 +65,9 @@ public class NearbyPeripheralsTableViewCell: UITableViewCell {
     public override func awakeFromNib() {
         super.awakeFromNib()
 		
-		self.timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: "updateLastCommsLabel", userInfo: nil, repeats: true)
+		btle_dispatch_main {
+			self.timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: "updateLastCommsLabel", userInfo: nil, repeats: true)
+		}
 		
 		self.rssiLabel.layer.borderWidth = 2.0
 		self.rssiLabel.layer.borderColor = UIColor.blackColor().CGColor

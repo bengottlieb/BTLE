@@ -54,8 +54,9 @@ class BeaconSettingsViewController: UIViewController {
 	weak var timer: NSTimer?
 	override func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
 		self.timer?.invalidate()
-		self.timer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "updateQRCodeImage", userInfo: nil, repeats: false)
-		
+		btle_dispatch_main {
+			self.timer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "updateQRCodeImage", userInfo: nil, repeats: false)
+		}
 		return true
 	}
 	

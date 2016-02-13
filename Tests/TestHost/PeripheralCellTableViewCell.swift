@@ -85,7 +85,9 @@ class PeripheralCellTableViewCell: UITableViewCell {
 	weak var updateTimer: NSTimer?
 	func queueUIUpdate() {
 		self.updateTimer?.invalidate()
-		self.updateTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "updateUI", userInfo: nil, repeats: false)
+		btle_dispatch_main {
+			self.updateTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "updateUI", userInfo: nil, repeats: false)
+		}
 	}
 	
 	func setupNotificationsForPeripheral(peripheral: BTLEPeripheral?) {
