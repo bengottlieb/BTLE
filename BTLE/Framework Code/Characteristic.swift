@@ -31,18 +31,24 @@ public class BTLECharacteristic: NSObject {
 	
 	public func stopListeningForUpdates() {
 		if self.canNotify && (self.state == .Listening || self.state == .StartingToListen) {
-			self.peripheral.cbPeripheral.setNotifyValue(false, forCharacteristic: self.cbCharacteristic)
+			if self.cbCharacteristic.isNotifying {
+				self.state = .FinishingListening
+				self.peripheral.cbPeripheral.setNotifyValue(false, forCharacteristic: self.cbCharacteristic)
+			} else {
+				self.state = .NotListening
+			}
 			self.updateListeners(.FinishingListening)
-			self.updateClosures = []
 		}
+		self.updateClosures = []
 	}
 	
 	var updateClosures: [(State, BTLECharacteristic) -> Void] = []
 	public func listenForUpdates(closure: (State, BTLECharacteristic) -> Void) {
 		if self.canNotify && (self.state == .NotListening || self.state == .FinishingListening) {
+			self.state = .StartingToListen
 			self.peripheral.cbPeripheral.setNotifyValue(true, forCharacteristic: self.cbCharacteristic)
-			self.updateClosures.append(closure)
 		}
+		self.updateClosures.append(closure)
 	}
 	
 	public var canNotify: Bool { return self.propertyEnabled(.Notify) || self.propertyEnabled(.Indicate) }
