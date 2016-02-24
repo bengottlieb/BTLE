@@ -17,6 +17,7 @@ public class BTLECharacteristic: NSObject {
 	public var state = State.NotListening { didSet { NSNotification.postNotification(BTLE.notifications.characteristicListeningChanged, object: self) }}
 	public override var description: String { return "\(self.cbCharacteristic)" }
 	public var writeBackInProgress: Bool { return self.writeBackCompletion != nil }
+	public private(set) var reloadInProgress: Bool = false
 
 	init(characteristic chr: CBCharacteristic, ofService svc: BTLEService?) {
 		cbCharacteristic = chr
@@ -149,6 +150,7 @@ public class BTLECharacteristic: NSObject {
 		BTLE.debugLog(.Low, "Characteristic: reload timed out")
 		self.reloadTimeoutTimer?.invalidate()
 		self.sendReloadCompletions(NSError(domain: CBErrorDomain, code: CBError.ConnectionTimeout.rawValue, userInfo: nil))
+		self.reloadInProgress = false
 	}
 	
 	func sendReloadCompletions(error: NSError?) {
@@ -168,6 +170,8 @@ public class BTLECharacteristic: NSObject {
 			completion?(error, nil)
 			return
 		}
+		
+		self.reloadInProgress = true
 		BTLE.debugLog(.Medium, "Reloading \(self.cbCharacteristic.UUID)")
 
 		if let completion = completion {
@@ -175,10 +179,8 @@ public class BTLECharacteristic: NSObject {
 		}
 
 		self.reloadTimeoutTimer?.invalidate()
-		if timeout > 0.0 {
-			btle_dispatch_main {
-				self.reloadTimeoutTimer = NSTimer.scheduledTimerWithTimeInterval(timeout, target: self, selector: "reloadTimedOut:", userInfo: nil, repeats: false)
-			}
+		btle_dispatch_main {
+			self.reloadTimeoutTimer = NSTimer.scheduledTimerWithTimeInterval(timeout, target: self, selector: "reloadTimedOut:", userInfo: nil, repeats: false)
 		}
 		
 		self.peripheral.connect(completion: { error in
@@ -187,6 +189,7 @@ public class BTLECharacteristic: NSObject {
 				let chr = self.cbCharacteristic
 				BTLE.debugLog(.High, "Connected, calling readValue on \(self.cbCharacteristic.UUID)")
 				self.peripheral.cbPeripheral.readValueForCharacteristic(chr)
+				self.reloadInProgress = false
 			}
 		})
 	}
