@@ -9,6 +9,7 @@
 import UIKit
 import Gulliver
 import CoreImage
+import GulliverEXT
 
 class BeaconSettingsViewController: UIViewController {
 	

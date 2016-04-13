@@ -93,7 +93,7 @@ public class BTLEService: NSObject {
 		var count = 0
 		
 		for chr in self.characteristics {
-			if chr.loadingState	== .Loading || chr.loadingState	== .Reloading { count++ }
+			if chr.loadingState	== .Loading || chr.loadingState	== .Reloading { count += 1 }
 		}
 		return count
 	}

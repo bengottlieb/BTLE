@@ -10,6 +10,7 @@ import UIKit
 import XCTest
 import Gulliver
 import BTLE
+import GulliverEXT
 
 class BTLE_Tests: XCTestCase {
     

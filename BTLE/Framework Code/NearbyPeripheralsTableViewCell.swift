@@ -17,8 +17,6 @@ public class NearbyPeripheralsTableViewCell: UITableViewCell {
 		self.timer?.invalidate()
 	}
 	
-	static let identifier = "NearbyPeripheralsTableViewCell"
-	
 	@IBOutlet var nameLabel: UILabel!
 	@IBOutlet var rssiLabel: UILabel!
 	@IBOutlet var lastCommunicatedAtLabel: UILabel!
@@ -30,12 +28,12 @@ public class NearbyPeripheralsTableViewCell: UITableViewCell {
 		self.removeAsObserver()
 		self.updateUI()
 		if let per = self.peripheral {
-			self.addAsObserver(BTLE.notifications.peripheralDidUpdateRSSI, selector: "pinged", object: per)
+			self.addAsObserver(BTLE.notifications.peripheralDidUpdateRSSI, selector: #selector(NearbyPeripheralsTableViewCell.pinged), object: per)
 		}
 	}}
 	
 	func pinged() {
-		dispatch_async_main() {
+		Dispatch.main.async() {
 			self.indicator.alpha = 1.0
 			UIView.animateWithDuration(0.5, animations: { self.indicator.alpha = 0.0} )
 			self.updateUI()
@@ -43,7 +41,7 @@ public class NearbyPeripheralsTableViewCell: UITableViewCell {
 	}
 	
 	public func updateUI() {
-		dispatch_async_main() {
+		Dispatch.main.async() {
 			if let per = self.peripheral {
 				self.nameLabel.text = per.name
 				self.rssiLabel.text = "\(per.rssi ?? 0)"
@@ -66,7 +64,7 @@ public class NearbyPeripheralsTableViewCell: UITableViewCell {
         super.awakeFromNib()
 		
 		btle_dispatch_main {
-			self.timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: "updateLastCommsLabel", userInfo: nil, repeats: true)
+			self.timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: #selector(NearbyPeripheralsTableViewCell.updateLastCommsLabel), userInfo: nil, repeats: true)
 		}
 		
 		self.rssiLabel.layer.borderWidth = 2.0

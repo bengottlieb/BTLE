@@ -9,6 +9,7 @@
 import UIKit
 import BTLE
 import Gulliver
+import GulliverEXT
 
 class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 	deinit {
@@ -23,13 +24,13 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 	
 	
 	func startLoading() {
-		dispatch_async_main {
+		Dispatch.main.async {
 			self.refreshControl?.beginRefreshing()
 		}
 	}
 
 	func finishLoading() {
-		dispatch_async_main {
+		Dispatch.main.async {
 			self.refreshControl?.endRefreshing()
 		}
 		self.updateSections()
@@ -91,7 +92,7 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 			self.sections.append(service)
 		}
 		
-		dispatch_async_main {
+		Dispatch.main.async {
 			self.tableView.reloadData()
 		}
 	}

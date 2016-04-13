@@ -32,7 +32,7 @@ class PeripheralCellTableViewCell: UITableViewCell {
     }
 	
 	func updateUI() {
-		dispatch_async_main {
+		Dispatch.main.async {
 			if let per = self.peripheral {
 				self.nameLabel.text = per.name + ", " + per.uuid.UUIDString
 				self.detailsLabel.text = per.summaryDescription

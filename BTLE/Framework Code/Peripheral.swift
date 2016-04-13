@@ -286,7 +286,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 			case .Unknown:
 				if let timeout = timeout {
 					btle_dispatch_main {
-						self.connectionTimeoutTimer = NSTimer.scheduledTimerWithTimeInterval(timeout, target: self, selector: "connectionTimedOut", userInfo: nil, repeats: false)
+						self.connectionTimeoutTimer = NSTimer.scheduledTimerWithTimeInterval(timeout, target: self, selector: #selector(BTLEPeripheral.connectionTimedOut), userInfo: nil, repeats: false)
 					}
 				}
 				if (reloadServices) { self.loadingState = .Reloading }
@@ -404,7 +404,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		var count = 0
 		
 		for chr in self.services {
-			if chr.loadingState == .Loading || chr.loadingState == .Reloading { count++ }
+			if chr.loadingState == .Loading || chr.loadingState == .Reloading { count += 1 }
 		}
 		return count
 	}
@@ -439,7 +439,7 @@ public class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 						
 						me.visibilityTimer?.invalidate()
 						btle_dispatch_main {
-							me.visibilityTimer = NSTimer.scheduledTimerWithTimeInterval(timeoutInverval, target: me, selector: "disconnectDueToTimeout", userInfo: nil, repeats: false)
+							me.visibilityTimer = NSTimer.scheduledTimerWithTimeInterval(timeoutInverval, target: me, selector: #selector(BTLEPeripheral.disconnectDueToTimeout), userInfo: nil, repeats: false)
 						}
 					} else if BTLE.manager.deviceLifetime > 0 {
 						me.disconnectDueToTimeout()

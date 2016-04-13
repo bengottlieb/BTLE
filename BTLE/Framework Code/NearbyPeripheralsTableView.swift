@@ -20,7 +20,7 @@ public class NearbyPeripheralsTableView: UITableView, UITableViewDelegate, UITab
 	
 	public var peripherals: [BTLEPeripheral]? { didSet { self.reload() }}
 	
-	public func reload() { dispatch_async_main() { self.reloadData() }}
+	public func reload() { Dispatch.main.async() { self.reloadData() }}
 	
 	var parentViewController: UIViewController?
 	
@@ -34,7 +34,7 @@ public class NearbyPeripheralsTableView: UITableView, UITableViewDelegate, UITab
 		self.delegate = self
 		self.dataSource = self
 		
-		self.addAsObserver(BTLE.notifications.peripheralWasDiscovered, selector: "reloadNearbyPeripherals", object: nil)
+		self.addAsObserver(BTLE.notifications.peripheralWasDiscovered, selector: #selector(NearbyPeripheralsTableView.reloadNearbyPeripherals), object: nil)
 		
 		self.registerNib(UINib(nibName: "NearbyPeripheralsTableViewCell", bundle: NSBundle(forClass: self.dynamicType)), forCellReuseIdentifier: NearbyPeripheralsTableViewCell.identifier)
 	}

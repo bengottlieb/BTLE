@@ -16,11 +16,11 @@ public class NearbyPeripheralsViewController: UIViewController {
 		table.parentViewController = self
 		
 		self.navigationItem.title = "Nearby Peripherals"
-		self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Done, target: self, action: "dismiss")
+		self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Done, target: self, action: #selector(NearbyPeripheralsViewController.dismiss))
 		
 		if BTLE.manager.services.count > 0 {
 			self.navigationItem.titleView = self.filterToggle
-			self.filterToggle.addTarget(self, action: "toggleFilter:", forControlEvents: .ValueChanged)
+			self.filterToggle.addTarget(self, action: #selector(NearbyPeripheralsViewController.toggleFilter(_:)), forControlEvents: .ValueChanged)
 		}
 	}
 	

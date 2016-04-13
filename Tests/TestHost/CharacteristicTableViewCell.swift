@@ -10,6 +10,7 @@ import UIKit
 import BTLE
 import Gulliver
 import CoreBluetooth
+import GulliverEXT
 
 class CharacteristicTableViewCell: UITableViewCell {
 	@IBOutlet var nameAndPropertiesLabel: UILabel!

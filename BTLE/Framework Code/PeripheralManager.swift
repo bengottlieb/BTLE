@@ -26,7 +26,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	var internalState: BTLE.State = .Off { didSet {
 		if oldValue == self.internalState { return }
 		
-		self.stateChangeCounter++
+		self.stateChangeCounter += 1
 		
 		switch self.internalState {
 		case .Off:
@@ -53,8 +53,8 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		case .ShuttingDown: break
 		}
 		
-		self.stateChangeCounter--
-		}}
+		self.stateChangeCounter -= 1
+	}}
 	
 	
 	public func startAdvertising() {

@@ -30,7 +30,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	func reload() {
 		self.devices = Array(BTLE.scanner.peripherals).sort { $0.rssi > $1.rssi }
 		
-		dispatch_async_main {
+		Dispatch.main.async {
 			self.tableView.reloadData()
 			self.updateScanningLabel()
 			self.scanSwitch.on = BTLE.scanner.state == .Active || BTLE.scanner.state == .StartingUp

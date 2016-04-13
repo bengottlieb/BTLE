@@ -24,7 +24,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	var internalState: BTLE.State = .Off { didSet {
 		if oldValue == self.internalState { return }
 		BTLE.debugLog(.Medium, "Changing state to \(self.internalState) from \(oldValue), Central state: \(self.cbCentral?.state.rawValue)")
-		self.stateChangeCounter++
+		self.stateChangeCounter += 1
 		switch self.internalState {
 		case .Off:
 			NSNotification.postNotificationOnMainThread(BTLE.notifications.didFinishScan, object: self)
@@ -55,7 +55,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 			
 		case .PowerInterupted: break
 		}
-		self.stateChangeCounter--
+		self.stateChangeCounter -= 1
 		}}
 	
 
@@ -125,7 +125,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 			self.cbCentral.scanForPeripheralsWithServices(self.coreBluetoothFilteredServices.count > 0 ? self.coreBluetoothFilteredServices : nil, options: options)
 			if self.pendingDuration != 0.0 {
 				btle_dispatch_main {
-					self.searchTimer = NSTimer.scheduledTimerWithTimeInterval(self.pendingDuration, target: self, selector: "stopScanning", userInfo: nil, repeats: false)
+					self.searchTimer = NSTimer.scheduledTimerWithTimeInterval(self.pendingDuration, target: self, selector: #selector(BTLECentralManager.stopScanning), userInfo: nil, repeats: false)
 				}
 			}
 		}
