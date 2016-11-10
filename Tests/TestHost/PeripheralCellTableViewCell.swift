@@ -9,10 +9,10 @@
 import UIKit
 import BTLE
 import Gulliver
-import GulliverEXT
+import GulliverUI
 
 class PeripheralCellTableViewCell: UITableViewCell {
-	var peripheral: BTLEPeripheral? { didSet { self.setupNotificationsForPeripheral(self.peripheral); self.updateUI() }}
+	var peripheral: BTLEPeripheral? { didSet { self.setupNotificationsForPeripheral(peripheral: self.peripheral); self.updateUI() }}
 	
 	@IBOutlet var nameLabel: UILabel!
 	@IBOutlet var detailsLabel: UILabel!
@@ -25,16 +25,16 @@ class PeripheralCellTableViewCell: UITableViewCell {
         // Initialization code
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
     }
 	
 	func updateUI() {
-		Dispatch.main.async {
+		DispatchQueue.main.async {
 			if let per = self.peripheral {
-				self.nameLabel.text = per.name + ", " + per.uuid.UUIDString
+				self.nameLabel.text = per.name + ", " + per.uuid.uuidString
 				self.detailsLabel.text = per.summaryDescription
 				self.rssiLabel.text = "\(per.rssi ?? 0)"
 				
@@ -42,7 +42,7 @@ class PeripheralCellTableViewCell: UITableViewCell {
 				var text = ""
 				for (key, value) in per.advertisementData {
 					if let describable = value as? CustomStringConvertible {
-						let line = describable.description.stringByReplacingOccurrencesOfString("\n", withString: "")
+						let line = describable.description.replacingOccurrences(of: "\n", with: "")
 						text += "\n\(key): \(line)"
 					} else {
 						text += "\n\(key): \(value)"
@@ -50,57 +50,57 @@ class PeripheralCellTableViewCell: UITableViewCell {
 					
 				}
 				
-				let string = NSMutableAttributedString(string: "\(seconds) sec since last ping, \(per.services.count) services", attributes: [NSFontAttributeName: UIFont.boldSystemFontOfSize(12)])
-				string.appendAttributedString(NSAttributedString(string: text, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(12)]))
+				let string = NSMutableAttributedString(string: "\(seconds) sec since last ping, \(per.services.count) services", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12)])
+				string.append(NSAttributedString(string: text, attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 12)]))
 				self.detailsLabel?.attributedText = string
 
 				
-				self.connectedSwitch.on = (per.state == .Connected || per.state == .Connecting)
+				self.connectedSwitch.isOn = (per.state == .connected || per.state == .connecting)
 				switch per.state {
-				case .Discovered:
-					self.nameLabel.textColor = UIColor.darkGrayColor()
-				case .Connected:
-					self.nameLabel.textColor = UIColor.blackColor()
-				case .Connecting:
-					self.nameLabel.textColor = UIColor.orangeColor()
-				case .Disconnecting:
-					self.nameLabel.textColor = UIColor.lightGrayColor()
-				case .Undiscovered:
-					self.nameLabel.textColor = UIColor.redColor()
-				case .Unknown:
-					self.nameLabel.textColor = UIColor.yellowColor()
+				case .discovered:
+					self.nameLabel.textColor = UIColor.darkGray
+				case .connected:
+					self.nameLabel.textColor = UIColor.black
+				case .connecting:
+					self.nameLabel.textColor = UIColor.orange
+				case .disconnecting:
+					self.nameLabel.textColor = UIColor.lightGray
+				case .undiscovered:
+					self.nameLabel.textColor = UIColor.red
+				case .unknown:
+					self.nameLabel.textColor = UIColor.yellow
 				}
 			}
 		}
 	}
 	
 	@IBAction func connect() {
-		if self.connectedSwitch.on {
+		if self.connectedSwitch.isOn {
 			self.peripheral?.connect()
 		} else {
 			self.peripheral?.disconnect()
 		}
 	}
 	
-	weak var updateTimer: NSTimer?
+	weak var updateTimer: Timer?
 	func queueUIUpdate() {
 		self.updateTimer?.invalidate()
 		btle_dispatch_main {
-			self.updateTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "updateUI", userInfo: nil, repeats: false)
+			self.updateTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(PeripheralCellTableViewCell.updateUI), userInfo: nil, repeats: false)
 		}
 	}
 	
 	func setupNotificationsForPeripheral(peripheral: BTLEPeripheral?) {
 		self.removeAsObserver()
 		if let per = peripheral {
-			self.addAsObserver(BTLE.notifications.peripheralDidDisconnect, selector: "queueUIUpdate", object: per)
-			self.addAsObserver(BTLE.notifications.peripheralDidConnect, selector: "queueUIUpdate", object: per)
-			self.addAsObserver(BTLE.notifications.peripheralDidUpdateRSSI, selector: "queueUIUpdate", object: per)
-			self.addAsObserver(BTLE.notifications.peripheralDidBeginLoading, selector: "queueUIUpdate", object: per)
-			self.addAsObserver(BTLE.notifications.peripheralDidFinishLoading, selector: "queueUIUpdate", object: per)
-			self.addAsObserver(BTLE.notifications.peripheralDidUpdateName, selector: "queueUIUpdate", object: per)
-			self.addAsObserver(BTLE.notifications.peripheralDidLoseComms, selector: "queueUIUpdate", object: per)
-			self.addAsObserver(BTLE.notifications.peripheralDidRegainComms, selector: "queueUIUpdate", object: per)
+			self.addAsObserver(for: BTLE.notifications.peripheralDidDisconnect, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(for: BTLE.notifications.peripheralDidConnect, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(for: BTLE.notifications.peripheralDidUpdateRSSI, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(for: BTLE.notifications.peripheralDidBeginLoading, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(for: BTLE.notifications.peripheralDidFinishLoading, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(for: BTLE.notifications.peripheralDidUpdateName, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(for: BTLE.notifications.peripheralDidLoseComms, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(for: BTLE.notifications.peripheralDidRegainComms, selector: #selector(queueUIUpdate), object: per)
 		}
 	}
 }

@@ -11,20 +11,20 @@ import CoreBluetooth
 
 public class NearbyPeripheralsViewController: UIViewController {
 	public override func loadView() {
-		let table = NearbyPeripheralsTableView(frame: CGRectZero)
+		let table = NearbyPeripheralsTableView(frame: CGRect.zero)
 		self.view = table
 		table.parentViewController = self
 		
 		self.navigationItem.title = "Nearby Peripherals"
-		self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Done, target: self, action: #selector(NearbyPeripheralsViewController.dismiss))
+		self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissNearbyPeripherals))
 		
 		if BTLE.manager.services.count > 0 {
 			self.navigationItem.titleView = self.filterToggle
-			self.filterToggle.addTarget(self, action: #selector(NearbyPeripheralsViewController.toggleFilter(_:)), forControlEvents: .ValueChanged)
+			self.filterToggle.addTarget(self, action: #selector(toggleFilter), for: .valueChanged)
 		}
 	}
 	
-	public override func viewWillDisappear(animated: Bool) {
+	public override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 		if self.appFilters.count > 0 {
 			BTLE.scanner.turnOff()
@@ -49,14 +49,14 @@ public class NearbyPeripheralsViewController: UIViewController {
 		}
 	}
 	
-	func dismiss() {
+	func dismissNearbyPeripherals() {
 		if let controller = self.navigationController {
-			controller.dismissViewControllerAnimated(true, completion: nil)
+			controller.dismiss(animated: true, completion: nil)
 		} else {
-			self.dismissViewControllerAnimated(true, completion: nil)
+			self.dismiss(animated: true, completion: nil)
 		}
 	}
 	
 	
-	var filterToggle = UISwitch(frame: CGRectZero)
+	var filterToggle = UISwitch(frame: CGRect.zero)
 }

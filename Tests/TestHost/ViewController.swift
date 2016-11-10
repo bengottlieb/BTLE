@@ -10,7 +10,7 @@ import UIKit
 import BTLE
 import CoreBluetooth
 import Gulliver
-import GulliverEXT
+import GulliverUI
 
 let testServiceID = CBUUID(string: "01EB2EF1-BF82-4516-81BE-57E119207436") // CBUUID(string: "737CFF0D-7AEC-43B6-A37F-1EC1671307A6")
 let filterServiceID = CBUUID(string: "45DFE33C-312F-4CEF-A67C-E103D29FA41D")//CBUUID(string: "FEAA")//testServiceID// CBUUID(string: "C9563739-1783-4E81-A3EC-5061D4B2311C")
@@ -24,16 +24,16 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	@IBOutlet var scanningLabel: UILabel!
 	@IBOutlet var beaconButton: UIBarButtonItem!
 
-	var characteristicData = NSDate().localTimeString(timeStyle: .FullStyle)
+	var characteristicData = Date().localTimeString(timeStyle: .full)
 	var devices: [BTLEPeripheral] = []
 	
 	func reload() {
-		self.devices = Array(BTLE.scanner.peripherals).sort { $0.rssi > $1.rssi }
+		self.devices = Array(BTLE.scanner.peripherals).sorted { ($0.rssi ?? 0) > ($1.rssi ?? 0) }
 		
-		Dispatch.main.async {
+		DispatchQueue.main.async {
 			self.tableView.reloadData()
 			self.updateScanningLabel()
-			self.scanSwitch.on = BTLE.scanner.state == .Active || BTLE.scanner.state == .StartingUp
+			self.scanSwitch.isOn = BTLE.scanner.state == .active || BTLE.scanner.state == .startingUp
 		}
 	}
 		
@@ -49,10 +49,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		self.scanningLabel.text = text
 	}
 	
-	override func viewDidAppear(animated: Bool) {
+	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		
-		if NSUserDefaults.get(AppDelegate.beaconEnabledKey) {
+		if UserDefaults.get(key: AppDelegate.beaconEnabledKey) {
 			self.beaconButton.title  = "iBeacon: On"
 		} else {
 			self.beaconButton.title  = "iBeacon…"
@@ -63,20 +63,20 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		super.viewDidLoad()
 		
 		if self.tableView.tableHeaderView == nil { self.tableView.tableHeaderView = self.tableView.tableFooterView }
-		self.tableView.registerNib(UINib(nibName: "PeripheralCellTableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
+		self.tableView.register(UINib(nibName: "PeripheralCellTableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
 		
-		BTLE.debugLevel = .High
+		BTLE.debugLevel = .high
 //		BTLE.registerServiceClass(LockService.self, forServiceID: CBUUID(string: "FFF4"))
 //		BTLE.registerPeripheralClass(LockPeripheral.self)
 
 		//setup scanner
 		BTLE.manager.deviceLifetime = 20.0
 		BTLE.manager.ignoreBeaconLikeDevices = false
-		BTLE.manager.monitorRSSI = (NSUserDefaults.get(DefaultsKey<Bool>("monitorRSSI")) ?? false)
-		BTLE.manager.services = (NSUserDefaults.get(DefaultsKey<Bool>("filterByServices")) ?? false) ? [filterServiceID] : []
-		BTLE.manager.serviceFilter = .AdvertisingData
+		BTLE.manager.monitorRSSI = (UserDefaults.get(key: DefaultsKey<Bool>("monitorRSSI")))
+		BTLE.manager.services = (UserDefaults.get(key: DefaultsKey<Bool>("filterByServices"))) ? [filterServiceID] : []
+		BTLE.manager.serviceFilter = .advertisingData
 		
-		if (NSUserDefaults.get(DefaultsKey<Bool>("scanning")) ?? false) {
+		if (UserDefaults.get(key: DefaultsKey<Bool>("scanning"))) {
 			BTLE.scanner.startScanning()
 		} else {
 			BTLE.scanner.stopScanning()
@@ -92,118 +92,118 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 //		service.advertised = true
 //		
 //		BTLE.advertiser.addService(service)
-//		if (NSUserDefaults.get(DefaultsKey<Bool>("advertising")) ?? false) {
+//		if (UserDefaults.get(DefaultsKey<Bool>("advertising")) ?? false) {
 //			BTLE.advertiser.startAdvertising()
 //		}
 		
-		self.scanSwitch.on = BTLE.scanner.state == .Active || BTLE.scanner.state == .StartingUp
-		self.advertiseSwitch.on = BTLE.advertiser.state == .Active || BTLE.advertiser.state == .StartingUp
-		self.filterByServicesSwitch.on = BTLE.manager.services.count > 0
-		self.monitorRSSISwitch.on = BTLE.manager.monitorRSSI
+		self.scanSwitch.isOn = BTLE.scanner.state == .active || BTLE.scanner.state == .startingUp
+		self.advertiseSwitch.isOn = BTLE.advertiser.state == .active || BTLE.advertiser.state == .startingUp
+		self.filterByServicesSwitch.isOn = BTLE.manager.services.count > 0
+		self.monitorRSSISwitch.isOn = BTLE.manager.monitorRSSI
 
 		//self.filterByServicesSwitch.enabled = self.scanSwitch.on
 		//self.monitorRSSISwitch.enabled = self.scanSwitch.on
 
-		self.addAsObserver(BTLE.notifications.willStartScan, selector: "updateStatus", object: nil)
-		self.addAsObserver(BTLE.notifications.didStartScan, selector: "updateStatus", object: nil)
-		self.addAsObserver(BTLE.notifications.didFinishScan, selector: "updateStatus", object: nil)
+		self.addAsObserver(for: BTLE.notifications.willStartScan, selector: #selector(updateStatus), object: nil)
+		self.addAsObserver(for: BTLE.notifications.didStartScan, selector: #selector(updateStatus), object: nil)
+		self.addAsObserver(for: BTLE.notifications.didFinishScan, selector: #selector(updateStatus), object: nil)
 
-		self.addAsObserver(BTLE.notifications.willStartAdvertising, selector: "updateStatus", object: nil)
-		self.addAsObserver(BTLE.notifications.didFinishAdvertising, selector: "updateStatus", object: nil)
+		self.addAsObserver(for: BTLE.notifications.willStartAdvertising, selector: #selector(updateStatus), object: nil)
+		self.addAsObserver(for: BTLE.notifications.didFinishAdvertising, selector: #selector(updateStatus), object: nil)
 
 	
-		self.addAsObserver(BTLE.notifications.peripheralWasDiscovered, selector: "reload", object: nil)
+		self.addAsObserver(for: BTLE.notifications.peripheralWasDiscovered, selector: #selector(reload), object: nil)
 		
 		self.updateStatus()
 	}
 	
 	func updateStatus() {
-		if BTLE.scanner.state == .Active {
-			self.timer = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: "reload", userInfo: nil, repeats: true)
+		if BTLE.scanner.state == .active {
+			self.timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(ViewController.reload), userInfo: nil, repeats: true)
 		} else {
 			self.timer?.invalidate()
 			self.timer = nil
 		}
 		
 		self.reload()
-		UIApplication.sharedApplication().idleTimerDisabled = (BTLE.scanner.state == .Active || BTLE.advertiser.state == .Active)
+		UIApplication.shared.isIdleTimerDisabled = (BTLE.scanner.state == .active || BTLE.advertiser.state == .active)
 	}
 	
-	var timer: NSTimer?
-	override func viewWillAppear(animated: Bool) {
+	var timer: Timer?
+	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		self.navigationController?.navigationBarHidden = true
+		self.navigationController?.isNavigationBarHidden = true
 	}
 	
 	@IBAction func toggleScanning() {
-		if (self.scanSwitch.on) {
+		if (self.scanSwitch.isOn) {
 			BTLE.scanner.startScanning()
 		} else {
 			BTLE.scanner.stopScanning()
 		}
 
-		NSUserDefaults.set(self.scanSwitch.on, forKey: DefaultsKey<Bool>("scanning"))
+		UserDefaults.set(self.scanSwitch.isOn, forKey: DefaultsKey<Bool>("scanning"))
 
-		self.filterByServicesSwitch.enabled = self.scanSwitch.on
-		self.monitorRSSISwitch.enabled = self.scanSwitch.on
+		self.filterByServicesSwitch.isEnabled = self.scanSwitch.isOn
+		self.monitorRSSISwitch.isEnabled = self.scanSwitch.isOn
 	}
 
 	@IBAction func toggleRSSIMonitoring() {
-		BTLE.manager.monitorRSSI = self.monitorRSSISwitch.on
-		NSUserDefaults.set(self.monitorRSSISwitch.on, forKey: DefaultsKey<Bool>("monitorRSSI"))
+		BTLE.manager.monitorRSSI = self.monitorRSSISwitch.isOn
+		UserDefaults.set(self.monitorRSSISwitch.isOn, forKey: DefaultsKey<Bool>("monitorRSSI"))
 	}
 	
 	@IBAction func toggleAdvertising() {
-		if self.advertiseSwitch.on {
-			self.writableCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "C9563739-1783-4E81-A3EC-5061D4B2311C"), properties: [CBCharacteristicProperties.Write, CBCharacteristicProperties.Read], value: nil, permissions: [.Readable, .Writeable])
-			self.notifyCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: [CBCharacteristicProperties.Read, CBCharacteristicProperties.Notify], value: self.characteristicData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true))
+		if self.advertiseSwitch.isOn {
+			self.writableCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "C9563739-1783-4E81-A3EC-5061D4B2311C"), properties: [CBCharacteristicProperties.write, CBCharacteristicProperties.read], value: nil, permissions: [.readable, .writeable])
+			self.notifyCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: [CBCharacteristicProperties.read, CBCharacteristicProperties.notify], value: self.characteristicData.data(using: .utf8, allowLossyConversion: true) as NSData?)
 
 			let service = BTLEMutableService(uuid: testServiceID, isPrimary: true, characteristics: [ self.writableCharacteristic! ])
 			service.advertised = true
-			BTLE.advertiser.addService(service)
+			BTLE.advertiser.addService(service: service)
 			BTLE.advertiser.startAdvertising()
 		} else {
 			BTLE.advertiser.stopAdvertising()
 		}
-		NSUserDefaults.set(self.advertiseSwitch.on, forKey: DefaultsKey<Bool>("advertising"))
+		UserDefaults.set(self.advertiseSwitch.isOn, forKey: DefaultsKey<Bool>("advertising"))
 	}
 	
 	@IBAction func toggleFilterByServices() {
-		NSUserDefaults.set(self.filterByServicesSwitch.on, forKey: DefaultsKey<Bool>("filterByServices"))
-		BTLE.manager.services = self.filterByServicesSwitch.on ? [filterServiceID] : []
+		UserDefaults.set(self.filterByServicesSwitch.isOn, forKey: DefaultsKey<Bool>("filterByServices"))
+		BTLE.manager.services = self.filterByServicesSwitch.isOn ? [filterServiceID] : []
 	}
 	
 	@IBAction func configureServices() {
-		self.characteristicData = NSDate().localTimeString(timeStyle: .FullStyle)
+		self.characteristicData = Date().localTimeString(timeStyle: .full)
 		
-		let published = self.characteristicData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+		let published = self.characteristicData.data(using: .utf8, allowLossyConversion: true)
 		
-		self.notifyCharacteristic!.updateDataValue(published)
+		self.notifyCharacteristic!.updateDataValue(data: published as NSData?)
 	}
 	
 	func connectToggled(toggle: UISwitch) {
 		let device = self.devices[toggle.tag]
 		
-		if toggle.on {
+		if toggle.isOn {
 			device.connect()
 		} else {
 			device.disconnect()
 		}
 		
 		self.tableView.beginUpdates()
-		self.tableView.reloadRowsAtIndexPaths([ NSIndexPath(forRow: toggle.tag, inSection: 0)], withRowAnimation: .Automatic)
+		self.tableView.reloadRows(at: [ IndexPath(row: toggle.tag, section: 0)], with: .automatic)
 		self.tableView.endUpdates()
 	}
 	
 	//=============================================================================================
 	//MARK:
 	
-	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return self.devices.count
 	}
 	
-	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! PeripheralCellTableViewCell
+	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! PeripheralCellTableViewCell
 		let device = self.devices[indexPath.row]
 		
 		cell.peripheral = device
@@ -211,20 +211,20 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		return cell
 	}
 	
-	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		let device = self.devices[indexPath.row]
 		
 		self.navigationController?.pushViewController(DeviceDetailsViewController(peripheral: device), animated: true)
 	}
 	
-	func tableView(tableView: UITableView, titleForDeleteConfirmationButtonForRowAtIndexPath indexPath: NSIndexPath) -> String? {
+	func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
 		return "Ignore"
 	}
 	
-	func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
 		tableView.beginUpdates()
 		
-		tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+		tableView.deleteRows(at: [indexPath], with: .automatic)
 		let device = self.devices[indexPath.row]
 		
 		device.ignore()
@@ -233,7 +233,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		tableView.endUpdates()
 	}
 
-	func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		if indexPath.row >= self.devices.count { return 0 }
 		let device = self.devices[indexPath.row]
 		
@@ -241,11 +241,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	}
 	
 	@IBAction func nearby() {
-		self.presentViewController(NearbyPeripheralsViewController().navigationWrappedController(false), animated: true, completion: nil)
+		self.present(NearbyPeripheralsViewController().navigationWrappedController(false), animated: true, completion: nil)
 	}
 	
 	@IBAction func showBeaconSettings() {
-		BeaconSettingsViewController.presentInController(self)
+		BeaconSettingsViewController.presentInController(parent: self)
 	}
 }
 

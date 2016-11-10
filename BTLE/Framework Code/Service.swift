@@ -14,16 +14,16 @@ protocol BTLEServiceProtocol {
 	init(service svc: CBService, onPeriperhal: BTLEPeripheral);
 }
 
-public class BTLEService: NSObject {
+open class BTLEService: NSObject {
 	public var cbService: CBService!
 	var peripheral: BTLEPeripheral!
-	var loadingState = BTLE.LoadingState.NotLoaded
+	var loadingState = BTLE.LoadingState.notLoaded
 	public var characteristics: [BTLECharacteristic] = []
 	var pendingCharacteristics: [BTLECharacteristic] = []
-	public var uuid: CBUUID { return self.cbService.UUID }
+	public var uuid: CBUUID { return self.cbService.uuid }
 	
 	class func createService(service svc: CBService, onPeriperhal: BTLEPeripheral) -> BTLEService {
-		if let serviceClass: BTLEService.Type = BTLE.registeredClasses.services[svc.UUID] {
+		if let serviceClass: BTLEService.Type = BTLE.registeredClasses.services[svc.uuid] {
 			return serviceClass.init(service: svc, onPeriperhal: onPeriperhal)
 		} else {
 			return BTLEService(service: svc, onPeriperhal: onPeriperhal)
@@ -39,14 +39,14 @@ public class BTLEService: NSObject {
 		super.init()
 		
 		self.reload()
-		BTLE.debugLog(.Medium, "Service: creating \(self.dynamicType) from \(svc)")
+		BTLE.debugLog(.medium, "Service: creating \(type(of: self)) from \(svc)")
 	}
 	
 	func cancelLoad() {
 		switch self.loadingState {
-		case .Loading: self.loadingState = .NotLoaded
-		case .Reloading: self.loadingState = .Loaded
-		case .Loaded: return
+		case .loading: self.loadingState = .notLoaded
+		case .reloading: self.loadingState = .loaded
+		case .loaded: return
 		default: break
 		}
 		
@@ -54,21 +54,21 @@ public class BTLEService: NSObject {
 	}
 	
 	func reload() {
-		if self.loadingState != .Loading && self.loadingState != .Reloading {
+		if self.loadingState != .loading && self.loadingState != .reloading {
 			//println("BTLE Service: Loading Service: \(self), UUID: \(self.uuid)")
-			self.loadingState = (self.loadingState == .Loaded) ? .Reloading : .Loading
+			self.loadingState = (self.loadingState == .loaded) ? .reloading : .loading
 			
 			for chr in self.characteristics {
 				chr.reload()
 			}
-			self.peripheral.cbPeripheral.discoverCharacteristics(nil, forService: self.cbService)
+			self.peripheral.cbPeripheral.discoverCharacteristics(nil, for: self.cbService)
 		}
 	}
 	
 	func updateCharacteristics() {
 		if let characteristics = self.cbService.characteristics {
 			for chr in characteristics {
-				if self.findCharacteristicMatching(chr) == nil && self.shouldLoadCharacteristic(chr) {
+				if self.findCharacteristicMatching(chr: chr) == nil && self.shouldLoadCharacteristic(characteristic: chr) {
 					let characteristic = BTLECharacteristic(characteristic: chr, ofService: self)
 					self.characteristics.append(characteristic)
 				}
@@ -80,9 +80,9 @@ public class BTLEService: NSObject {
 		return true
 	}
 	
-	public func didFinishLoading() {
-		self.loadingState = .Loaded
-		self.peripheral.didFinishLoadingService(self)
+	open func didFinishLoading() {
+		self.loadingState = .loaded
+		self.peripheral.didFinishLoadingService(service: self)
 	}
 	
 	func findCharacteristicMatching(chr: CBCharacteristic) -> BTLECharacteristic? {
@@ -93,29 +93,29 @@ public class BTLEService: NSObject {
 		var count = 0
 		
 		for chr in self.characteristics {
-			if chr.loadingState	== .Loading || chr.loadingState	== .Reloading { count += 1 }
+			if chr.loadingState	== .loading || chr.loadingState	== .reloading { count += 1 }
 		}
 		return count
 	}
 	
-	func didLoadCharacteristic(chr: CBCharacteristic, error: NSError?) {
+	func didLoadCharacteristic(chr: CBCharacteristic, error: Error?) {
 		//println("BTLE Service: Loaded characteristic: \(chr)")
-		if let char = self.findCharacteristicMatching(chr) {
-			char.didLoadWithError(error)
+		if let char = self.findCharacteristicMatching(chr: chr) {
+			char.didLoadWithError(error: error)
 		}
 	}
 	
-	public override var description: String { return "\(self.cbService): \(self.characteristics)" }
+	open override var description: String { return "\(self.cbService): \(self.characteristics)" }
 	
 	public var summaryDescription: String {
-		var string = "\(self.cbService.UUID): "
+		var string = "\(self.cbService.uuid): "
 
 		switch self.loadingState {
-		case .NotLoaded: break
-		case .Loading: string = "Loading " + string
-		case .Loaded: string = "Loaded " + string
-		case .LoadingCancelled: string = "Cancelled " + string
-		case .Reloading: string = "Reloading " + string
+		case .notLoaded: break
+		case .loading: string = "Loading " + string
+		case .loaded: string = "Loaded " + string
+		case .loadingCancelled: string = "Cancelled " + string
+		case .reloading: string = "Reloading " + string
 		}
 		
 		return string
@@ -133,7 +133,7 @@ public class BTLEService: NSObject {
 	}
 	
 
-	public func characteristicWithUUID(uuid: CBUUID) -> BTLECharacteristic? { return self.characteristics.filter({ $0.cbCharacteristic.UUID == uuid }).last }
+	public func characteristicWithUUID(uuid: CBUUID) -> BTLECharacteristic? { return self.characteristics.filter({ $0.cbCharacteristic.uuid == uuid }).last }
 	
 }
 
@@ -157,24 +157,24 @@ public class BTLEMutableService: BTLEService {
 	public init(uuid: CBUUID, isPrimary: Bool = true, characteristics chrs: [BTLECharacteristic] = []) {
 		super.init()
 		self.cbService = CBMutableService(type: uuid, primary: isPrimary)
-		for svc in chrs { self.addCharacteristic(svc) }
+		for svc in chrs { self.addCharacteristic(chr: svc) }
 	}
 
 	func addToManager(mgr: CBPeripheralManager?) {
 		if self.hasBeenAdded {
 			return
 		}
-		if let mgr = mgr where mgr.state == .PoweredOn {
+		if let mgr = mgr, mgr.state == .poweredOn {
 			self.hasBeenAdded = true
-			mgr.addService(self.cbService as! CBMutableService)
+			mgr.add(self.cbService as! CBMutableService)
 		}
 	}
 	
 	func removeFromManager(mgr: CBPeripheralManager?) {
-		if let mgr = mgr where mgr.state == .PoweredOn {
+		if let mgr = mgr, mgr.state == .poweredOn {
 			if !self.hasBeenAdded { return }
 			self.hasBeenAdded = false
-			mgr.removeService(self.cbService as! CBMutableService)
+			mgr.remove(self.cbService as! CBMutableService)
 		}
 	}
 	

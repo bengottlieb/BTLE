@@ -11,7 +11,7 @@ import CoreBluetooth
 import BTLE
 import Gulliver
 import CoreLocation
-import GulliverEXT
+import GulliverUI
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -25,19 +25,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	var window: UIWindow?
 
 
-	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) -> Bool {
 		// Override point for customization after application launch
 		
 		AppDelegate.instance = self
 		
-		let settings = UIUserNotificationSettings(forTypes: [.Alert, .Sound, .Badge], categories: nil)
+		let settings = UIUserNotificationSettings(types: [.alert, .sound, .badge], categories: nil)
 		application.registerUserNotificationSettings(settings)
 		application.registerForRemoteNotifications()
 	
 		//BTLE.manager.services = [CBUUID(string: "01EB2EF1-BF82-4516-81BE-57E119207437")]
 		
-		BTLE.manager.serviceFilter = .ActualServices
-		self.addAsObserver(BTLE.notifications.characteristicWasWrittenTo, selector: "zapped:")
+		BTLE.manager.serviceFilter = .actualServices
+		self.addAsObserver(for: BTLE.notifications.characteristicWasWrittenTo, selector: #selector(zapped))
 		
 		self.setupBeacon()
 		return true
@@ -46,23 +46,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	var beacon: CLBeaconRegion?
 	
 	func setupBeacon() {
-		if NSUserDefaults.get(AppDelegate.beaconEnabledKey) ?? false {
-			guard let uuid = NSUUID(UUIDString: NSUserDefaults.get(AppDelegate.beaconProximityIDKey)) else {
-				NSUserDefaults.set(false, forKey: AppDelegate.beaconEnabledKey)
-				UIAlertController.showAlert("Unable to Start an iBeacon: Invalid UUID")
+		if UserDefaults.get(key: AppDelegate.beaconEnabledKey) {
+			guard let uuid = UUID(uuidString: UserDefaults.get(key: AppDelegate.beaconProximityIDKey)) else {
+				UserDefaults.set(false, forKey: AppDelegate.beaconEnabledKey)
+				SA_AlertController.showAlert(title: "Unable to Start an iBeacon: Invalid UUID")
 				return
 			}
 			
-			let major = CLBeaconMajorValue(NSUserDefaults.get(AppDelegate.beaconMajorIDKey)) ?? 0
-			let minor = CLBeaconMajorValue(NSUserDefaults.get(AppDelegate.beaconMinorIDKey)) ?? 0
-			let name = UIDevice.currentDevice().name
+			let major = CLBeaconMajorValue(UserDefaults.get(key: AppDelegate.beaconMajorIDKey)) ?? 0
+			let minor = CLBeaconMajorValue(UserDefaults.get(key: AppDelegate.beaconMinorIDKey)) ?? 0
+			let name = UIDevice.current
+				.name
 			
 			self.beacon = CLBeaconRegion(proximityUUID:  uuid, major: major, minor: minor, identifier: name)
 			
-			let data = self.beacon!.peripheralDataWithMeasuredPower(nil)
+			let data = self.beacon!.peripheralData(withMeasuredPower: nil)
 			if data.count > 0 {
 				print("Starting to advertise (\(uuid)) beacon: \(data)")
-				BTLE.advertiser.advertisingData = NSDictionary(dictionary: data) as? [String: AnyObject] ?? [:]
+				BTLE.advertiser.advertisingData = NSDictionary(dictionary: data) as? [String: Any] ?? [:]
 			}
 			BTLE.advertiser.startAdvertising()
 		} else if self.beacon != nil {
@@ -71,19 +72,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		}
 	}
 
-	func applicationWillResignActive(application: UIApplication) {
+	func applicationWillResignActive(_ application: UIApplication) {
 	}
 
-	func applicationDidEnterBackground(application: UIApplication) {
+	func applicationDidEnterBackground(_ application: UIApplication) {
 	}
 
-	func applicationWillEnterForeground(application: UIApplication) {
+	func applicationWillEnterForeground(_ application: UIApplication) {
 	}
 
-	func applicationDidBecomeActive(application: UIApplication) {
+	func applicationDidBecomeActive(_ application: UIApplication) {
 	}
 
-	func applicationWillTerminate(application: UIApplication) {
+	func applicationWillTerminate(_ application: UIApplication) {
 	}
 
 	func zapped(note: NSNotification) {
@@ -96,7 +97,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 class LockPeripheral: BTLEPeripheral {
-	required init(peripheral: CBPeripheral, RSSI: BTLEPeripheral.RSSValue?, advertisementData adv: [NSObject: AnyObject]?) {
+	required init(peripheral: CBPeripheral, RSSI: BTLEPeripheral.RSSValue?, advertisementData adv: [String: Any]?) {
 		super.init(peripheral: peripheral, RSSI: RSSI, advertisementData: adv)
 	}
 	required init() { super.init() }
@@ -109,7 +110,7 @@ class LockService: BTLEService {
 		super.init(service: svc, onPeriperhal: onPeriperhal)
 	}
 	
-	override func didFinishLoading() {
+	override public func didFinishLoading() {
 //		let lockStatus = self.characteristicWithUUID(LockStatusCharacteristic)
 //		let data = lockStatus?.dataValue
 		//lockStatus?.listenForUpdates = true
@@ -123,8 +124,8 @@ extension UILocalNotification {
 	class func playSound(soundName: String) {
 		let note = UILocalNotification()
 		
-		note.fireDate = NSDate(timeIntervalSinceNow: 0.01)
+		note.fireDate = Date(timeIntervalSinceNow: 0.01)
 		note.soundName = soundName
-		UIApplication.sharedApplication().scheduleLocalNotification(note)
+		UIApplication.shared.scheduleLocalNotification(note)
 	}
 }

@@ -11,13 +11,13 @@ import Foundation
 let BTLEErrorDomain = "BTLE Framework"
 
 extension NSError {
-	enum BTLEErrorType: String { case CharacteristicHasPendingWriteInProgress = "Unable to write to the characteristic, there's already a write in progress", CharacteristicNotWritable = "This characteristic cannot be written to", CharacteristicNotConnected = "Characteristic Not Connected", PeripheralConnectionTimedOut = "Connection to Peripheral Timed Out"
+	enum BTLEErrorType: String { case characteristicHasPendingWriteInProgress = "Unable to write to the characteristic, there's already a write in progress", characteristicNotWritable = "This characteristic cannot be written to", characteristicNotConnected = "Characteristic Not Connected", peripheralConnectionTimedOut = "Connection to Peripheral Timed Out"
 	
 	}
 	
 	
-	convenience init(type: BTLEErrorType, userInfo: [NSObject: AnyObject] = [:]) {
-		var info = userInfo ?? [:]
+	convenience init(type: BTLEErrorType, userInfo: [String: Any] = [:]) {
+		var info = userInfo
 		info[NSLocalizedDescriptionKey] = type.rawValue
 		self.init(domain: BTLEErrorDomain, code: type.rawValue.hash, userInfo: info)
 	}

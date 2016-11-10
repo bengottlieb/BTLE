@@ -9,31 +9,6 @@
 import Foundation
 
 extension Array {
-	func contains<T: Equatable>(obj: T) -> Bool {
-		return self.indexOf(obj) != nil
-	}
-
-	mutating func remove<U: Equatable>(object: U) -> [Element] {
-		var index: Int?
-		for (idx, objectToCompare) in self.enumerate() {
-			if let to = objectToCompare as? U {
-				if object == to {
-					index = idx
-				}
-			}
-		}
-		
-		if let found = index { self.removeAtIndex(found) }
-		return self
-	}
-	
-	func indexOf<T: Equatable>(obj: T) -> Int? {
-		for i in 0..<self.count {
-			if let iter = self[i] as? T { if iter == obj { return i } }
-		}
-		return nil
-	}
-	
 	func shuffled() -> [Element] {
 		var list = self
 		for i in 0..<(list.count - 1) {

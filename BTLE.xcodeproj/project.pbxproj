@@ -35,13 +35,15 @@
 		B504E6A41A897017001B414B /* BTLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B504E6461A8968DC001B414B /* BTLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B504E6A51A897087001B414B /* BTLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B504E6461A8968DC001B414B /* BTLE.framework */; };
 		B5345B3F1AE1F20F0074F337 /* PeripheralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5345B3E1AE1F20F0074F337 /* PeripheralManager.swift */; };
+		B53E20031DD3B8990019BD3F /* Gulliver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20011DD3B8990019BD3F /* Gulliver.framework */; };
+		B53E20041DD3B8990019BD3F /* GulliverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20021DD3B8990019BD3F /* GulliverUI.framework */; };
+		B53E20051DD402860019BD3F /* Gulliver.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20011DD3B8990019BD3F /* Gulliver.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B53E20061DD402880019BD3F /* GulliverUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20021DD3B8990019BD3F /* GulliverUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B53EADE71C651C1D00A3203E /* BTLE+Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B53EADE51C651AD400A3203E /* BTLE+Errors.swift */; };
 		B53EADE81C651C1D00A3203E /* BTLE+Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B53EADE51C651AD400A3203E /* BTLE+Errors.swift */; };
 		B57CA3C11AEAD51700B0125F /* NearbyPeripheralsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B57CA3C01AEAD51700B0125F /* NearbyPeripheralsTableView.swift */; };
 		B57CA3C41AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B57CA3C21AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift */; };
 		B57CA3C51AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B57CA3C31AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib */; };
-		B57D31451CBEB1C9004CC358 /* GulliverEXT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5FCDCD31C4FEE3B00F6F20C /* GulliverEXT.framework */; };
-		B57D31461CBEB1C9004CC358 /* Gulliver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5CC3B921BC98A7900DB75DD /* Gulliver.framework */; };
 		B58D64791A898F89005A0002 /* BTLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B58D64681A898F81005A0002 /* BTLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B58D647F1A898FBD005A0002 /* BTLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D64751A898F81005A0002 /* BTLE.swift */; };
 		B58D64831A898FBE005A0002 /* BTLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D64751A898F81005A0002 /* BTLE.swift */; };
@@ -54,8 +56,6 @@
 		B5A4823E1AE3F1E8001636BE /* DeviceDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A4823C1AE3F1E8001636BE /* DeviceDetailsViewController.swift */; };
 		B5A4823F1AE3F1E8001636BE /* DeviceDetailsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5A4823D1AE3F1E8001636BE /* DeviceDetailsViewController.xib */; };
 		B5BCEC091AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BCEC081AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift */; };
-		B5CC3B931BC98A7900DB75DD /* Gulliver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5CC3B921BC98A7900DB75DD /* Gulliver.framework */; };
-		B5CC3B941BC98ACD00DB75DD /* Gulliver.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B5CC3B921BC98A7900DB75DD /* Gulliver.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B5D6083E1ADBF4F6004DC9AC /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */; };
 		B5D6083F1ADBF4F6004DC9AC /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */; };
 		B5D608411ADBFD4C004DC9AC /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D608401ADBFD4C004DC9AC /* Peripheral.swift */; };
@@ -68,7 +68,6 @@
 		B5DAB3341AE40B3800D49D44 /* PeripheralCellTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5DAB3321AE40B3800D49D44 /* PeripheralCellTableViewCell.xib */; };
 		B5DAB3361AE418FE00D49D44 /* Array+SA_Additions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5DAB3351AE418FE00D49D44 /* Array+SA_Additions.swift */; };
 		B5DAB3371AE418FE00D49D44 /* Array+SA_Additions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5DAB3351AE418FE00D49D44 /* Array+SA_Additions.swift */; };
-		B5FCDCD41C4FEE3B00F6F20C /* GulliverEXT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5FCDCD31C4FEE3B00F6F20C /* GulliverEXT.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -96,7 +95,8 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B504E6A41A897017001B414B /* BTLE.framework in Embed Frameworks */,
-				B5CC3B941BC98ACD00DB75DD /* Gulliver.framework in Embed Frameworks */,
+				B53E20051DD402860019BD3F /* Gulliver.framework in Embed Frameworks */,
+				B53E20061DD402880019BD3F /* GulliverUI.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -119,6 +119,8 @@
 		B504E69C1A896E82001B414B /* BTLE_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTLE_Tests.swift; sourceTree = "<group>"; };
 		B504E6AF1A898110001B414B /* BTLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BTLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5345B3E1AE1F20F0074F337 /* PeripheralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManager.swift; sourceTree = "<group>"; };
+		B53E20011DD3B8990019BD3F /* Gulliver.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Gulliver.framework; sourceTree = "<group>"; };
+		B53E20021DD3B8990019BD3F /* GulliverUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GulliverUI.framework; sourceTree = "<group>"; };
 		B53EADE51C651AD400A3203E /* BTLE+Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "BTLE+Errors.swift"; sourceTree = "<group>"; };
 		B57CA3C01AEAD51700B0125F /* NearbyPeripheralsTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPeripheralsTableView.swift; sourceTree = "<group>"; };
 		B57CA3C21AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPeripheralsTableViewCell.swift; sourceTree = "<group>"; };
@@ -138,7 +140,6 @@
 		B5A4823C1AE3F1E8001636BE /* DeviceDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DeviceDetailsViewController.swift; path = "Device Details/DeviceDetailsViewController.swift"; sourceTree = "<group>"; };
 		B5A4823D1AE3F1E8001636BE /* DeviceDetailsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DeviceDetailsViewController.xib; path = "Device Details/DeviceDetailsViewController.xib"; sourceTree = "<group>"; };
 		B5BCEC081AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPeripheralsViewController.swift; sourceTree = "<group>"; };
-		B5CC3B921BC98A7900DB75DD /* Gulliver.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Gulliver.framework; sourceTree = "<group>"; };
 		B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManager.swift; sourceTree = "<group>"; };
 		B5D608401ADBFD4C004DC9AC /* Peripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
 		B5D608491ADC4486004DC9AC /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
@@ -146,7 +147,6 @@
 		B5DAB3311AE40B3800D49D44 /* PeripheralCellTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralCellTableViewCell.swift; sourceTree = "<group>"; };
 		B5DAB3321AE40B3800D49D44 /* PeripheralCellTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PeripheralCellTableViewCell.xib; sourceTree = "<group>"; };
 		B5DAB3351AE418FE00D49D44 /* Array+SA_Additions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+SA_Additions.swift"; sourceTree = "<group>"; };
-		B5FCDCD31C4FEE3B00F6F20C /* GulliverEXT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GulliverEXT.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,8 +155,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B504E65D1A8968DC001B414B /* BTLE.framework in Frameworks */,
-				B5CC3B931BC98A7900DB75DD /* Gulliver.framework in Frameworks */,
-				B5FCDCD41C4FEE3B00F6F20C /* GulliverEXT.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -164,8 +162,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B57D31461CBEB1C9004CC358 /* Gulliver.framework in Frameworks */,
-				B57D31451CBEB1C9004CC358 /* GulliverEXT.framework in Frameworks */,
+				B53E20041DD3B8990019BD3F /* GulliverUI.framework in Frameworks */,
+				B53E20031DD3B8990019BD3F /* Gulliver.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -314,8 +312,8 @@
 		B5D608431ADC097E004DC9AC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B5FCDCD31C4FEE3B00F6F20C /* GulliverEXT.framework */,
-				B5CC3B921BC98A7900DB75DD /* Gulliver.framework */,
+				B53E20011DD3B8990019BD3F /* Gulliver.framework */,
+				B53E20021DD3B8990019BD3F /* GulliverUI.framework */,
 			);
 			path = Frameworks;
 			sourceTree = "<group>";
@@ -428,6 +426,7 @@
 				TargetAttributes = {
 					B504E6121A89230F001B414B = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = YY6CWUX533;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -436,15 +435,18 @@
 					};
 					B504E6451A8968DC001B414B = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = YY6CWUX533;
 					};
 					B504E6661A89690C001B414B = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
 					B504E6971A896E82001B414B = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = YY6CWUX533;
 					};
 					B504E6AE1A898110001B414B = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = YY6CWUX533;
 					};
 				};
 			};
@@ -656,11 +658,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0.1;
 			};
 			name = Debug;
 		};
@@ -694,9 +697,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 3.0.1;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -705,6 +709,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = YY6CWUX533;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks",
@@ -713,6 +718,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = BTLESniffer;
+				SWIFT_VERSION = 3.0.1;
 			};
 			name = Debug;
 		};
@@ -720,6 +726,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = YY6CWUX533;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks",
@@ -729,14 +736,17 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = BTLESniffer;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0.1;
 			};
 			name = Release;
 		};
 		B504E6601A8968DC001B414B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = YY6CWUX533;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -754,6 +764,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = BTLE;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0.1;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -765,6 +776,7 @@
 			buildSettings = {
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = YY6CWUX533;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -779,6 +791,7 @@
 				PRODUCT_NAME = BTLE;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0.1;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -802,6 +815,7 @@
 		B504E6A21A896E82001B414B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = YY6CWUX533;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -822,6 +836,7 @@
 		B504E6A31A896E82001B414B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = YY6CWUX533;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -842,6 +857,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = YY6CWUX533;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -876,6 +892,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = YY6CWUX533;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";

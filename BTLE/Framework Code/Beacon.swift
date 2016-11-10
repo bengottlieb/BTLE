@@ -16,14 +16,14 @@ class BTLEBeacon: CustomStringConvertible {
 	let proximityID: String
 	let major: Int
 	let minor: Int
-	let firstSeenAt: NSDate
-	var lastSeenAt: NSDate?
+	let firstSeenAt: Date
+	var lastSeenAt: Date?
 	
 	class func beaconWithData(data: NSData) -> BTLEBeacon? {
-		if let info = BTLEBeacon.parseData(data) {
+		if let info = BTLEBeacon.parseData(data: data) {
 			
 			if let existing = BTLEBeacon.existing[info.0] {
-				existing.lastSeenAt = NSDate()
+				existing.lastSeenAt = Date()
 				print("Existing beacon: \(existing.proximityID)")
 				return existing
 			}
@@ -37,16 +37,16 @@ class BTLEBeacon: CustomStringConvertible {
 		proximityID = id
 		major = maj
 		minor = min
-		firstSeenAt = NSDate()
-		lastSeenAt = NSDate()
+		firstSeenAt = Date()
+		lastSeenAt = Date()
 	}
 	
 	var description: String {
-		let formatter = NSDateIntervalFormatter()
-		formatter.timeStyle = .NoStyle
+		let formatter = DateIntervalFormatter()
+		formatter.timeStyle = .none
 		
 		
-		let lastSeen = formatter.stringFromDate(self.lastSeenAt!, toDate: NSDate())
+		let lastSeen = formatter.string(from: self.lastSeenAt!, to: Date())
 		
 		return "\(self.proximityID), last seen \(lastSeen)"
 	}
@@ -54,8 +54,8 @@ class BTLEBeacon: CustomStringConvertible {
 	class func parseData(data: NSData) -> (String, Int, Int)? {
 		if data.length != 25 { return nil }
 		
-		let ids = UnsafeMutablePointer<UInt16>.alloc(3)
-		let raw = UnsafeMutablePointer<UInt8>.alloc(16)
+		let ids = UnsafeMutablePointer<UInt16>.allocate(capacity: 3)
+		let raw = UnsafeMutablePointer<UInt8>.allocate(capacity: 16)
 		
 		data.getBytes(&ids[0], length: 2)
 		data.getBytes(&ids[1], range: NSRange(location: 20, length: 2))
@@ -66,9 +66,9 @@ class BTLEBeacon: CustomStringConvertible {
 		let minor = ids[2]
 		
 		data.getBytes(raw, range: NSRange(location: 4, length: 16))
-		let proximityID = NSUUID(UUIDBytes: raw)
+		let proximityID = NSUUID(uuidBytes: raw)
 		
 		print("raw: \(raw): \(proximityID), major: \(companyID), minor: \(minor)")
-		return (proximityID.UUIDString, Int(major), Int(minor))
+		return (proximityID.uuidString, Int(major), Int(minor))
 	}
 }

@@ -10,7 +10,7 @@ import UIKit
 import BTLE
 import Gulliver
 import CoreBluetooth
-import GulliverEXT
+import GulliverUI
 
 class CharacteristicTableViewCell: UITableViewCell {
 	@IBOutlet var nameAndPropertiesLabel: UILabel!
@@ -30,8 +30,8 @@ class CharacteristicTableViewCell: UITableViewCell {
 	
     override func awakeFromNib() {
         super.awakeFromNib()
-		self.addAsObserver(BTLE.notifications.characteristicDidUpdate, selector: "updateUI", object: nil)
-		self.addAsObserver(BTLE.notifications.characteristicListeningChanged, selector: "updateUI", object: nil)
+		self.addAsObserver(for: BTLE.notifications.characteristicDidUpdate, selector: #selector(updateUI), object: nil)
+		self.addAsObserver(for: BTLE.notifications.characteristicListeningChanged, selector: #selector(updateUI), object: nil)
 		
 		self.updateUI()
         // Initialization code
@@ -40,17 +40,17 @@ class CharacteristicTableViewCell: UITableViewCell {
 	func updateUI() {
 		btle_dispatch_main	{
 			if let chr = self.characteristic {
-				self.notifySwitch.on = (chr.listeningState == .Listening || chr.listeningState == .StartingToListen)
-				self.notifySwitch.enabled = (chr.listeningState == .Listening || chr.listeningState == .NotListening)
-				let desc = chr.cbCharacteristic.UUID.description
-				self.nameAndPropertiesLabel?.text = desc.substringToIndex(desc.index(20)) + ": " + chr.propertiesAsString
+				self.notifySwitch.isOn = (chr.state == .listening || chr.state == .startingToListen)
+				self.notifySwitch.isEnabled = (chr.state == .listening || chr.state == .notListening)
+				let desc = chr.cbCharacteristic.uuid.description
+				self.nameAndPropertiesLabel?.text = desc.substring(to: desc.index(20)) + ": " + chr.propertiesAsString
 				
-				self.notifySwitch.hidden = !chr.canNotify
-				self.writeButton.hidden = !chr.centralCanWriteTo
+				self.notifySwitch.isHidden = !chr.canNotify
+				self.writeButton.isHidden = !chr.centralCanWriteTo
 				
 				if let data = chr.dataValue {
-					self.stringValueLabel?.text = String(data: data, encoding: NSUTF8StringEncoding) ?? ""
-					self.dataValueLabel?.text = data.hexString
+					self.stringValueLabel?.text = String(data: data as Data, encoding: .utf8) ?? ""
+					self.dataValueLabel?.text = (data as Data).hexString
 				} else {
 					self.dataValueLabel?.text = ""
 					self.stringValueLabel?.text = ""
@@ -59,21 +59,25 @@ class CharacteristicTableViewCell: UITableViewCell {
 		}
 	}
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
     }
 	
 	@IBAction func toggledNotify() {
-		self.characteristic?.listenForUpdates(self.notifySwitch.on)
+		self.characteristic?.listenForUpdates() { state, chr in
+			self.notifySwitch.isOn = chr.state == .listening
+		}
 	}
 	
 	@IBAction func writeTo() {
-		let data = NSData(hexString: "935343717a627a743074565a7849435876724867")
+		let data = Data(hexString: "935343717a627a743074565a7849435876724867")! as NSData
 
 		NSLog("%@", self.characteristic!.service!.fullDescription)
 		
-		self.characteristic?.writeBackValue(data!, withResponse: true)
+		self.characteristic?.writeBackValue(data: data) { chr, error in
+			
+		}
 	}
 }

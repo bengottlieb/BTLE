@@ -10,47 +10,47 @@ import Foundation
 import CoreBluetooth
 
 public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
-	public var dispatchQueue = dispatch_queue_create("BTLE.PeripheralManager queue", DISPATCH_QUEUE_SERIAL)
+	public var dispatchQueue = DispatchQueue(label: "BTLE.PeripheralManager queue")
 	public var cbPeripheralManager: CBPeripheralManager?
-	public var advertisingData: [String: AnyObject] = [CBAdvertisementDataLocalNameKey: UIDevice.currentDevice().name]
+	public var advertisingData: [String: Any] = [CBAdvertisementDataLocalNameKey: UIDevice.current.name]
 	
 	//=============================================================================================
 	//MARK: Class vars
-	class var restoreIdentifier: String { return (NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? String ?? "btle") + "-advertiser" }
+	class var restoreIdentifier: String { return (Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String ?? "btle") + "-advertiser" }
 
 	
 	//=============================================================================================
 	//MARK: Actions
 	
 	public var state: BTLE.State { get { return self.internalState }}
-	var internalState: BTLE.State = .Off { didSet {
+	var internalState: BTLE.State = .off { didSet {
 		if oldValue == self.internalState { return }
 		
 		self.stateChangeCounter += 1
 		
 		switch self.internalState {
-		case .Off:
-			if oldValue != .Idle { NSNotification.postNotification(BTLE.notifications.didFinishAdvertising, object: self) }
+		case .off:
+			if oldValue != .idle { Notification.postOnMainThread(name: BTLE.notifications.didFinishAdvertising, object: self) }
 			if BTLE.manager.cyclingAdvertising {
 				btle_delay(0.5) {
 					BTLE.manager.cyclingAdvertising = false
-					self.internalState = .Active
+					self.internalState = .active
 				}
 			}
-		case .StartingUp:
-			NSNotification.postNotification(BTLE.notifications.willStartAdvertising, object: self)
+		case .startingUp:
+			Notification.postOnMainThread(name: BTLE.notifications.willStartAdvertising, object: self)
 			break
 			
-		case .Active:
+		case .active:
 			break
 			
-		case .Idle:
-			NSNotification.postNotification(BTLE.notifications.didFinishAdvertising, object: self)
+		case .idle:
+			Notification.postOnMainThread(name: BTLE.notifications.didFinishAdvertising, object: self)
 			self.stopAdvertising()
 			
-		case .PowerInterupted: break
-		case .Cycling: break
-		case .ShuttingDown: break
+		case .powerInterupted: break
+		case .cycling: break
+		case .shuttingDown: break
 		}
 		
 		self.stateChangeCounter -= 1
@@ -59,10 +59,10 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	
 	public func startAdvertising() {
 		if let mgr = self.setupCBPeripheralManager() {
-			if mgr.state == .PoweredOn {
+			if mgr.state == .poweredOn {
 				self.setupAdvertising()
 			} else {
-				self.internalState = .StartingUp
+				self.internalState = .startingUp
 			}
 		}
 	}
@@ -70,35 +70,35 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	
 	public func stopAdvertising() {
 		if self.stateChangeCounter == 0 {
-			if self.internalState == .Off { return }
+			if self.internalState == .off { return }
 		}
 		
 		self.cbPeripheralManager?.stopAdvertising()
 
-		if self.internalState == .Active || self.internalState == .StartingUp {
-			self.internalState = .Idle
+		if self.internalState == .active || self.internalState == .startingUp {
+			self.internalState = .idle
 		}
 	}
 	
 	//=============================================================================================
 	//MARK: BTLEPeripheralDelegate
-	public func peripheralManagerDidUpdateState(peripheral: CBPeripheralManager) {
-		switch cbPeripheralManager?.state ?? .Unknown {
-		case .PoweredOn:
-			if self.internalState == .PowerInterupted {
-				self.internalState = .Active
+	public func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
+		switch cbPeripheralManager?.state ?? .unknown {
+		case .poweredOn:
+			if self.internalState == .powerInterupted {
+				self.internalState = .active
 			}
 			
-			if self.internalState == .StartingUp {
+			if self.internalState == .startingUp {
 				self.setupAdvertising()
 			} else {
-				self.internalState = .Active
+				self.internalState = .active
 			}
 			self.updateServices()
 			
-		case .PoweredOff:
-			if self.internalState == .Active || self.internalState == .StartingUp {
-				self.internalState = .PowerInterupted
+		case .poweredOff:
+			if self.internalState == .active || self.internalState == .startingUp {
+				self.internalState = .powerInterupted
 				self.stopAdvertising()
 			}
 			
@@ -106,11 +106,12 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		}
 	}
 	
-	public func peripheralManager(peripheral: CBPeripheralManager, willRestoreState dict: [String : AnyObject]) {
-		let advertised = ((dict["kCBRestoredAdvertisement"] as? [NSObject: AnyObject])?["kCBAdvDataServiceUUIDs"] as? [NSData]) ?? []
+	public func peripheralManager(_ peripheral: CBPeripheralManager, willRestoreState dict: [String : Any])
+ {
+		let advertised = ((dict["kCBRestoredAdvertisement"] as? [String: Any])?["kCBAdvDataServiceUUIDs"] as? [NSData]) ?? []
 		var advertisedIDs: [CBUUID] = []
 		for data in advertised {
-			advertisedIDs.append(CBUUID(data: data))
+			advertisedIDs.append(CBUUID(data: data as Data))
 		}
 		
 		
@@ -119,72 +120,72 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 			
 			for service in self.services {
 				for existingService in existingServices {
-					if service.uuid == existingService.UUID	{
-						service.replaceCBService(existingService)
-						servicesToAdd.remove(existingService)
+					if service.uuid == existingService.uuid	{
+						service.replaceCBService(newService: existingService)
+						_ = servicesToAdd.remove(object: existingService)
 					}
 				}
 			}
 			
 			for service in servicesToAdd {
-				let ourService = BTLEMutableService(service: service, isAdvertised: advertisedIDs.contains(service.UUID))
+				let ourService = BTLEMutableService(service: service, isAdvertised: advertisedIDs.contains(service.uuid))
 				self.services.append(ourService)
 			}
 		}
 	}
 	
-	public func peripheralManager(peripheral: CBPeripheralManager, didReceiveReadRequest request: CBATTRequest) {
-		if let characteristic = self.characteristicWithCBCharacteristic(request.characteristic) {
+	public func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
+		if let characteristic = self.characteristicWithCBCharacteristic(characteristic: request.characteristic) {
 			if let data = characteristic.dataValue {
 				let range = NSRange(location: request.offset, length: data.length - request.offset)
-				request.value = characteristic.dataValue?.subdataWithRange(range)
-				self.cbPeripheralManager?.respondToRequest(request, withResult: .Success)
+				request.value = characteristic.dataValue?.subdata(with: range)
+				self.cbPeripheralManager?.respond(to: request, withResult: .success)
 			} else {
-				self.cbPeripheralManager?.respondToRequest(request, withResult: .Success)
+				self.cbPeripheralManager?.respond(to: request, withResult: .success)
 			}
 		}
 		
-		self.cbPeripheralManager?.respondToRequest(request, withResult: .AttributeNotFound)
+		self.cbPeripheralManager?.respond(to: request, withResult: .attributeNotFound)
 	}
 	
-	public func peripheralManager(peripheral: CBPeripheralManager, didReceiveWriteRequests requests: [CBATTRequest]) {
+	public func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveWrite requests: [CBATTRequest]) {
 		if requests.count == 0 { return }
 		for request in requests {
-			NSNotification.postNotification(BTLE.notifications.characteristicWasWrittenTo, object: self.characteristicWithCBCharacteristic(request.characteristic))
+			Notification.postOnMainThread(name: BTLE.notifications.characteristicWasWrittenTo, object: self.characteristicWithCBCharacteristic(characteristic: request.characteristic))
 		}
-		self.cbPeripheralManager?.respondToRequest(requests[0], withResult: .Success)
+		self.cbPeripheralManager?.respond(to: requests[0], withResult: .success)
 	}
 	
 	//=============================================================================================
 	//MARK: Delegate - status
 
 	
-	public func peripheralManagerDidStartAdvertising(peripheral: CBPeripheralManager, error: NSError?) {
+	public func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
 		if let error = error {
-			BTLE.debugLog(.Low, "advertising started with error: \(error)")
-			self.internalState = .Idle
+			BTLE.debugLog(.low, "advertising started with error: \(error)")
+			self.internalState = .idle
 		}
 	}
 	
-	public func peripheralManager(peripheral: CBPeripheralManager, didAddService service: CBService, error: NSError?) {
-		self.serviceWithCBService(service)?.isLive = true
+	public func peripheralManager(_ peripheral: CBPeripheralManager, didAdd service: CBService, error: Error?) {
+		self.serviceWithCBService(service: service)?.isLive = true
 	}
 	
 	//=============================================================================================
 	//MARK: Delegate - Characteristic
 
 	
-	public func peripheralManager(peripheral: CBPeripheralManager, central: CBCentral, didSubscribeToCharacteristic characteristic: CBCharacteristic) {
+	public func peripheralManager(_ peripheral: CBPeripheralManager, central: CBCentral, didSubscribeTo characteristic: CBCharacteristic) {
 		
 	}
 	
-	public func peripheralManager(peripheral: CBPeripheralManager, central: CBCentral, didUnsubscribeFromCharacteristic characteristic: CBCharacteristic) {
+	public func peripheralManager(_ peripheral: CBPeripheralManager, central: CBCentral, didUnsubscribeFrom characteristic: CBCharacteristic) {
 		
 	}
 	
 	//=============================================================================================
 	//MARK: Private
-	var combinedAdvertisementData: [String: AnyObject] {
+	var combinedAdvertisementData: [String: Any] {
 		var data = self.advertisingData
 		var services: [CBUUID] = []
 		
@@ -204,7 +205,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		if self.cbPeripheralManager == nil || rebuild {
 			self.turnOff()
 			
-			var options: [String: AnyObject] = [:]
+			var options: [String: Any] = [:]
 			
 			if BTLE.advertiseInBackground { options[CBPeripheralManagerOptionRestoreIdentifierKey] = BTLEPeripheralManager.restoreIdentifier }
 			
@@ -216,10 +217,10 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	
 	func setupAdvertising() {
 		if let mgr = self.cbPeripheralManager {
-			if !mgr.isAdvertising && mgr.state == .PoweredOn && self.internalState != .Active {
+			if !mgr.isAdvertising && mgr.state == .poweredOn && self.internalState != .active {
 				mgr.startAdvertising(self.combinedAdvertisementData)
 				
-				BTLE.debugLog(.Medium, "Starting to advertise: \(self.combinedAdvertisementData)") 
+				BTLE.debugLog(.medium, "Starting to advertise: \(self.combinedAdvertisementData)") 
 			}
 		}
 	}
@@ -229,7 +230,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		
 		if self.cbPeripheralManager != nil {
 			self.cbPeripheralManager = nil
-			if stateChangeCounter == 0 { self.internalState = .Off }
+			if stateChangeCounter == 0 { self.internalState = .off }
 		}
 		
 		
@@ -243,7 +244,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	}
 	
 	func characteristicWithCBCharacteristic(characteristic: CBCharacteristic) -> BTLEMutableCharacteristic? {
-		if let svc = self.serviceWithCBService(characteristic.service) {
+		if let svc = self.serviceWithCBService(service: characteristic.service) {
 			for chr in svc.characteristics {
 				if chr.cbCharacteristic == characteristic { return chr as? BTLEMutableCharacteristic }
 			}
@@ -252,16 +253,16 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	}
 	
 	func updateServices() {
-		dispatch_async(self.dispatchQueue) {
-			if let mgr = self.cbPeripheralManager where mgr.state == .PoweredOn {
-				for service in self.services { service.addToManager(self.cbPeripheralManager) }
+		self.dispatchQueue.async {
+			if let mgr = self.cbPeripheralManager, mgr.state == .poweredOn {
+				for service in self.services { service.addToManager(mgr: self.cbPeripheralManager) }
 			}
 		}
 	}
 	
 	public var services: [BTLEMutableService] = []
 	
-	public func addService(service: BTLEMutableService) -> BTLEMutableService {
+	@discardableResult public func addService(service: BTLEMutableService) -> BTLEMutableService {
 		for existing in self.services {
 			if service.uuid == existing.uuid { return existing }
 		}
@@ -271,8 +272,8 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	}
 	
 	public func removeService(service: BTLEMutableService) {
-		service.removeFromManager(self.cbPeripheralManager)
-		self.services.remove(service)
+		service.removeFromManager(mgr: self.cbPeripheralManager)
+		_ = self.services.remove(object: service)
 	}
 
 }
