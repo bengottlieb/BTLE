@@ -121,7 +121,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 			for service in self.services {
 				for existingService in existingServices {
 					if service.uuid == existingService.uuid	{
-						service.replaceCBService(newService: existingService)
+						service.replaceCBService(with: existingService)
 						_ = servicesToAdd.remove(object: existingService)
 					}
 				}
@@ -135,7 +135,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	}
 	
 	public func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
-		if let characteristic = self.characteristicWithCBCharacteristic(characteristic: request.characteristic) {
+		if let characteristic = self.existingCharacteristic(with : request.characteristic) {
 			if let data = characteristic.dataValue {
 				let range = NSRange(location: request.offset, length: data.length - request.offset)
 				request.value = characteristic.dataValue?.subdata(with: range)
@@ -151,7 +151,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	public func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveWrite requests: [CBATTRequest]) {
 		if requests.count == 0 { return }
 		for request in requests {
-			Notification.postOnMainThread(name: BTLE.notifications.characteristicWasWrittenTo, object: self.characteristicWithCBCharacteristic(characteristic: request.characteristic))
+			Notification.postOnMainThread(name: BTLE.notifications.characteristicWasWrittenTo, object: self.existingCharacteristic(with: request.characteristic))
 		}
 		self.cbPeripheralManager?.respond(to: requests[0], withResult: .success)
 	}
@@ -168,7 +168,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	}
 	
 	public func peripheralManager(_ peripheral: CBPeripheralManager, didAdd service: CBService, error: Error?) {
-		self.serviceWithCBService(service: service)?.isLive = true
+		self.existingService(with: service)?.isLive = true
 	}
 	
 	//=============================================================================================
@@ -236,15 +236,15 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		
 	}
 	
-	func serviceWithCBService(service: CBService) -> BTLEMutableService? {
+	func existingService(with service: CBService) -> BTLEMutableService? {
 		for svc in self.services {
 			if svc.cbService == service { return svc }
 		}
 		return nil
 	}
 	
-	func characteristicWithCBCharacteristic(characteristic: CBCharacteristic) -> BTLEMutableCharacteristic? {
-		if let svc = self.serviceWithCBService(service: characteristic.service) {
+	func existingCharacteristic(with characteristic: CBCharacteristic) -> BTLEMutableCharacteristic? {
+		if let svc = self.existingService(with: characteristic.service) {
 			for chr in svc.characteristics {
 				if chr.cbCharacteristic == characteristic { return chr as? BTLEMutableCharacteristic }
 			}
@@ -255,14 +255,14 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	func updateServices() {
 		self.dispatchQueue.async {
 			if let mgr = self.cbPeripheralManager, mgr.state == .poweredOn {
-				for service in self.services { service.addToManager(mgr: self.cbPeripheralManager) }
+				for service in self.services { service.add(to: self.cbPeripheralManager) }
 			}
 		}
 	}
 	
 	public var services: [BTLEMutableService] = []
 	
-	@discardableResult public func addService(service: BTLEMutableService) -> BTLEMutableService {
+	@discardableResult public func add(service: BTLEMutableService) -> BTLEMutableService {
 		for existing in self.services {
 			if service.uuid == existing.uuid { return existing }
 		}
@@ -271,8 +271,8 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		return service
 	}
 	
-	public func removeService(service: BTLEMutableService) {
-		service.removeFromManager(mgr: self.cbPeripheralManager)
+	public func remove(service: BTLEMutableService) {
+		service.remove(from: self.cbPeripheralManager)
 		_ = self.services.remove(object: service)
 	}
 

@@ -19,8 +19,8 @@ class BTLEBeacon: CustomStringConvertible {
 	let firstSeenAt: Date
 	var lastSeenAt: Date?
 	
-	class func beaconWithData(data: NSData) -> BTLEBeacon? {
-		if let info = BTLEBeacon.parseData(data: data) {
+	class func beacon(with data: NSData) -> BTLEBeacon? {
+		if let info = BTLEBeacon.parse(data: data) {
 			
 			if let existing = BTLEBeacon.existing[info.0] {
 				existing.lastSeenAt = Date()
@@ -51,7 +51,7 @@ class BTLEBeacon: CustomStringConvertible {
 		return "\(self.proximityID), last seen \(lastSeen)"
 	}
 	
-	class func parseData(data: NSData) -> (String, Int, Int)? {
+	class func parse(data: NSData) -> (String, Int, Int)? {
 		if data.length != 25 { return nil }
 		
 		let ids = UnsafeMutablePointer<UInt16>.allocate(capacity: 3)

@@ -109,7 +109,7 @@ public class BTLECharacteristic: NSObject {
 	//=============================================================================================
 	//MARK: Call backs from Peripheral Delegate
 	
-	public func didLoadWithError(error: Error?) {
+	public func didLoad(with error: Error?) {
 		BTLE.debugLog(.medium, "Finished reloading \(self.cbCharacteristic.uuid), error: \(error)")
 
 		if error == nil {
@@ -166,7 +166,7 @@ public class BTLECharacteristic: NSObject {
 	public func reload(timeout: TimeInterval = 10.0, completion: ((Error?, NSData?) -> ())? = nil) {
 		if !self.propertyEnabled(prop: .read) {
 			let error = NSError(domain: CBErrorDomain, code: CBError.invalidParameters.rawValue, userInfo: nil)
-			self.didLoadWithError(error: error)
+			self.didLoad(with: error)
 			completion?(error, nil)
 			return
 		}

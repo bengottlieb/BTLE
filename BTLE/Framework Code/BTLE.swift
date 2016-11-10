@@ -93,11 +93,11 @@ public class BTLE: NSObject {
 		static var peripheralClass: BTLEPeripheral.Type?
 	}
 	
-	public class func registerServiceClass(serviceClass: BTLEService.Type, forServiceID serviceID: CBUUID) {
+	public class func register(class serviceClass: BTLEService.Type, forServiceID serviceID: CBUUID) {
 		BTLE.registeredClasses.services[serviceID] = serviceClass
 	}
 	
-	public class func registerPeripheralClass(peripheralClass: BTLEPeripheral.Type?) {
+	public class func register(peripheralClass: BTLEPeripheral.Type?) {
 		BTLE.registeredClasses.peripheralClass = peripheralClass
 	}
 
@@ -147,7 +147,7 @@ public class BTLE: NSObject {
 	
 	//BTLE Authorization status
 	public var isAuthorized: Bool { return CBPeripheralManager.authorizationStatus() == .authorized }
-	public func authorizeWithCompletion(completion: @escaping (Bool) -> Void) { self.authorizer = BTLEAuthorizer(completion: completion) }
+	public func authorizeWithCompletion(_ completion: @escaping (Bool) -> Void) { self.authorizer = BTLEAuthorizer(completion: completion) }
 
 	class BTLEAuthorizer: NSObject, CBPeripheralManagerDelegate {
 		init(completion comp: @escaping (Bool) -> Void) {
@@ -173,8 +173,8 @@ public class BTLE: NSObject {
 	var authorizer: BTLEAuthorizer?
 }
 
-func >(lhs: DebugLevel, rhs: DebugLevel) -> Bool { return lhs.rawValue > rhs.rawValue }
-func <(lhs: DebugLevel, rhs: DebugLevel) -> Bool { return lhs.rawValue < rhs.rawValue }
+//func >(lhs: DebugLevel, rhs: DebugLevel) -> Bool { return lhs.rawValue > rhs.rawValue }
+//func <(lhs: DebugLevel, rhs: DebugLevel) -> Bool { return lhs.rawValue < rhs.rawValue }
 
 public func btle_delay(_ delay: TimeInterval?, closure: @escaping () -> ()) {
 	if let delay = delay {

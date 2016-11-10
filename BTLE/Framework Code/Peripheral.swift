@@ -320,9 +320,9 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		didSet {
 			if oldValue != self.ignored {
 				if self.ignored == .blackList {
-					BTLE.scanner.addIgnoredPeripheral(peripheral: self)
+					BTLE.scanner.addIgnored(peripheral: self)
 				} else if self.ignored == .not {
-					BTLE.scanner.removeIgnoredPeripheral(peripheral: self)
+					BTLE.scanner.removeIgnored(peripheral: self)
 				}
 			}
 			
@@ -362,7 +362,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	public func serviceWithUUID(uuid: CBUUID) -> BTLEService? { return self.services.filter({ $0.cbService.uuid == uuid }).last }
 	public func characteristicFromCBCharacteristic(characteristic: CBCharacteristic) -> BTLECharacteristic? {
 		if let service = self.serviceWithUUID(uuid: characteristic.service.uuid) {
-			if let chr = service.characteristicWithUUID(uuid: characteristic.uuid) {
+			if let chr = service.characteristic(with: characteristic.uuid) {
 				return chr
 			}
 		}
@@ -415,7 +415,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 			return service
 		}
 		
-		let service = BTLEService.createService(service: cbService, onPeriperhal: self)
+		let service = BTLEService.create(service: cbService, onPeriperhal: self)
 		self.services.append(service)
 
 		return service
@@ -540,7 +540,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	
 	public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
 		if self.shouldLoadService(service: characteristic.service) {
-			self.findOrCreateService(cbService: characteristic.service).didLoadCharacteristic(chr: characteristic, error: error)
+			self.findOrCreateService(cbService: characteristic.service).didLoad(characteristic: characteristic, error: error)
 		} else {
 			print("^^^^^^^^^^ Not loading: \(characteristic)")
 		}

@@ -160,7 +160,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
 			let service = BTLEMutableService(uuid: testServiceID, isPrimary: true, characteristics: [ self.writableCharacteristic! ])
 			service.advertised = true
-			BTLE.advertiser.addService(service: service)
+			BTLE.advertiser.add(service: service)
 			BTLE.advertiser.startAdvertising()
 		} else {
 			BTLE.advertiser.stopAdvertising()

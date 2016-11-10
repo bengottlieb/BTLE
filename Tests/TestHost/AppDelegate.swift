@@ -111,7 +111,7 @@ class LockService: BTLEService {
 	}
 	
 	override public func didFinishLoading() {
-//		let lockStatus = self.characteristicWithUUID(LockStatusCharacteristic)
+//		let lockStatus = self.characteristic(with: LockStatusCharacteristic)
 //		let data = lockStatus?.dataValue
 		//lockStatus?.listenForUpdates = true
 		

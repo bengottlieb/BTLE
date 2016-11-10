@@ -11,7 +11,7 @@ import CoreBluetooth
 
 protocol BTLEServiceProtocol {
 	init();
-	init(service svc: CBService, onPeriperhal: BTLEPeripheral);
+	init(service: CBService, onPeriperhal: BTLEPeripheral);
 }
 
 open class BTLEService: NSObject {
@@ -22,24 +22,24 @@ open class BTLEService: NSObject {
 	var pendingCharacteristics: [BTLECharacteristic] = []
 	public var uuid: CBUUID { return self.cbService.uuid }
 	
-	class func createService(service svc: CBService, onPeriperhal: BTLEPeripheral) -> BTLEService {
-		if let serviceClass: BTLEService.Type = BTLE.registeredClasses.services[svc.uuid] {
-			return serviceClass.init(service: svc, onPeriperhal: onPeriperhal)
+	class func create(service: CBService, onPeriperhal: BTLEPeripheral) -> BTLEService {
+		if let serviceClass: BTLEService.Type = BTLE.registeredClasses.services[service.uuid] {
+			return serviceClass.init(service: service, onPeriperhal: onPeriperhal)
 		} else {
-			return BTLEService(service: svc, onPeriperhal: onPeriperhal)
+			return BTLEService(service: service, onPeriperhal: onPeriperhal)
 		}
 	}
 	
 	
 	override init() { super.init() }
 	
-	required public init(service svc: CBService, onPeriperhal: BTLEPeripheral) {
-		cbService = svc
+	required public init(service: CBService, onPeriperhal: BTLEPeripheral) {
+		cbService = service
 		peripheral = onPeriperhal
 		super.init()
 		
 		self.reload()
-		BTLE.debugLog(.medium, "Service: creating \(type(of: self)) from \(svc)")
+		BTLE.debugLog(.medium, "Service: creating \(type(of: self)) from \(service)")
 	}
 	
 	func cancelLoad() {
@@ -68,7 +68,7 @@ open class BTLEService: NSObject {
 	func updateCharacteristics() {
 		if let characteristics = self.cbService.characteristics {
 			for chr in characteristics {
-				if self.findCharacteristicMatching(chr: chr) == nil && self.shouldLoadCharacteristic(characteristic: chr) {
+				if self.findMatching(characteristic: chr) == nil && self.shouldLoad(characteristic: chr) {
 					let characteristic = BTLECharacteristic(characteristic: chr, ofService: self)
 					self.characteristics.append(characteristic)
 				}
@@ -76,7 +76,7 @@ open class BTLEService: NSObject {
 		}
 	}
 	
-	public func shouldLoadCharacteristic(characteristic: CBCharacteristic) -> Bool {
+	public func shouldLoad(characteristic: CBCharacteristic) -> Bool {
 		return true
 	}
 	
@@ -85,8 +85,8 @@ open class BTLEService: NSObject {
 		self.peripheral.didFinishLoadingService(service: self)
 	}
 	
-	func findCharacteristicMatching(chr: CBCharacteristic) -> BTLECharacteristic? {
-		return self.characteristics.filter({ $0.cbCharacteristic == chr }).last
+	func findMatching(characteristic: CBCharacteristic) -> BTLECharacteristic? {
+		return self.characteristics.filter({ $0.cbCharacteristic == characteristic }).last
 	}
 	
 	var numberOfLoadingCharacteristics: Int {
@@ -98,10 +98,10 @@ open class BTLEService: NSObject {
 		return count
 	}
 	
-	func didLoadCharacteristic(chr: CBCharacteristic, error: Error?) {
+	func didLoad(characteristic: CBCharacteristic, error: Error?) {
 		//println("BTLE Service: Loaded characteristic: \(chr)")
-		if let char = self.findCharacteristicMatching(chr: chr) {
-			char.didLoadWithError(error: error)
+		if let char = self.findMatching(characteristic: characteristic) {
+			char.didLoad(with: error)
 		}
 	}
 	
@@ -133,7 +133,7 @@ open class BTLEService: NSObject {
 	}
 	
 
-	public func characteristicWithUUID(uuid: CBUUID) -> BTLECharacteristic? { return self.characteristics.filter({ $0.cbCharacteristic.uuid == uuid }).last }
+	public func characteristic(with uuid: CBUUID) -> BTLECharacteristic? { return self.characteristics.filter({ $0.cbCharacteristic.uuid == uuid }).last }
 	
 }
 
@@ -157,20 +157,20 @@ public class BTLEMutableService: BTLEService {
 	public init(uuid: CBUUID, isPrimary: Bool = true, characteristics chrs: [BTLECharacteristic] = []) {
 		super.init()
 		self.cbService = CBMutableService(type: uuid, primary: isPrimary)
-		for svc in chrs { self.addCharacteristic(chr: svc) }
+		for svc in chrs { self.add(characteristic: svc) }
 	}
 
-	func addToManager(mgr: CBPeripheralManager?) {
+	func add(to manager: CBPeripheralManager?) {
 		if self.hasBeenAdded {
 			return
 		}
-		if let mgr = mgr, mgr.state == .poweredOn {
+		if let mgr = manager, mgr.state == .poweredOn {
 			self.hasBeenAdded = true
 			mgr.add(self.cbService as! CBMutableService)
 		}
 	}
 	
-	func removeFromManager(mgr: CBPeripheralManager?) {
+	func remove(from mgr: CBPeripheralManager?) {
 		if let mgr = mgr, mgr.state == .poweredOn {
 			if !self.hasBeenAdded { return }
 			self.hasBeenAdded = false
@@ -182,17 +182,17 @@ public class BTLEMutableService: BTLEService {
 	
 	public required init(service svc: CBService, onPeriperhal: BTLEPeripheral) { fatalError("init(service:onPeriperhal:) has not been implemented") }
 	
-	public func addCharacteristic(chr: BTLECharacteristic) {
-		self.characteristics.append(chr)
-		chr.service = self
+	public func add(characteristic: BTLECharacteristic) {
+		self.characteristics.append(characteristic)
+		characteristic.service = self
 		if let svc = self.cbService as? CBMutableService {
 			if svc.characteristics == nil { svc.characteristics = [] }
-			svc.characteristics?.append(chr.cbCharacteristic)
+			svc.characteristics?.append(characteristic.cbCharacteristic)
 		}
 	}
 	
 	
-	func replaceCBService(newService: CBMutableService) {
+	func replaceCBService(with newService: CBMutableService) {
 		self.cbService = newService
 		self.hasBeenAdded = true
 	}
