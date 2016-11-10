@@ -21,40 +21,44 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		B50143281BCAE66C00FA3A79 /* BeaconSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50143261BCAE66C00FA3A79 /* BeaconSettingsViewController.swift */; };
-		B50143291BCAE66C00FA3A79 /* BeaconSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B50143271BCAE66C00FA3A79 /* BeaconSettingsViewController.xib */; };
 		B50143301BCBF17C00FA3A79 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B501432F1BCBF17C00FA3A79 /* Beacon.swift */; };
 		B50143311BCBF17C00FA3A79 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B501432F1BCBF17C00FA3A79 /* Beacon.swift */; };
-		B5037E711AE6F9BF000D2A64 /* CharacteristicTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5037E6F1AE6F9BF000D2A64 /* CharacteristicTableViewCell.swift */; };
-		B5037E721AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5037E701AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib */; };
 		B5037E741AE72B18000D2A64 /* Descriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5037E731AE72B18000D2A64 /* Descriptor.swift */; };
 		B5037E751AE72B18000D2A64 /* Descriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5037E731AE72B18000D2A64 /* Descriptor.swift */; };
-		B5037E771AE875FC000D2A64 /* zap.caf in Resources */ = {isa = PBXBuildFile; fileRef = B5037E761AE875FC000D2A64 /* zap.caf */; };
-		B504E65D1A8968DC001B414B /* BTLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B504E6461A8968DC001B414B /* BTLE.framework */; };
 		B504E69D1A896E82001B414B /* BTLE_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B504E69C1A896E82001B414B /* BTLE_Tests.swift */; };
-		B504E6A41A897017001B414B /* BTLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B504E6461A8968DC001B414B /* BTLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B504E6A51A897087001B414B /* BTLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B504E6461A8968DC001B414B /* BTLE.framework */; };
 		B5345B3F1AE1F20F0074F337 /* PeripheralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5345B3E1AE1F20F0074F337 /* PeripheralManager.swift */; };
 		B53E20031DD3B8990019BD3F /* Gulliver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20011DD3B8990019BD3F /* Gulliver.framework */; };
 		B53E20041DD3B8990019BD3F /* GulliverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20021DD3B8990019BD3F /* GulliverUI.framework */; };
-		B53E20051DD402860019BD3F /* Gulliver.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20011DD3B8990019BD3F /* Gulliver.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B53E20061DD402880019BD3F /* GulliverUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20021DD3B8990019BD3F /* GulliverUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B53EADE71C651C1D00A3203E /* BTLE+Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B53EADE51C651AD400A3203E /* BTLE+Errors.swift */; };
 		B53EADE81C651C1D00A3203E /* BTLE+Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B53EADE51C651AD400A3203E /* BTLE+Errors.swift */; };
+		B54473401DD4BD5C00590803 /* Gulliver.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20011DD3B8990019BD3F /* Gulliver.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B54473411DD4BD5C00590803 /* GulliverUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20021DD3B8990019BD3F /* GulliverUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B54473421DD4BD6300590803 /* BTLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B504E6461A8968DC001B414B /* BTLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B54473451DD4BD9300590803 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D64881A899094005A0002 /* AppDelegate.swift */; };
+		B54473461DD4BDA100590803 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B58D648D1A899094005A0002 /* Images.xcassets */; };
+		B54473471DD4BDA800590803 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B58D648B1A899094005A0002 /* Main.storyboard */; };
+		B54473481DD4BDAF00590803 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B58D64891A899094005A0002 /* LaunchScreen.xib */; };
+		B54473491DD4BDB500590803 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D648F1A899094005A0002 /* ViewController.swift */; };
+		B544734A1DD4BDB500590803 /* BeaconSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50143261BCAE66C00FA3A79 /* BeaconSettingsViewController.swift */; };
+		B544734B1DD4BDB500590803 /* BeaconSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B50143271BCAE66C00FA3A79 /* BeaconSettingsViewController.xib */; };
+		B544734C1DD4BDB500590803 /* PeripheralCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5DAB3311AE40B3800D49D44 /* PeripheralCellTableViewCell.swift */; };
+		B544734D1DD4BDB500590803 /* PeripheralCellTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5DAB3321AE40B3800D49D44 /* PeripheralCellTableViewCell.xib */; };
+		B544734E1DD4BDB500590803 /* DeviceDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A4823C1AE3F1E8001636BE /* DeviceDetailsViewController.swift */; };
+		B544734F1DD4BDB500590803 /* DeviceDetailsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5A4823D1AE3F1E8001636BE /* DeviceDetailsViewController.xib */; };
+		B54473501DD4BDB500590803 /* CharacteristicTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5037E6F1AE6F9BF000D2A64 /* CharacteristicTableViewCell.swift */; };
+		B54473511DD4BDB500590803 /* CharacteristicTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5037E701AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib */; };
+		B54473521DD4BDB900590803 /* zap.caf in Resources */ = {isa = PBXBuildFile; fileRef = B5037E761AE875FC000D2A64 /* zap.caf */; };
+		B54473531DD4BFCC00590803 /* Gulliver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20011DD3B8990019BD3F /* Gulliver.framework */; };
+		B54473541DD4BFCC00590803 /* GulliverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20021DD3B8990019BD3F /* GulliverUI.framework */; };
+		B54473551DD4BFD600590803 /* BTLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B504E6461A8968DC001B414B /* BTLE.framework */; };
 		B57CA3C11AEAD51700B0125F /* NearbyPeripheralsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B57CA3C01AEAD51700B0125F /* NearbyPeripheralsTableView.swift */; };
 		B57CA3C41AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B57CA3C21AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift */; };
 		B57CA3C51AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B57CA3C31AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib */; };
 		B58D64791A898F89005A0002 /* BTLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B58D64681A898F81005A0002 /* BTLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B58D647F1A898FBD005A0002 /* BTLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D64751A898F81005A0002 /* BTLE.swift */; };
 		B58D64831A898FBE005A0002 /* BTLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D64751A898F81005A0002 /* BTLE.swift */; };
-		B58D64901A899094005A0002 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D64881A899094005A0002 /* AppDelegate.swift */; };
-		B58D64911A899094005A0002 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B58D64891A899094005A0002 /* LaunchScreen.xib */; };
-		B58D64921A899094005A0002 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B58D648B1A899094005A0002 /* Main.storyboard */; };
-		B58D64931A899094005A0002 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B58D648D1A899094005A0002 /* Images.xcassets */; };
-		B58D64951A899094005A0002 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D648F1A899094005A0002 /* ViewController.swift */; };
 		B58D64961A899285005A0002 /* BTLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B58D646B1A898F81005A0002 /* BTLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B5A4823E1AE3F1E8001636BE /* DeviceDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A4823C1AE3F1E8001636BE /* DeviceDetailsViewController.swift */; };
-		B5A4823F1AE3F1E8001636BE /* DeviceDetailsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5A4823D1AE3F1E8001636BE /* DeviceDetailsViewController.xib */; };
 		B5BCEC091AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BCEC081AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift */; };
 		B5D6083E1ADBF4F6004DC9AC /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */; };
 		B5D6083F1ADBF4F6004DC9AC /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */; };
@@ -64,39 +68,30 @@
 		B5D6084B1ADC4486004DC9AC /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D608491ADC4486004DC9AC /* Service.swift */; };
 		B5D6084D1ADC44A5004DC9AC /* Characteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6084C1ADC44A5004DC9AC /* Characteristic.swift */; };
 		B5D6084E1ADC44A5004DC9AC /* Characteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6084C1ADC44A5004DC9AC /* Characteristic.swift */; };
-		B5DAB3331AE40B3800D49D44 /* PeripheralCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5DAB3311AE40B3800D49D44 /* PeripheralCellTableViewCell.swift */; };
-		B5DAB3341AE40B3800D49D44 /* PeripheralCellTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5DAB3321AE40B3800D49D44 /* PeripheralCellTableViewCell.xib */; };
 		B5DAB3361AE418FE00D49D44 /* Array+SA_Additions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5DAB3351AE418FE00D49D44 /* Array+SA_Additions.swift */; };
 		B5DAB3371AE418FE00D49D44 /* Array+SA_Additions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5DAB3351AE418FE00D49D44 /* Array+SA_Additions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B504E65B1A8968DC001B414B /* PBXContainerItemProxy */ = {
+		B54473431DD4BD6B00590803 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B504E60B1A89230F001B414B /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = B504E6451A8968DC001B414B;
-			remoteInfo = BTLE;
-		};
-		B58D64971A899FE9005A0002 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B504E60B1A89230F001B414B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B504E6121A89230F001B414B;
-			remoteInfo = TestHost;
+			remoteInfo = BTLE_iOS;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		B504E6621A8968DC001B414B /* Embed Frameworks */ = {
+		B544733F1DD4BD5200590803 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B504E6A41A897017001B414B /* BTLE.framework in Embed Frameworks */,
-				B53E20051DD402860019BD3F /* Gulliver.framework in Embed Frameworks */,
-				B53E20061DD402880019BD3F /* GulliverUI.framework in Embed Frameworks */,
+				B54473401DD4BD5C00590803 /* Gulliver.framework in Embed Frameworks */,
+				B54473411DD4BD5C00590803 /* GulliverUI.framework in Embed Frameworks */,
+				B54473421DD4BD6300590803 /* BTLE.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -111,7 +106,6 @@
 		B5037E701AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CharacteristicTableViewCell.xib; sourceTree = "<group>"; };
 		B5037E731AE72B18000D2A64 /* Descriptor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Descriptor.swift; sourceTree = "<group>"; };
 		B5037E761AE875FC000D2A64 /* zap.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = zap.caf; sourceTree = "<group>"; };
-		B504E6131A89230F001B414B /* BTLESniffer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BTLESniffer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B504E6461A8968DC001B414B /* BTLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BTLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B504E66A1A896980001B414B /* BuildFramework.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = BuildFramework.sh; path = BTLE/BuildFramework.sh; sourceTree = "<group>"; };
 		B504E6981A896E82001B414B /* BTLE Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BTLE Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -122,6 +116,8 @@
 		B53E20011DD3B8990019BD3F /* Gulliver.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Gulliver.framework; sourceTree = "<group>"; };
 		B53E20021DD3B8990019BD3F /* GulliverUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GulliverUI.framework; sourceTree = "<group>"; };
 		B53EADE51C651AD400A3203E /* BTLE+Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "BTLE+Errors.swift"; sourceTree = "<group>"; };
+		B544732D1DD4BD2000590803 /* TestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B544733B1DD4BD2000590803 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B57CA3C01AEAD51700B0125F /* NearbyPeripheralsTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPeripheralsTableView.swift; sourceTree = "<group>"; };
 		B57CA3C21AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPeripheralsTableViewCell.swift; sourceTree = "<group>"; };
 		B57CA3C31AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NearbyPeripheralsTableViewCell.xib; sourceTree = "<group>"; };
@@ -150,14 +146,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		B504E6101A89230F001B414B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B504E65D1A8968DC001B414B /* BTLE.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B504E6421A8968DC001B414B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -182,6 +170,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B544732A1DD4BD2000590803 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B54473531DD4BFCC00590803 /* Gulliver.framework in Frameworks */,
+				B54473551DD4BFD600590803 /* BTLE.framework in Frameworks */,
+				B54473541DD4BFCC00590803 /* GulliverUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -194,6 +192,7 @@
 				B58D64661A898F81005A0002 /* BTLE_Mac */,
 				B58D64691A898F81005A0002 /* BTLE_iOS */,
 				B504E6991A896E82001B414B /* BTLE Tests */,
+				B544732E1DD4BD2000590803 /* TestHost2 */,
 				B504E6141A89230F001B414B /* Products */,
 				B582A2B91ADDB1FB00736517 /* Mac Frameworks */,
 				B5D608431ADC097E004DC9AC /* Frameworks */,
@@ -203,10 +202,10 @@
 		B504E6141A89230F001B414B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B504E6131A89230F001B414B /* BTLESniffer.app */,
 				B504E6461A8968DC001B414B /* BTLE.framework */,
 				B504E6981A896E82001B414B /* BTLE Tests.xctest */,
 				B504E6AF1A898110001B414B /* BTLE.framework */,
+				B544732D1DD4BD2000590803 /* TestHost.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -228,6 +227,14 @@
 				B504E69B1A896E82001B414B /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B544732E1DD4BD2000590803 /* TestHost2 */ = {
+			isa = PBXGroup;
+			children = (
+				B544733B1DD4BD2000590803 /* Info.plist */,
+			);
+			path = TestHost2;
 			sourceTree = "<group>";
 		};
 		B582A2B91ADDB1FB00736517 /* Mac Frameworks */ = {
@@ -340,25 +347,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B504E6121A89230F001B414B /* TestHost */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B504E6321A89230F001B414B /* Build configuration list for PBXNativeTarget "TestHost" */;
-			buildPhases = (
-				B504E60F1A89230F001B414B /* Sources */,
-				B504E6101A89230F001B414B /* Frameworks */,
-				B504E6111A89230F001B414B /* Resources */,
-				B504E6621A8968DC001B414B /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B504E65C1A8968DC001B414B /* PBXTargetDependency */,
-			);
-			name = TestHost;
-			productName = BTLE;
-			productReference = B504E6131A89230F001B414B /* BTLESniffer.app */;
-			productType = "com.apple.product-type.application";
-		};
 		B504E6451A8968DC001B414B /* BTLE_iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B504E65F1A8968DC001B414B /* Build configuration list for PBXNativeTarget "BTLE_iOS" */;
@@ -388,7 +376,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B58D64981A899FE9005A0002 /* PBXTargetDependency */,
 			);
 			name = "BTLE Tests";
 			productName = "BTLE Tests";
@@ -413,6 +400,25 @@
 			productReference = B504E6AF1A898110001B414B /* BTLE.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		B544732C1DD4BD2000590803 /* TestHost */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B544733C1DD4BD2000590803 /* Build configuration list for PBXNativeTarget "TestHost" */;
+			buildPhases = (
+				B54473291DD4BD2000590803 /* Sources */,
+				B544732A1DD4BD2000590803 /* Frameworks */,
+				B544732B1DD4BD2000590803 /* Resources */,
+				B544733F1DD4BD5200590803 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B54473441DD4BD6B00590803 /* PBXTargetDependency */,
+			);
+			name = TestHost;
+			productName = TestHost2;
+			productReference = B544732D1DD4BD2000590803 /* TestHost.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -420,19 +426,10 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftMigration = 0700;
-				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0710;
+				LastSwiftUpdateCheck = 0810;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "Stand Alone, inc.";
 				TargetAttributes = {
-					B504E6121A89230F001B414B = {
-						CreatedOnToolsVersion = 6.1.1;
-						DevelopmentTeam = YY6CWUX533;
-						SystemCapabilities = {
-							com.apple.BackgroundModes = {
-								enabled = 1;
-							};
-						};
-					};
 					B504E6451A8968DC001B414B = {
 						CreatedOnToolsVersion = 6.1.1;
 						DevelopmentTeam = YY6CWUX533;
@@ -447,6 +444,11 @@
 					B504E6AE1A898110001B414B = {
 						CreatedOnToolsVersion = 6.1.1;
 						DevelopmentTeam = YY6CWUX533;
+					};
+					B544732C1DD4BD2000590803 = {
+						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = YY6CWUX533;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -463,31 +465,16 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B504E6121A89230F001B414B /* TestHost */,
 				B504E6451A8968DC001B414B /* BTLE_iOS */,
 				B504E6AE1A898110001B414B /* BTLE_Mac */,
 				B504E6661A89690C001B414B /* Combined Framework */,
 				B504E6971A896E82001B414B /* BTLE Tests */,
+				B544732C1DD4BD2000590803 /* TestHost */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		B504E6111A89230F001B414B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B5037E721AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib in Resources */,
-				B58D64931A899094005A0002 /* Images.xcassets in Resources */,
-				B50143291BCAE66C00FA3A79 /* BeaconSettingsViewController.xib in Resources */,
-				B5A4823F1AE3F1E8001636BE /* DeviceDetailsViewController.xib in Resources */,
-				B5DAB3341AE40B3800D49D44 /* PeripheralCellTableViewCell.xib in Resources */,
-				B5037E771AE875FC000D2A64 /* zap.caf in Resources */,
-				B58D64911A899094005A0002 /* LaunchScreen.xib in Resources */,
-				B58D64921A899094005A0002 /* Main.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B504E6441A8968DC001B414B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -510,6 +497,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B544732B1DD4BD2000590803 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B54473461DD4BDA100590803 /* Images.xcassets in Resources */,
+				B54473481DD4BDAF00590803 /* LaunchScreen.xib in Resources */,
+				B54473521DD4BDB900590803 /* zap.caf in Resources */,
+				B544734D1DD4BDB500590803 /* PeripheralCellTableViewCell.xib in Resources */,
+				B544734B1DD4BDB500590803 /* BeaconSettingsViewController.xib in Resources */,
+				B54473471DD4BDA800590803 /* Main.storyboard in Resources */,
+				B544734F1DD4BDB500590803 /* DeviceDetailsViewController.xib in Resources */,
+				B54473511DD4BDB500590803 /* CharacteristicTableViewCell.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -529,19 +531,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		B504E60F1A89230F001B414B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B5A4823E1AE3F1E8001636BE /* DeviceDetailsViewController.swift in Sources */,
-				B5DAB3331AE40B3800D49D44 /* PeripheralCellTableViewCell.swift in Sources */,
-				B58D64951A899094005A0002 /* ViewController.swift in Sources */,
-				B50143281BCAE66C00FA3A79 /* BeaconSettingsViewController.swift in Sources */,
-				B58D64901A899094005A0002 /* AppDelegate.swift in Sources */,
-				B5037E711AE6F9BF000D2A64 /* CharacteristicTableViewCell.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B504E6411A8968DC001B414B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -586,18 +575,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B54473291DD4BD2000590803 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B544734A1DD4BDB500590803 /* BeaconSettingsViewController.swift in Sources */,
+				B544734C1DD4BDB500590803 /* PeripheralCellTableViewCell.swift in Sources */,
+				B54473501DD4BDB500590803 /* CharacteristicTableViewCell.swift in Sources */,
+				B54473491DD4BDB500590803 /* ViewController.swift in Sources */,
+				B54473451DD4BD9300590803 /* AppDelegate.swift in Sources */,
+				B544734E1DD4BDB500590803 /* DeviceDetailsViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B504E65C1A8968DC001B414B /* PBXTargetDependency */ = {
+		B54473441DD4BD6B00590803 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B504E6451A8968DC001B414B /* BTLE_iOS */;
-			targetProxy = B504E65B1A8968DC001B414B /* PBXContainerItemProxy */;
-		};
-		B58D64981A899FE9005A0002 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B504E6121A89230F001B414B /* TestHost */;
-			targetProxy = B58D64971A899FE9005A0002 /* PBXContainerItemProxy */;
+			targetProxy = B54473431DD4BD6B00590803 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -634,8 +631,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -646,6 +645,7 @@
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -680,8 +680,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -691,6 +693,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -700,50 +703,16 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0.1;
 				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		B504E6331A89230F001B414B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = YY6CWUX533;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks",
-				);
-				INFOPLIST_FILE = "$(SRCROOT)/Tests/TestHost/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = BTLESniffer;
-				SWIFT_VERSION = 3.0.1;
-			};
-			name = Debug;
-		};
-		B504E6341A89230F001B414B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = YY6CWUX533;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks",
-				);
-				INFOPLIST_FILE = "$(SRCROOT)/Tests/TestHost/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = BTLESniffer;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0.1;
 			};
 			name = Release;
 		};
 		B504E6601A8968DC001B414B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = YY6CWUX533;
@@ -774,6 +743,7 @@
 		B504E6611A8968DC001B414B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = YY6CWUX533;
@@ -790,7 +760,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = BTLE;
 				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0.1;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -853,7 +823,7 @@
 		B504E6C31A898111001B414B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -887,7 +857,7 @@
 		B504E6C41A898111001B414B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -915,6 +885,54 @@
 			};
 			name = Release;
 		};
+		B544733D1DD4BD2000590803 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = YY6CWUX533;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Tests/TestHost/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.standalone.TestHost2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B544733E1DD4BD2000590803 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = YY6CWUX533;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Tests/TestHost/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.standalone.TestHost2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -923,15 +941,6 @@
 			buildConfigurations = (
 				B504E6301A89230F001B414B /* Debug */,
 				B504E6311A89230F001B414B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B504E6321A89230F001B414B /* Build configuration list for PBXNativeTarget "TestHost" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B504E6331A89230F001B414B /* Debug */,
-				B504E6341A89230F001B414B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -971,6 +980,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		B544733C1DD4BD2000590803 /* Build configuration list for PBXNativeTarget "TestHost" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B544733D1DD4BD2000590803 /* Debug */,
+				B544733E1DD4BD2000590803 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
