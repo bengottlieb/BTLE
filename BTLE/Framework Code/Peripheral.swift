@@ -212,7 +212,6 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		super.init()
 
 		peripheral.delegate = self
-		peripheral.readRSSI()
 		self.rssi = RSSI
 		self.updateVisibilityTimer()
 
