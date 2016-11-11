@@ -56,57 +56,6 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		self.connectionTimeoutTimer?.invalidate()
 		BTLE.debugLog(.superHigh, "BTLE Peripheral: deiniting: \(self)")
 	}
-	public enum Ignored: Int { case not, blackList, missingServices, checkingForServices }
-	public enum State { case discovered, connecting, connected, disconnecting, undiscovered, unknown
-		var description: String {
-			switch self {
-			case .discovered: return "Discovered"
-			case .connecting: return "Connecting"
-			case .connected: return "Connected"
-			case .disconnecting: return "Disconnecting"
-			case .undiscovered: return "Undiscovered"
-			case .unknown: return "Unknown"
-			}
-		}
-	}
-	public typealias RSSValue = Int
-	public enum Distance: Int { case touching, veryClose, close, nearby, sameRoom, around, far, unknown
-		init(raw: RSSValue) {
-			if raw > rssi_range_touching { self = .touching }
-			else if raw > rssi_range_very_close { self = .veryClose }
-			else if raw > rssi_range_close { self = .close }
-			else if raw > rssi_range_nearby { self = .nearby }
-			else if raw > rssi_range_same_room { self = .sameRoom }
-			else if raw > rssi_range_around { self = .around }
-			else { self = .far }
-		}
-		
-		public var toString: String {
-			switch self {
-			case .touching: return "touching"
-			case .veryClose: return "very close"
-			case .close: return "close"
-			case .nearby: return "nearby"
-			case .sameRoom: return "same room"
-			case .around: return "around"
-			case .far: return "far"
-			case .unknown: return "unknown"
-			}
-		}
-
-		public var toFloat: Float {
-			switch self {
-			case .touching: return 0.0
-			case .veryClose: return 0.1
-			case .close: return 0.25
-			case .nearby: return 0.4
-			case .sameRoom: return 0.5
-			case .around: return 0.75
-			case .far: return 0.9
-			case .unknown: return 1.0
-			}
-		}
-	}
 	
 	public var cbPeripheral: CBPeripheral!
 	public var uuid: UUID!
@@ -133,22 +82,6 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 			self.sendNotification(name: BTLE.notifications.peripheralDidUpdateAdvertisementData)
 		}
 	}}
-	
-	func didFailToConnect(error: Error?) {
-		BTLE.debugLog(.medium, "Failed to connect \(self.name): \(error)")
-		self.sendConnectionCompletions(error: error)
-	}
-	
-	func sendConnectionCompletions(error: Error?) {
-		self.connectionTimeoutTimer?.invalidate()
-		BTLE.debugLog(.medium, "Sending \(self.connectionCompletionBlocks.count) completion messages (\(error))")
-		let completions = self.connectionCompletionBlocks
-		self.connectionCompletionBlocks = []
-		
-		for block in completions {
-			block(error)
-		}
-	}
 	
 	public var state: State = .discovered { didSet {
 		if self.state == oldValue { return }
@@ -180,6 +113,27 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	public var distance: Distance { if let rssi = self.rssi { return Distance(raw: rssi) }; return .unknown }
 	
 	public var rssiHistory: [(Date, RSSValue)] = []
+	
+	open override var description: String {
+		return "Peripheral: \(self.name ?? "<unnamed>") (\(self.uuid.uuidString)), \(self.state), \(self.rssi ?? -1)"
+	}
+
+	func didFailToConnect(error: Error?) {
+		BTLE.debugLog(.medium, "Failed to connect \(self.name): \(error)")
+		self.sendConnectionCompletions(error: error)
+	}
+	
+	func sendConnectionCompletions(error: Error?) {
+		self.connectionTimeoutTimer?.invalidate()
+		BTLE.debugLog(.medium, "Sending \(self.connectionCompletionBlocks.count) completion messages (\(error))")
+		let completions = self.connectionCompletionBlocks
+		self.connectionCompletionBlocks = []
+		
+		for block in completions {
+			block(error)
+		}
+	}
+	
 	func setCurrentRSSI(newRSSI: RSSValue) {
 		if abs(newRSSI) == 127 { return }
 		
@@ -571,6 +525,51 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	
 	public func shouldLoadService(service: CBService) -> Bool {
 		return true
+	}
+}
+
+extension BTLEPeripheral {
+	public enum Ignored: Int { case not, blackList, missingServices, checkingForServices }
+	public enum State: String { case discovered, connecting, connected, disconnecting, undiscovered, unknown
+		var description: String { return self.rawValue }
+	}
+	public typealias RSSValue = Int
+	public enum Distance: Int { case touching, veryClose, close, nearby, sameRoom, around, far, unknown
+		init(raw: RSSValue) {
+			if raw > rssi_range_touching { self = .touching }
+			else if raw > rssi_range_very_close { self = .veryClose }
+			else if raw > rssi_range_close { self = .close }
+			else if raw > rssi_range_nearby { self = .nearby }
+			else if raw > rssi_range_same_room { self = .sameRoom }
+			else if raw > rssi_range_around { self = .around }
+			else { self = .far }
+		}
+		
+		public var toString: String {
+			switch self {
+			case .touching: return "touching"
+			case .veryClose: return "very close"
+			case .close: return "close"
+			case .nearby: return "nearby"
+			case .sameRoom: return "same room"
+			case .around: return "around"
+			case .far: return "far"
+			case .unknown: return "unknown"
+			}
+		}
+		
+		public var toFloat: Float {
+			switch self {
+			case .touching: return 0.0
+			case .veryClose: return 0.1
+			case .close: return 0.25
+			case .nearby: return 0.4
+			case .sameRoom: return 0.5
+			case .around: return 0.75
+			case .far: return 0.9
+			case .unknown: return 1.0
+			}
+		}
 	}
 }
 

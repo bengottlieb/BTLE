@@ -45,9 +45,13 @@ public class BTLE: NSObject {
 		}
 	}}
 	
-	public var servicesToAdvertise: [BTLEMutableService] {
+	public var servicesToVend: [BTLEMutableService] {
 		get { return BTLE.advertiser.services }
 		set { BTLE.advertiser.services = newValue }
+	}
+	public var advertisingData: [String: Any] {
+		get { return BTLE.advertiser.advertisingData }
+		set { BTLE.advertiser.advertisingData = newValue }
 	}
 	
 	public var serviceFilter = ServiceFilter.coreBluetooth { didSet { if oldValue != self.serviceFilter { self.cycleScanning() }}}

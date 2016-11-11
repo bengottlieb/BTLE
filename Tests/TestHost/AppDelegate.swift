@@ -63,7 +63,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			let data = self.beacon!.peripheralData(withMeasuredPower: nil)
 			if data.count > 0 {
 				print("Starting to advertise (\(uuid)) beacon: \(data)")
-				BTLE.advertiser.advertisingData = NSDictionary(dictionary: data) as? [String: Any] ?? [:]
+				BTLE.advertisingData = NSDictionary(dictionary: data) as? [String: Any] ?? [:]
 			}
 			BTLE.advertiser.startAdvertising()
 		} else if self.beacon != nil {
