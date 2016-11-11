@@ -137,8 +137,8 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	public func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
 		if let characteristic = self.existingCharacteristic(with : request.characteristic) {
 			if let data = characteristic.dataValue {
-				let range = NSRange(location: request.offset, length: data.length - request.offset)
-				request.value = characteristic.dataValue?.subdata(with: range)
+		//		let range = NSRange(location: request.offset, length: data.count - request.offset)
+				request.value = data.subdata(in: request.offset..<data.count)
 				self.cbPeripheralManager?.respond(to: request, withResult: .success)
 			} else {
 				self.cbPeripheralManager?.respond(to: request, withResult: .success)

@@ -24,6 +24,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	
 	var window: UIWindow?
 
+	static let parentServiceID = CBUUID(string: "CD1B6256-CCE3-496A-A573-3FCE739A3736")
+	static let childServiceID = CBUUID(string: "287E2E84-7B66-445E-8168-9811FB49B12E")
+	static let infoServiceID = CBUUID(string: "D4D8A77A-8301-4349-A1AE-402EFF51A098")
+	
+	static let nameCharacteristicID = CBUUID(string: "0001")
+	static let deviceCharacteristicID = CBUUID(string: "0002")
+	
+	static var serviceToScanFor = CBUUID(string: "287E2E84-7B66-445E-8168-9811FB49B12E")
+	static var servicesToRead: [CBUUID]? = [CBUUID(string: "D4D8A77A-8301-4349-A1AE-402EFF51A098")]
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) -> Bool {
 		// Override point for customization after application launch
@@ -46,30 +55,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	var beacon: CLBeaconRegion?
 	
 	func setupBeacon() {
-		if UserDefaults.get(key: AppDelegate.beaconEnabledKey) {
-			guard let uuid = UUID(uuidString: UserDefaults.get(key: AppDelegate.beaconProximityIDKey)) else {
-				UserDefaults.set(false, forKey: AppDelegate.beaconEnabledKey)
-				SA_AlertController.showAlert(title: "Unable to Start an iBeacon: Invalid UUID")
-				return
-			}
-			
-			let major = CLBeaconMajorValue(UserDefaults.get(key: AppDelegate.beaconMajorIDKey)) ?? 0
-			let minor = CLBeaconMajorValue(UserDefaults.get(key: AppDelegate.beaconMinorIDKey)) ?? 0
-			let name = UIDevice.current
-				.name
-			
-			self.beacon = CLBeaconRegion(proximityUUID:  uuid, major: major, minor: minor, identifier: name)
-			
-			let data = self.beacon!.peripheralData(withMeasuredPower: nil)
-			if data.count > 0 {
-				print("Starting to advertise (\(uuid)) beacon: \(data)")
-				BTLE.advertisingData = NSDictionary(dictionary: data) as? [String: Any] ?? [:]
-			}
-			BTLE.advertiser.startAdvertising()
-		} else if self.beacon != nil {
-			BTLE.advertiser.stopAdvertising()
-			self.beacon = nil
-		}
+//		if UserDefaults.get(key: AppDelegate.beaconEnabledKey) {
+//			guard let uuid = UUID(uuidString: UserDefaults.get(key: AppDelegate.beaconProximityIDKey)) else {
+//				UserDefaults.set(false, forKey: AppDelegate.beaconEnabledKey)
+//				SA_AlertController.showAlert(title: "Unable to Start an iBeacon: Invalid UUID")
+//				return
+//			}
+//			
+//			let major = CLBeaconMajorValue(UserDefaults.get(key: AppDelegate.beaconMajorIDKey)) ?? 0
+//			let minor = CLBeaconMajorValue(UserDefaults.get(key: AppDelegate.beaconMinorIDKey)) ?? 0
+//			let name = UIDevice.current
+//				.name
+//			
+//			self.beacon = CLBeaconRegion(proximityUUID:  uuid, major: major, minor: minor, identifier: name)
+//			
+//			let data = self.beacon!.peripheralData(withMeasuredPower: nil)
+//			if data.count > 0 {
+//				print("Starting to advertise (\(uuid)) beacon: \(data)")
+//				BTLE.advertisingData = NSDictionary(dictionary: data) as? [String: Any] ?? [:]
+//			}
+//			BTLE.advertiser.startAdvertising()
+//		} else if self.beacon != nil {
+//			BTLE.advertiser.stopAdvertising()
+//			self.beacon = nil
+//		}
 	}
 
 	func applicationWillResignActive(_ application: UIApplication) {

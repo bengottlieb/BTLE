@@ -50,7 +50,7 @@ open class BTLEService: NSObject {
 		default: break
 		}
 		
-		for chr in self.characteristics { chr.cancelLoad() }
+		for chr in self.characteristics { chr.resetLoadingState() }
 	}
 	
 	func reload() {
@@ -73,6 +73,8 @@ open class BTLEService: NSObject {
 					self.characteristics.append(characteristic)
 				}
 			}
+			
+			self.loadingState = .loaded
 		}
 	}
 	

@@ -76,7 +76,7 @@ class PeripheralCellTableViewCell: UITableViewCell {
 	
 	@IBAction func connect() {
 		if self.connectedSwitch.isOn {
-			self.peripheral?.connect()
+			self.peripheral?.connect(services: AppDelegate.servicesToRead)
 		} else {
 			self.peripheral?.disconnect()
 		}

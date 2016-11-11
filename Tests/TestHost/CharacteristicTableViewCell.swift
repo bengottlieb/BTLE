@@ -72,7 +72,7 @@ class CharacteristicTableViewCell: UITableViewCell {
 	}
 	
 	@IBAction func writeTo() {
-		let data = Data(hexString: "935343717a627a743074565a7849435876724867")! as NSData
+		let data = Data(hexString: "935343717a627a743074565a7849435876724867")!
 
 		NSLog("%@", self.characteristic!.service!.fullDescription)
 		

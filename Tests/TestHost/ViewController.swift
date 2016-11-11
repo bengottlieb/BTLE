@@ -73,8 +73,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		BTLE.manager.deviceLifetime = 20.0
 		BTLE.manager.ignoreBeaconLikeDevices = false
 		BTLE.manager.monitorRSSI = (UserDefaults.get(key: DefaultsKey<Bool>("monitorRSSI")))
-		BTLE.manager.services = (UserDefaults.get(key: DefaultsKey<Bool>("filterByServices"))) ? [filterServiceID] : []
-		BTLE.manager.serviceFilter = .advertisingData
+		BTLE.manager.serviceIDsToScanFor = (UserDefaults.get(key: DefaultsKey<Bool>("filterByServices"))) ? [AppDelegate.serviceToScanFor] : []
+		BTLE.manager.serviceFilter = .coreBluetooth
 		
 		if (UserDefaults.get(key: DefaultsKey<Bool>("scanning"))) {
 			BTLE.scanner.startScanning()
@@ -98,7 +98,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		
 		self.scanSwitch.isOn = BTLE.scanner.state == .active || BTLE.scanner.state == .startingUp
 		self.advertiseSwitch.isOn = BTLE.advertiser.state == .active || BTLE.advertiser.state == .startingUp
-		self.filterByServicesSwitch.isOn = BTLE.manager.services.count > 0
+		self.filterByServicesSwitch.isOn = BTLE.manager.serviceIDsToScanFor.count > 0
 		self.monitorRSSISwitch.isOn = BTLE.manager.monitorRSSI
 
 		//self.filterByServicesSwitch.enabled = self.scanSwitch.on
@@ -156,7 +156,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	@IBAction func toggleAdvertising() {
 		if self.advertiseSwitch.isOn {
 			self.writableCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "C9563739-1783-4E81-A3EC-5061D4B2311C"), properties: [CBCharacteristicProperties.write, CBCharacteristicProperties.read], value: nil, permissions: [.readable, .writeable])
-			self.notifyCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: [CBCharacteristicProperties.read, CBCharacteristicProperties.notify], value: self.characteristicData.data(using: .utf8, allowLossyConversion: true) as NSData?)
+			self.notifyCharacteristic = BTLEMutableCharacteristic(uuid: CBUUID(string: "FFF4"), properties: [CBCharacteristicProperties.read, CBCharacteristicProperties.notify], value: self.characteristicData.data(using: .utf8, allowLossyConversion: true))
 
 			let service = BTLEMutableService(uuid: testServiceID, isPrimary: true, characteristics: [ self.writableCharacteristic! ])
 			service.advertised = true
@@ -170,7 +170,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	
 	@IBAction func toggleFilterByServices() {
 		UserDefaults.set(self.filterByServicesSwitch.isOn, forKey: DefaultsKey<Bool>("filterByServices"))
-		BTLE.manager.services = self.filterByServicesSwitch.isOn ? [filterServiceID] : []
+		BTLE.manager.serviceIDsToScanFor = self.filterByServicesSwitch.isOn ? [AppDelegate.serviceToScanFor] : []
 	}
 	
 	@IBAction func configureServices() {
@@ -178,14 +178,14 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		
 		let published = self.characteristicData.data(using: .utf8, allowLossyConversion: true)
 		
-		self.notifyCharacteristic!.updateDataValue(data: published as NSData?)
+		self.notifyCharacteristic!.updateDataValue(data: published)
 	}
 	
 	func connectToggled(toggle: UISwitch) {
 		let device = self.devices[toggle.tag]
 		
 		if toggle.isOn {
-			device.connect()
+			device.connect(services: AppDelegate.servicesToRead)
 		} else {
 			device.disconnect()
 		}

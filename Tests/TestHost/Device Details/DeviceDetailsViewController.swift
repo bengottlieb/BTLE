@@ -101,7 +101,7 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 	
 	@IBAction func toggleConnected() {
 		if self.connectedSwitch.isOn {
-			self.peripheral.connect()
+			self.peripheral.connect(services: AppDelegate.servicesToRead)
 		} else {
 			self.peripheral.disconnect()
 		}

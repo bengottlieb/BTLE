@@ -335,6 +335,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	public func centralManager(_ centralManager: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
 		self.dispatchQueue.async {
 			if let per = self.add(peripheral: peripheral), per.state != .discovered {
+				BTLE.debugLog(.medium, "Disconnected from: \(peripheral): \(error)")
 				per.state = .discovered
 				per.sendNotification(name: BTLE.notifications.peripheralDidDisconnect)
 			}
