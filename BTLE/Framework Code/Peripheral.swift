@@ -219,7 +219,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		if BTLE.scanner.ignoredPeripheralUUIDs.contains(peripheral.identifier.uuidString) {
 			ignored = .blackList
 			BTLE.debugLog(.medium, "Peripheral: Ignoring: \(name), \(uuid)")
-		} else if BTLE.manager.services.count > 0 {
+		} else if BTLE.manager.serviceIDsToScanFor.count > 0 {
 			if BTLE.manager.serviceFilter == .advertisingData {
 				if let info = adv {
 					self.updateIgnoredWithAdvertisingData(info: info)
@@ -239,12 +239,12 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	
 	func updateIgnoredWithAdvertisingData(info: [String: Any]) {
 		BTLE.scanner.dispatchQueue.async {
-			if BTLE.manager.serviceFilter == .advertisingData && BTLE.manager.services.count > 0 {
+			if BTLE.manager.serviceFilter == .advertisingData && BTLE.manager.serviceIDsToScanFor.count > 0 {
 				var ignored = true
 				if let services = info[CBAdvertisementDataServiceUUIDsKey] as? NSArray {
 					for service in services {
 						if let cbid = service as? CBUUID {
-							if BTLE.manager.services.contains(cbid) { ignored = false; break }
+							if BTLE.manager.serviceIDsToScanFor.contains(cbid) { ignored = false; break }
 						}
 					}
 				}
@@ -504,7 +504,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 				if self.ignored == .checkingForServices {
 					for svc in services {
 						BTLE.debugLog(.medium, "\(self.name) loading \(svc.uuid)")
-						if BTLE.manager.services.contains(svc.uuid) {
+						if BTLE.manager.serviceIDsToScanFor.contains(svc.uuid) {
 							self.ignored = .not
 							BTLE.scanner.pendingPeripheralFinishLoadingServices(peripheral: self)
 							break

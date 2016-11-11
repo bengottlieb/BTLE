@@ -154,8 +154,9 @@ public class BTLEMutableService: BTLEService {
 		self.cbService = service
 	}
 
-	public init(uuid: CBUUID, isPrimary: Bool = true, characteristics chrs: [BTLECharacteristic] = []) {
+	public init(uuid: CBUUID, isAdvertised: Bool = true, isPrimary: Bool = true, characteristics chrs: [BTLECharacteristic] = []) {
 		super.init()
+		self.advertised = isAdvertised
 		self.cbService = CBMutableService(type: uuid, primary: isPrimary)
 		for svc in chrs { self.add(characteristic: svc) }
 	}

@@ -187,7 +187,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	//MARK: Private
 	var combinedAdvertisementData: [String: Any] {
 		var data = self.advertisingData
-		var services: [CBUUID] = []
+		var services: [CBUUID] = [] { didSet { self.updateServices() }}
 		
 		for service in self.services {
 			if service.advertised { services.append(service.uuid) }

@@ -38,12 +38,18 @@ public class BTLE: NSObject {
 	
 	//[CBUUID(string: "FFF0")] //[BatteryServiceCBUUID, UserDataServiceCBUUID, GenericServiceCBUUID, GenericAccessServiceCBUUID, CBUUID(string: "1810"), CBUUID(string: "1805"), CBUUID(string: "1818"), CBUUID(string: "1816"), CBUUID(string: "180A"), CBUUID(string: "1808"), CBUUID(string: "1809"), CBUUID(string: "180D"), CBUUID(string: "1812"), CBUUID(string: "1802"), CBUUID(string: "1803"), CBUUID(string: "1819"), CBUUID(string: "1807"), CBUUID(string: "180E"), CBUUID(string: "1806"), CBUUID(string: "1813"), CBUUID(string: "1804")]
 	
-	public var services: [CBUUID] = [] { didSet {
-		if oldValue != self.services {
-			BTLE.debugLog(.low, "Setting services to \(self.services)") 
+	public var serviceIDsToScanFor: [CBUUID] = [] { didSet {
+		if oldValue != self.serviceIDsToScanFor {
+			BTLE.debugLog(.low, "Setting services to \(self.serviceIDsToScanFor)")
 			self.cycleScanning()
 		}
 	}}
+	
+	public var servicesToAdvertise: [BTLEMutableService] {
+		get { return BTLE.advertiser.services }
+		set { BTLE.advertiser.services = newValue }
+	}
+	
 	public var serviceFilter = ServiceFilter.coreBluetooth { didSet { if oldValue != self.serviceFilter { self.cycleScanning() }}}
 	public var monitorRSSI = false { didSet { self.cycleScanning() }}
 	public var disableRSSISmoothing = false
@@ -123,8 +129,10 @@ public class BTLE: NSObject {
 	var cyclingAdvertising = false
 	
 	public func cycleAdvertising() {
-		if self.cyclingAdvertising { return }
+		if self.cyclingAdvertising || BTLE.advertiser.state == .off { return }
 		
+		BTLE.debugLog(.low, "Cycling Advertising")
+
 		switch BTLE.advertiser.state {
 		case .active: fallthrough
 		case .startingUp: fallthrough
@@ -142,7 +150,10 @@ public class BTLE: NSObject {
 	}
 	
 	public func cycleScanning() {
-		BTLE.scanner.internalState = .cycling
+		if BTLE.scanner.internalState == .active {
+			BTLE.debugLog(.low, "Cycling Services")
+			BTLE.scanner.internalState = .cycling
+		}
 	}
 	
 	//BTLE Authorization status
@@ -165,7 +176,7 @@ public class BTLE: NSObject {
 				BTLE.manager.authorizer = nil
 			} else if CBPeripheralManager.authorizationStatus() == .authorized {
 				self.completion(true)
-				self.manager.startAdvertising()
+				self.manager.stopAdvertising()
 				BTLE.manager.authorizer = nil
 			}
 		}

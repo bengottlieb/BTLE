@@ -23,7 +23,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	public var state: BTLE.State { get { return self.internalState }}
 	var internalState: BTLE.State = .off { didSet {
 		if oldValue == self.internalState { return }
-		BTLE.debugLog(.medium, "Changing state to \(self.internalState) from \(oldValue), Central state: \(self.cbCentral?.state.rawValue)")
+		BTLE.debugLog(.medium, "Changing state to \(self.internalState) from \(oldValue), Central state: \(self.cbCentral?.state.rawValue ?? -1)")
 		self.stateChangeCounter += 1
 		switch self.internalState {
 		case .off:
@@ -88,7 +88,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	//MARK: State changers
 	weak var searchTimer: Timer?
 	
-	var coreBluetoothFilteredServices: [CBUUID] { return BTLE.manager.serviceFilter == .coreBluetooth ? BTLE.manager.services : [] }
+	var coreBluetoothFilteredServices: [CBUUID] { return BTLE.manager.serviceFilter == .coreBluetooth ? BTLE.manager.serviceIDsToScanFor : [] }
 	
 	func restartScanning() {
 		self.internalState = .idle
@@ -121,7 +121,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		self.dispatchQueue.async {
 			self.internalState = .active
 			let options = BTLE.manager.monitorRSSI ? [CBCentralManagerScanOptionAllowDuplicatesKey: true] : [:]
-			BTLE.debugLog(.medium, BTLE.manager.services.count > 0 ? "Starting scan for \(BTLE.manager.services)" : "Starting unfiltered scan")
+			BTLE.debugLog(.medium, BTLE.manager.serviceIDsToScanFor.count > 0 ? "Starting scan for \(BTLE.manager.serviceIDsToScanFor)" : "Starting unfiltered scan")
 			self.cbCentral.scanForPeripherals(withServices: self.coreBluetoothFilteredServices.count > 0 ? self.coreBluetoothFilteredServices : nil, options: options)
 			if self.pendingDuration != 0.0 {
 				btle_dispatch_main {
