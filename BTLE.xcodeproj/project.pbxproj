@@ -117,7 +117,6 @@
 		B53E20021DD3B8990019BD3F /* GulliverUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GulliverUI.framework; sourceTree = "<group>"; };
 		B53EADE51C651AD400A3203E /* BTLE+Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "BTLE+Errors.swift"; sourceTree = "<group>"; };
 		B544732D1DD4BD2000590803 /* TestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B544733B1DD4BD2000590803 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B57CA3C01AEAD51700B0125F /* NearbyPeripheralsTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPeripheralsTableView.swift; sourceTree = "<group>"; };
 		B57CA3C21AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPeripheralsTableViewCell.swift; sourceTree = "<group>"; };
 		B57CA3C31AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NearbyPeripheralsTableViewCell.xib; sourceTree = "<group>"; };
@@ -192,7 +191,6 @@
 				B58D64661A898F81005A0002 /* BTLE_Mac */,
 				B58D64691A898F81005A0002 /* BTLE_iOS */,
 				B504E6991A896E82001B414B /* BTLE Tests */,
-				B544732E1DD4BD2000590803 /* TestHost2 */,
 				B504E6141A89230F001B414B /* Products */,
 				B582A2B91ADDB1FB00736517 /* Mac Frameworks */,
 				B5D608431ADC097E004DC9AC /* Frameworks */,
@@ -227,14 +225,6 @@
 				B504E69B1A896E82001B414B /* Info.plist */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		B544732E1DD4BD2000590803 /* TestHost2 */ = {
-			isa = PBXGroup;
-			children = (
-				B544733B1DD4BD2000590803 /* Info.plist */,
-			);
-			path = TestHost2;
 			sourceTree = "<group>";
 		};
 		B582A2B91ADDB1FB00736517 /* Mac Frameworks */ = {
@@ -899,7 +889,7 @@
 					"$(PROJECT_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/TestHost/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.standalone.TestHost2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -924,7 +914,7 @@
 					"$(PROJECT_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/TestHost/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.standalone.TestHost2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -988,6 +978,7 @@
 				B544733E1DD4BD2000590803 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -165,7 +165,7 @@ public class BTLE: NSObject {
 				BTLE.manager.authorizer = nil
 			} else if CBPeripheralManager.authorizationStatus() == .authorized {
 				self.completion(true)
-				self.manager.stopAdvertising()
+				self.manager.startAdvertising()
 				BTLE.manager.authorizer = nil
 			}
 		}
