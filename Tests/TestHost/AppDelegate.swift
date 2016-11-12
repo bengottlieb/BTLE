@@ -32,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	static let deviceCharacteristicID = CBUUID(string: "0002")
 	
 	static var serviceToScanFor = CBUUID(string: "287E2E84-7B66-445E-8168-9811FB49B12E")
-	static var servicesToRead: [CBUUID]? = [CBUUID(string: "D4D8A77A-8301-4349-A1AE-402EFF51A098")]
+	static var servicesToRead: [CBUUID]? = [CBUUID(string: "287E2E84-7B66-445E-8168-9811FB49B12E")]
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) -> Bool {
 		// Override point for customization after application launch
@@ -55,7 +55,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	
 	func connected(note: Notification) {
 		if let per = note.object as? BTLEPeripheral {
-			per.connect() { error in
+			per.connect(services: [CBUUID(string: "287E2E84-7B66-445E-8168-9811FB49B12E")]) { error in
 				per.rssiUpdateInterval = 1.0
 				if let svc = per.service(with: AppDelegate.infoServiceID), let chr = svc.characteristic(with: AppDelegate.nameCharacteristicID) {
 					chr.listenForUpdates(force: true) { state, chr in

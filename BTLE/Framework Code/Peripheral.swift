@@ -553,6 +553,9 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 
 	
 	public func shouldLoadService(service: CBService) -> Bool {
+		if let pertinent = self.pertinentServices {
+			return pertinent.contains(obj: service.uuid)
+		}
 		return true
 	}
 }
