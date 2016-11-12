@@ -232,7 +232,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		if let perClass = BTLE.registeredClasses.peripheralClass {
 			per = perClass.init(peripheral: peripheral, RSSI: RSSI, advertisementData: advertisementData)
 		} else {
-			if BTLE.manager.ignoreBeaconLikeDevices, let _ = advertisementData?[CBAdvertisementDataManufacturerDataKey] as? NSData {
+			if BTLE.manager.ignoreBeaconLikeDevices, let _ = advertisementData?[CBAdvertisementDataManufacturerDataKey] {
 //				print("\(advertisementData)")
 //				if let beacon = BTLEBeacon.beaconWithData(mfrData) {
 //					print("Found beacon: \(beacon)")

@@ -58,7 +58,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	
 	
 	public func startAdvertising() {
-		if let mgr = self.setupCBPeripheralManager() {
+		if let mgr = self.setupCBPeripheralManager(), self.state != .active && self.state != .startingUp {
 			if mgr.state == .poweredOn {
 				self.setupAdvertising()
 			} else {
@@ -108,7 +108,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	
 	public func peripheralManager(_ peripheral: CBPeripheralManager, willRestoreState dict: [String : Any])
  {
-		let advertised = ((dict["kCBRestoredAdvertisement"] as? [String: Any])?["kCBAdvDataServiceUUIDs"] as? [NSData]) ?? []
+		let advertised = ((dict["kCBRestoredAdvertisement"] as? [String: Any])?["kCBAdvDataServiceUUIDs"] as? [Data]) ?? []
 		var advertisedIDs: [CBUUID] = []
 		for data in advertised {
 			advertisedIDs.append(CBUUID(data: data as Data))
@@ -187,7 +187,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	//MARK: Private
 	var combinedAdvertisementData: [String: Any] {
 		var data = self.advertisingData
-		var services: [CBUUID] = [] { didSet { self.updateServices() }}
+		var services: [CBUUID] = []
 		
 		for service in self.services {
 			if service.advertised { services.append(service.uuid) }
@@ -252,15 +252,19 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		return nil
 	}
 	
-	func updateServices() {
+	func updateServices(restartAdvertising: Bool = false) {
 		self.dispatchQueue.async {
 			if let mgr = self.cbPeripheralManager, mgr.state == .poweredOn {
 				for service in self.services { service.add(to: self.cbPeripheralManager) }
 			}
+			
+			if self.state == .active && restartAdvertising {
+				BTLE.manager.cycleAdvertising()
+			}
 		}
 	}
 	
-	public var services: [BTLEMutableService] = []
+	public var services: [BTLEMutableService] = [] { didSet { if self.services != oldValue { self.updateServices(restartAdvertising: true) }}}
 	
 	@discardableResult public func add(service: BTLEMutableService) -> BTLEMutableService {
 		for existing in self.services {
