@@ -331,6 +331,12 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	}
 	
 	public func service(with uuid: CBUUID) -> BTLEService? { return self.services.filter({ $0.cbService.uuid == uuid }).last }
+	public func characteristic(with uuid: CBUUID) -> BTLECharacteristic? {
+		for service in self.services {
+			if let chr = service.characteristic(with: uuid) { return chr }
+		}
+		return nil
+	}
 	public func characteristicFromCBCharacteristic(characteristic: CBCharacteristic) -> BTLECharacteristic? {
 		if let service = self.service(with: characteristic.service.uuid) {
 			if let chr = service.characteristic(with: characteristic.uuid) {
@@ -386,7 +392,9 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		return count
 	}
 
-	@discardableResult func findOrCreateService(cbService: CBService) -> BTLEService {
+	@discardableResult func findOrCreateService(cbService: CBService) -> BTLEService? {
+		if !self.shouldLoadService(service: cbService) { return nil }
+		
 		if let service = self.service(with: cbService.uuid) {
 			return service
 		}
@@ -472,7 +480,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		BTLE.scanner.dispatchQueue.async {
 			for invalidated in invalidatedServices {
 				if self.shouldLoadService(service: invalidated) {
-					self.findOrCreateService(cbService: invalidated).reload()
+					self.findOrCreateService(cbService: invalidated)?.reload()
 				}
 			}
 		}
@@ -516,13 +524,13 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 
 	public func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
 		if self.shouldLoadService(service: service) {
-			self.findOrCreateService(cbService: service).updateCharacteristics()
+			self.findOrCreateService(cbService: service)?.updateCharacteristics()
 		}
 	}
 	
 	public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
 		if self.shouldLoadService(service: characteristic.service) {
-			self.findOrCreateService(cbService: characteristic.service).didLoad(characteristic: characteristic, error: error)
+			self.findOrCreateService(cbService: characteristic.service)?.didLoad(characteristic: characteristic, error: error)
 		} else {
 			print("^^^^^^^^^^ Not loading: \(characteristic)")
 		}
