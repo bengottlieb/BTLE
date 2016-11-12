@@ -49,8 +49,8 @@ public class BTLECharacteristic: NSObject {
 	}
 	
 	var updateClosures: [(State, BTLECharacteristic) -> Void] = []
-	public func listenForUpdates(closure: @escaping (State, BTLECharacteristic) -> Void) {
-		if self.canNotify && (self.state == .notListening || self.state == .finishingListening) {
+	public func listenForUpdates(force: Bool = false, closure: @escaping (State, BTLECharacteristic) -> Void) {
+		if (self.canNotify || force) && (self.state == .notListening || self.state == .finishingListening) {
 			self.state = .startingToListen
 			self.peripheral.cbPeripheral.setNotifyValue(true, for: self.cbCharacteristic)
 		}

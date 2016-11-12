@@ -17,7 +17,11 @@ protocol BTLEServiceProtocol {
 open class BTLEService: NSObject {
 	public var cbService: CBService!
 	var peripheral: BTLEPeripheral!
-	var loadingState = BTLE.LoadingState.notLoaded
+	var loadingState = BTLE.LoadingState.notLoaded { didSet {
+		if self.loadingState == .loaded {
+			self.peripheral.didFinishLoadingService(service: self)
+		}
+	}}
 	public var characteristics: [BTLECharacteristic] = []
 	var pendingCharacteristics: [BTLECharacteristic] = []
 	public var uuid: CBUUID { return self.cbService.uuid }
@@ -84,7 +88,6 @@ open class BTLEService: NSObject {
 	
 	open func didFinishLoading() {
 		self.loadingState = .loaded
-		self.peripheral.didFinishLoadingService(service: self)
 	}
 	
 	func findMatching(characteristic: CBCharacteristic) -> BTLECharacteristic? {

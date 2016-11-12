@@ -53,6 +53,7 @@ public struct BTLECharacteristicUUIDs {
 
 open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	deinit {
+		self.rssiTimer?.invalidate()
 		self.connectionTimeoutTimer?.invalidate()
 		BTLE.debugLog(.superHigh, "BTLE Peripheral: deiniting: \(self)")
 	}
@@ -105,6 +106,15 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 			
 		default: break
 		}
+	}}
+	
+	public var rssiUpdateInterval: TimeInterval? { didSet {
+		if self.rssiUpdateInterval == nil {
+			self.rssiTimer?.invalidate()
+		} else {
+			self.updateRSSI()
+		}
+		
 	}}
 	public var rssi: RSSValue? { didSet {
 		self.lastCommunicatedAt = Date()
@@ -316,6 +326,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	}
 	
 	public func updateRSSI() {
+		self.rssiTimer?.invalidate()
 		self.cbPeripheral.readRSSI()
 	}
 	
@@ -437,8 +448,14 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	//=============================================================================================
 	//MARK: Delegate - Peripheral
 	
+	weak var rssiTimer: Timer?
 	public func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
 		self.rssi = RSSI.intValue
+		if let interval = self.rssiUpdateInterval {
+			DispatchQueue.main.async {
+				self.rssiTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(self.updateRSSI), userInfo: nil, repeats: false)
+			}
+		}
 	}
 
 	public func peripheralDidUpdateName(_ peripheral: CBPeripheral) {

@@ -47,9 +47,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
 		BTLE.manager.serviceFilter = .actualServices
 		self.addAsObserver(for: BTLE.notifications.characteristicWasWrittenTo, selector: #selector(zapped))
+		self.addAsObserver(for: BTLE.notifications.peripheralWasDiscovered, selector: #selector(connected))
 		
 		self.setupBeacon()
 		return true
+	}
+	
+	func connected(note: Notification) {
+		if let per = note.object as? BTLEPeripheral {
+			per.connect() { error in
+				per.rssiUpdateInterval = 1.0
+				if let svc = per.service(with: AppDelegate.infoServiceID), let chr = svc.characteristic(with: AppDelegate.nameCharacteristicID) {
+					chr.listenForUpdates(force: true) { state, chr in
+						print("updated: \(state)")
+					}
+				}
+			}
+		}
 	}
 	
 	var beacon: CLBeaconRegion?
