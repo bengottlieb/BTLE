@@ -17,7 +17,12 @@ public class BTLECharacteristic: NSObject {
 	public var state = State.notListening { didSet { Notification.postOnMainThread(name: BTLE.notifications.characteristicListeningChanged, object: self) }}
 	public override var description: String { return "\(self.cbCharacteristic)" }
 	public var writeBackInProgress: Bool { return self.writeBackCompletion != nil }
-	public var loadingState = BTLE.LoadingState.notLoaded
+	public var loadingState = BTLE.LoadingState.notLoaded { didSet {
+		if self.loadingState == .loaded {
+			print("Loaded")
+		}
+		
+	}}
 
 	init(characteristic chr: CBCharacteristic, ofService svc: BTLEService?) {
 		cbCharacteristic = chr
@@ -187,7 +192,7 @@ public class BTLECharacteristic: NSObject {
 			self.reloadCompletionBlocks.append(completion)
 		}
 
-		btle_dispatch_main {
+		DispatchQueue.main.async {
 			self.reloadTimeoutTimer = Timer.scheduledTimer(timeInterval: timeout, target: self, selector: #selector(BTLECharacteristic.reloadTimedOut), userInfo: nil, repeats: false)
 		}
 		
@@ -281,9 +286,8 @@ public class BTLEMutableCharacteristic : BTLECharacteristic {
 	public func updateDataValue(data: Data?) {
 		self.dataValue = data
 		
-		if let data = data {
-			let mgr = BTLE.advertiser.cbPeripheralManager!
-			if !mgr.updateValue(data as Data, for: self.cbCharacteristic as! CBMutableCharacteristic, onSubscribedCentrals: nil) {
+		if let data = data, let mgr = BTLE.advertiser.cbPeripheralManager, let chr = self.cbCharacteristic as? CBMutableCharacteristic {
+			if !mgr.updateValue(data as Data, for: chr, onSubscribedCentrals: nil) {
 				BTLE.debugLog(.none, "Characteristic: Unable to update \(self)")
 			}
 		} else {

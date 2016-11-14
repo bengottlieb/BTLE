@@ -255,7 +255,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 			case .undiscovered: fallthrough
 			case .unknown:
 				if let timeout = timeout {
-					btle_dispatch_main {
+					DispatchQueue.main.async {
 						self.connectionTimeoutTimer = Timer.scheduledTimer(timeInterval: timeout, target: self, selector: #selector(
 							self.connectionTimedOut), userInfo: nil, repeats: false)
 					}
@@ -423,7 +423,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 						// if timeoutInverval < 3 { println("BTLE Peripheral: short term timer: \(timeSinceLastComms) sec") }
 						
 						me.visibilityTimer?.invalidate()
-						btle_dispatch_main {
+						DispatchQueue.main.async {
 							me.visibilityTimer = Timer.scheduledTimer(timeInterval: timeoutInverval, target: me, selector: #selector(BTLEPeripheral.disconnectDueToTimeout), userInfo: nil, repeats: false)
 						}
 					} else if BTLE.manager.deviceLifetime > 0 {

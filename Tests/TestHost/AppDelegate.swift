@@ -25,14 +25,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	var window: UIWindow?
 
 	static let parentServiceID = CBUUID(string: "CD1B6256-CCE3-496A-A573-3FCE739A3736")
-	static let childServiceID = CBUUID(string: "287E2E84-7B66-445E-8168-9811FB49B12E")
+	static let modeServiceID = CBUUID(string: "287E2E84-7B66-445E-8168-9811FB49B12E")
 	static let infoServiceID = CBUUID(string: "D4D8A77A-8301-4349-A1AE-402EFF51A098")
 	
+	static let typeCharacteristicID = CBUUID(string: "CD1B6256-CCE3-496A-A573-3FCE739A3736")
 	static let nameCharacteristicID = CBUUID(string: "0001")
 	static let deviceCharacteristicID = CBUUID(string: "0002")
 	
 	static var serviceToScanFor = CBUUID(string: "287E2E84-7B66-445E-8168-9811FB49B12E")
-	static var servicesToRead: [CBUUID]? = [CBUUID(string: "287E2E84-7B66-445E-8168-9811FB49B12E")]
+	static var servicesToRead: [CBUUID]? = [CBUUID(string: "287E2E84-7B66-445E-8168-9811FB49B12E"), CBUUID(string: "D4D8A77A-8301-4349-A1AE-402EFF51A098")]
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) -> Bool {
 		// Override point for customization after application launch
@@ -45,7 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	
 		//BTLE.manager.services = [CBUUID(string: "01EB2EF1-BF82-4516-81BE-57E119207437")]
 		
-		BTLE.manager.serviceFilter = .actualServices
+		BTLE.manager.serviceFilter = .coreBluetooth
 		self.addAsObserver(for: BTLE.notifications.characteristicWasWrittenTo, selector: #selector(zapped))
 		self.addAsObserver(for: BTLE.notifications.peripheralWasDiscovered, selector: #selector(connected))
 		
@@ -55,11 +56,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	
 	func connected(note: Notification) {
 		if let per = note.object as? BTLEPeripheral {
-			per.connect(services: [CBUUID(string: "287E2E84-7B66-445E-8168-9811FB49B12E")]) { error in
+			per.connect(services: AppDelegate.servicesToRead) { error in
 				per.rssiUpdateInterval = 1.0
-				if let svc = per.service(with: AppDelegate.infoServiceID), let chr = svc.characteristic(with: AppDelegate.nameCharacteristicID) {
+				if let svc = per.service(with: AppDelegate.modeServiceID), let chr = svc.characteristic(with: AppDelegate.typeCharacteristicID) {
 					chr.listenForUpdates(force: true) { state, chr in
-						print("updated: \(state)")
+						if state == .notListening {
+							print("updated: \(state)")
+						}
 					}
 				}
 			}

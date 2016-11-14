@@ -44,7 +44,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		var text = BTLE.scanner.state.stringValue
 		let count = self.devices.count
 		
-		text += " \(count) found"
+		text = "\(count) found"
 		
 		self.scanningLabel.text = text
 	}
@@ -119,7 +119,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	
 	func updateStatus() {
 		if BTLE.scanner.state == .active {
-			self.timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(ViewController.reload), userInfo: nil, repeats: true)
+			DispatchQueue.main.async {
+				self.timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(ViewController.reload), userInfo: nil, repeats: true)
+			}
 		} else {
 			self.timer?.invalidate()
 			self.timer = nil

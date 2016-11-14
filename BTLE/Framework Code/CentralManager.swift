@@ -58,7 +58,16 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		self.stateChangeCounter -= 1
 		}}
 	
-
+	
+	func serialize(block: @escaping () -> Void) {
+		if Thread.isMainThread {
+			block()
+		} else {
+			DispatchQueue.main.sync(execute: block)
+		}
+//		self.dispatchQueue.sync(execute: block)
+	}
+	
 	//=============================================================================================
 	//MARK: Actions
 	public enum ClearWhichCacheItems { case old, allIncludingConnected }
@@ -96,7 +105,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	}
 	
 	public func startScanning(for duration: TimeInterval? = nil) {
-		self.dispatchQueue.async {
+		self.serialize {
 			if self.state == .active || self.state == .startingUp { return }			//already scanning
 			if self.state == .shuttingDown { self.internalState = .cycling }
 			if self.state == .cycling { return }
@@ -118,13 +127,17 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	
 	var pendingDuration: TimeInterval = 0.0
 	func startCentralScanning() {
-		self.dispatchQueue.async {
+		self.serialize {
+			for peripheral in self.cbCentral.retrieveConnectedPeripherals(withServices: self.coreBluetoothFilteredServices) {
+				self.add(peripheral: peripheral)
+			}
+			
 			self.internalState = .active
 			let options = BTLE.manager.monitorRSSI ? [CBCentralManagerScanOptionAllowDuplicatesKey: true] : [:]
 			BTLE.debugLog(.medium, BTLE.manager.serviceIDsToScanFor.count > 0 ? "Starting scan for \(BTLE.manager.serviceIDsToScanFor)" : "Starting unfiltered scan")
 			self.cbCentral.scanForPeripherals(withServices: self.coreBluetoothFilteredServices.count > 0 ? self.coreBluetoothFilteredServices : nil, options: options)
 			if self.pendingDuration != 0.0 {
-				btle_dispatch_main {
+				DispatchQueue.main.async {
 					self.searchTimer = Timer.scheduledTimer(timeInterval: self.pendingDuration, target: self, selector: #selector(BTLECentralManager.stopScanning), userInfo: nil, repeats: false)
 				}
 			}
@@ -132,7 +145,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	}
 	
 	public func stopScanning() {
-		self.dispatchQueue.async {
+		self.serialize {
 			self.searchTimer?.invalidate()
 			if let centralManager = self.cbCentral, self.internalState == .active {
 				if self.internalState != .cycling && self.internalState != .idle { self.internalState = .shuttingDown }
@@ -258,7 +271,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	}
 
 	func pendingPeripheralFinishLoadingServices(peripheral: BTLEPeripheral) {
-		self.dispatchQueue.async {
+		self.serialize {
 			if peripheral.ignored == .missingServices {
 				self.ignoredPeripherals.insert(peripheral)
 				peripheral.sendNotification(name: BTLE.notifications.peripheralWasDiscovered)
@@ -274,7 +287,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	//=============================================================================================
 	//MARK: CBCentralManagerDelegate
 	public func centralManagerDidUpdateState(_ centralManager: CBCentralManager) {
-		self.dispatchQueue.async {
+		self.serialize {
 			BTLE.debugLog(.medium, "Central manager updated state to \(centralManager.state.rawValue), my state: \(self.internalState)")
 			switch centralManager.state {
 			case .poweredOn:
@@ -299,13 +312,13 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	}
 	
 	public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-		self.dispatchQueue.async {
+	//	self.serialize {
 			self.add(peripheral: peripheral, RSSI: RSSI.intValue as BTLEPeripheral.RSSValue, advertisementData: advertisementData)
-		}
+	//	}
 	}
 	
 	public func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
-		self.dispatchQueue.async {
+		self.serialize {
 			self.cbCentral = central
 			central.delegate = self
 			if self.cbCentral.state == .poweredOn { self.fetchConnectedPeripherals() }
@@ -313,7 +326,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	}
 
 	public func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-		self.dispatchQueue.async {
+		self.serialize {
 			if BTLE.debugLevel.rawValue > DebugLevel.none.rawValue {
 				BTLE.debugLog(.medium, "Failed to connect to peripheral: \(peripheral): \(error)")
 			}
@@ -324,7 +337,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	}
 	
 	public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-		self.dispatchQueue.async {
+		self.serialize {
 			if let per = self.add(peripheral: peripheral), per.state != .connected {
 				per.state = .connected
 				per.sendNotification(name: BTLE.notifications.peripheralDidConnect)
@@ -333,7 +346,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	}
 	
 	public func centralManager(_ centralManager: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-		self.dispatchQueue.async {
+		self.serialize {
 			if let per = self.add(peripheral: peripheral), per.state != .discovered {
 				BTLE.debugLog(.medium, "Disconnected from: \(peripheral): \(error)")
 				per.state = .discovered
@@ -346,7 +359,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	//MARK: Utility
 	
 	func fetchConnectedPeripherals() {
-		self.dispatchQueue.async {
+		self.serialize {
 			if let connected = self.cbCentral?.retrieveConnectedPeripherals(withServices: self.coreBluetoothFilteredServices) {
 				for peripheral in connected {
 					self.add(peripheral: peripheral)

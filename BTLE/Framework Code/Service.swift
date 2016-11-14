@@ -78,7 +78,7 @@ open class BTLEService: NSObject {
 				}
 			}
 			
-			self.loadingState = .loaded
+			self.loadingState = self.numberOfLoadingCharacteristics == 0 ? .loaded : .loading
 		}
 	}
 	
@@ -88,6 +88,7 @@ open class BTLEService: NSObject {
 	
 	open func didFinishLoading() {
 		self.loadingState = .loaded
+		self.peripheral.didFinishLoadingService(service: self)
 	}
 	
 	func findMatching(characteristic: CBCharacteristic) -> BTLECharacteristic? {

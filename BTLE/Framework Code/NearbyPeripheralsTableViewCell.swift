@@ -62,7 +62,7 @@ public class NearbyPeripheralsTableViewCell: UITableViewCell {
     public override func awakeFromNib() {
         super.awakeFromNib()
 		
-		btle_dispatch_main {
+		DispatchQueue.main.async {
 			self.timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(NearbyPeripheralsTableViewCell.updateLastCommsLabel), userInfo: nil, repeats: true)
 		}
 		

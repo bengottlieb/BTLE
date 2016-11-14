@@ -85,7 +85,7 @@ class PeripheralCellTableViewCell: UITableViewCell {
 	weak var updateTimer: Timer?
 	func queueUIUpdate() {
 		self.updateTimer?.invalidate()
-		btle_dispatch_main {
+		DispatchQueue.main.async {
 			self.updateTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(PeripheralCellTableViewCell.updateUI), userInfo: nil, repeats: false)
 		}
 	}
