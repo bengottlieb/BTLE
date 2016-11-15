@@ -22,18 +22,20 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	
 	public private (set) var state: BTLE.State = .off { didSet {
 		if oldValue == self.state { return }
+		
 		BTLE.debugLog(.medium, "Changing state to \(self.state) from \(oldValue), Central state: \(self.cbCentral?.state.rawValue ?? -1)")
 		self.stateChangeCounter += 1
+		
 		switch self.state {
 		case .off:
 			Notification.postOnMainThread(name: BTLE.notifications.didFinishScan, object: self)
 			break
 			
 		case .startingUp:
-			if oldValue != .active {
-				Notification.postOnMainThread(name: BTLE.notifications.willStartScan, object: self)
+			Notification.postOnMainThread(name: BTLE.notifications.willStartScan, object: self)
+			if self.cbCentral?.state == .poweredOn {
+				self.state = .active
 			}
-			if self.cbCentral?.state == .poweredOn { self.state = .active }
 			break
 			
 		case .active:
@@ -55,7 +57,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		case .powerInterupted: break
 		}
 		self.stateChangeCounter -= 1
-		}}
+	}}
 	
 	
 	func serialize(block: @escaping () -> Void) {
@@ -124,7 +126,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 			
 			if let duration = duration { self.pendingDuration = duration }
 			if self.cbCentral.state == .poweredOn {
-				self.startCentralScanning()
+				self.state = .active
 			} else {
 				self.state = .startingUp
 			}
@@ -134,14 +136,9 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	var pendingDuration: TimeInterval = 0.0
 	func startCentralScanning() {
 		self.serialize {
-			if self.state == .active {
-				BTLE.debugLog(.medium, "Trying to start scanning, but we were already scanning.")
-				//return
-			}
-			
-			self.state = .active
-			let options = BTLE.manager.monitorRSSI ? [CBCentralManagerScanOptionAllowDuplicatesKey: true] : [:]
 			BTLE.debugLog(.medium, BTLE.manager.serviceIDsToScanFor.count > 0 ? "Starting scan for \(BTLE.manager.serviceIDsToScanFor)" : "Starting unfiltered scan")
+
+			let options = BTLE.manager.monitorRSSI ? [CBCentralManagerScanOptionAllowDuplicatesKey: true] : [:]
 			self.cbCentral.scanForPeripherals(withServices: self.coreBluetoothFilteredServices.count > 0 ? self.coreBluetoothFilteredServices : nil, options: options)
 			if self.pendingDuration != 0.0 {
 				DispatchQueue.main.async {
