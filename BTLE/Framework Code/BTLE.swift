@@ -154,10 +154,7 @@ public class BTLE: NSObject {
 	}
 	
 	public func cycleScanning() {
-		if BTLE.scanner.internalState == .active {
-			BTLE.debugLog(.low, "Cycling Services")
-			BTLE.scanner.internalState = .cycling
-		}
+		BTLE.scanner.cycle()
 	}
 	
 	//BTLE Authorization status
