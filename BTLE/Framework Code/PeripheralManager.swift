@@ -151,7 +151,10 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	public func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveWrite requests: [CBATTRequest]) {
 		if requests.count == 0 { return }
 		for request in requests {
-			Notification.postOnMainThread(name: BTLE.notifications.characteristicWasWrittenTo, object: self.existingCharacteristic(with: request.characteristic))
+			let info: NSMutableDictionary = [ BTLE.keys.deviceID: request.central.identifier.uuidString ]
+			
+			if let peripheral = BTLE.scanner.existingPeripheral(with: request.central.identifier) { info[BTLE.keys.peripheral] = peripheral }
+			Notification.postOnMainThread(name: BTLE.notifications.characteristicWasWrittenTo, object: self.existingCharacteristic(with: request.characteristic), userInfo: info)
 		}
 		self.cbPeripheralManager?.respond(to: requests[0], withResult: .success)
 	}
@@ -238,7 +241,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	
 	func existingService(with service: CBService) -> BTLEMutableService? {
 		for svc in self.services {
-			if svc.cbService == service { return svc }
+			if svc.cbService.uuid == service.uuid { return svc }
 		}
 		return nil
 	}
@@ -246,7 +249,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	func existingCharacteristic(with characteristic: CBCharacteristic) -> BTLEMutableCharacteristic? {
 		if let svc = self.existingService(with: characteristic.service) {
 			for chr in svc.characteristics {
-				if chr.cbCharacteristic == characteristic { return chr as? BTLEMutableCharacteristic }
+				if chr.cbCharacteristic.uuid == characteristic.uuid { return chr as? BTLEMutableCharacteristic }
 			}
 		}
 		return nil

@@ -73,7 +73,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		BTLE.manager.deviceLifetime = 20.0
 		BTLE.manager.ignoreBeaconLikeDevices = false
 		BTLE.manager.monitorRSSI = (UserDefaults.get(key: DefaultsKey<Bool>("monitorRSSI")))
-		BTLE.manager.serviceIDsToScanFor = (UserDefaults.get(key: DefaultsKey<Bool>("filterByServices"))) ? [AppDelegate.serviceToScanFor] : []
+		BTLE.manager.serviceIDsToScanFor = (UserDefaults.get(key: DefaultsKey<Bool>("filterByServices"))) ? AppDelegate.servicesToScanFor : []
 		BTLE.manager.serviceFilter = .coreBluetooth
 		
 		if (UserDefaults.get(key: DefaultsKey<Bool>("scanning"))) {
@@ -172,7 +172,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	
 	@IBAction func toggleFilterByServices() {
 		UserDefaults.set(self.filterByServicesSwitch.isOn, forKey: DefaultsKey<Bool>("filterByServices"))
-		BTLE.manager.serviceIDsToScanFor = self.filterByServicesSwitch.isOn ? [AppDelegate.serviceToScanFor] : []
+		BTLE.manager.serviceIDsToScanFor = self.filterByServicesSwitch.isOn ? AppDelegate.servicesToScanFor : []
 	}
 	
 	@IBAction func configureServices() {

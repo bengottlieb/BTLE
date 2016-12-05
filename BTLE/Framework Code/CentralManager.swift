@@ -195,15 +195,15 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		}
 	}
 	
-	func existingPeripheral(matching peripheral: CBPeripheral) -> BTLEPeripheral? {
-		for perGroup in [self.peripherals, self.ignoredPeripherals, self.pendingPeripherals] {
-			for per in perGroup {
-				if per.uuid == peripheral.identifier {
-					return per
-				}
+	func existingPeripheral(matching peripheral: CBPeripheral) -> BTLEPeripheral? { return self.existingPeripheral(with: peripheral.identifier) }
+	
+	func existingPeripheral(with id: UUID) -> BTLEPeripheral? {
+		for per in [self.peripherals, self.ignoredPeripherals, self.pendingPeripherals].flatMap({ $0 }) {
+			if per.uuid == id {
+				return per
 			}
 		}
-
+		
 		return nil
 	}
 	

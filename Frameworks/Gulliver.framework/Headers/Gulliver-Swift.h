@@ -445,6 +445,16 @@ SWIFT_CLASS("_TtC8Gulliver8Notifier")
 - (void)addOperationAndWaitWithBlock:(void (^ _Nonnull)(void))block;
 @end
 
+@class UITapGestureRecognizer;
+
+SWIFT_CLASS("_TtC8Gulliver15SA_BlockingView")
+@interface SA_BlockingView : UIView
+@property (nonatomic, copy) void (^ _Nullable tappedClosure)(void);
+- (void)tappedWithRecog:(UITapGestureRecognizer * _Nonnull)recog;
+- (nonnull instancetype)initWithFrame:(CGRect)frame OBJC_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
+@end
+
 
 SWIFT_CLASS("_TtC8Gulliver28SA_MailComposeViewController")
 @interface SA_MailComposeViewController : MFMailComposeViewController <MFMailComposeViewControllerDelegate>
@@ -466,7 +476,6 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, copy) NSString * _No
 @end
 
 @class UIColor;
-@class UIView;
 
 SWIFT_CLASS("_TtC8Gulliver16SA_TableViewCell")
 @interface SA_TableViewCell : UITableViewCell
@@ -518,21 +527,12 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) SoundPlayer 
 
 @interface UIBarButtonItem (SWIFT_EXTENSION(Gulliver))
 - (nonnull instancetype)initWithSpacerWith:(CGFloat)spacerWith;
++ (UIBarButtonItem * _Nonnull)flexibleSpacer;
 @end
 
 
 @interface UIBezierPath (SWIFT_EXTENSION(Gulliver))
 - (void)appendStringWithString:(NSAttributedString * _Nonnull)string atPoint:(CGPoint)pt withTransform:(CGAffineTransform)withTransform;
-@end
-
-@class UITapGestureRecognizer;
-
-SWIFT_CLASS("_TtC8Gulliver14UIBlockingView")
-@interface UIBlockingView : UIView
-@property (nonatomic, copy) void (^ _Nullable tappedClosure)(void);
-- (void)tappedWithRecog:(UITapGestureRecognizer * _Nonnull)recog;
-- (nonnull instancetype)initWithFrame:(CGRect)frame OBJC_DESIGNATED_INITIALIZER;
-- (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
 @end
 
 @class UIImage;
@@ -637,6 +637,13 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) UINib * _Non
 @interface UIView (SWIFT_EXTENSION(Gulliver))
 @end
 
+@class UIViewDraggingPanGestureRecognizer;
+
+@interface UIView (SWIFT_EXTENSION(Gulliver))
+- (void)draggedViaPanGestureRecognizerWithRecog:(UIViewDraggingPanGestureRecognizer * _Nonnull)recog;
+@property (nonatomic) BOOL isDraggable;
+@end
+
 
 @interface UIView (SWIFT_EXTENSION(Gulliver))
 - (NSLayoutConstraint * _Nullable)existingConstraintFor:(NSLayoutAttribute)attr;
@@ -652,6 +659,8 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) UINib * _Non
 + (UIView * _Nullable)viewWithNibName:(NSString * _Nullable)nibName bundle:(NSBundle * _Nullable)bundle;
 @property (nonatomic, readonly) CGPoint contentCenter;
 - (void)resignFirstResponderForAllSubviews;
+@property (nonatomic, readonly, strong) SA_BlockingView * _Nullable blockingView;
+- (void)removeBlockingViewWithDuration:(NSTimeInterval)duration completion:(void (^ _Nullable)(void))completion;
 - (UIView * _Nonnull)blockingViewWithTappedClosure:(void (^ _Nullable)(void))closure;
 @property (nonatomic, readonly, strong) UIViewController * _Nullable viewController;
 @property (nonatomic, readonly, strong) UITableViewCell * _Nullable tableViewCell;
@@ -671,6 +680,12 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) UINib * _Non
 
 
 @interface UIViewController (SWIFT_EXTENSION(Gulliver)) <UITextFieldDelegate>
+@end
+
+
+@interface UIViewController (SWIFT_EXTENSION(Gulliver))
+- (void)slideInFromTheBottomFrom:(UIViewController * _Nonnull)parent completion:(void (^ _Nullable)(void))completion;
+- (void)dismissFromBottomSlideWithDuration:(NSTimeInterval)duration completion:(void (^ _Nullable)(void))completion;
 @end
 
 @class UINavigationController;

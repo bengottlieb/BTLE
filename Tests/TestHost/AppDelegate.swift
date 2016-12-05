@@ -32,8 +32,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	static let nameCharacteristicID = CBUUID(string: "0001")
 	static let deviceCharacteristicID = CBUUID(string: "0002")
 	
-	static var serviceToScanFor = CBUUID(string: "287E2E84-7B66-445E-8168-9811FB49B12E")
-	static var servicesToRead: [CBUUID]? = [CBUUID(string: "287E2E84-7B66-445E-8168-9811FB49B12E"), CBUUID(string: "D4D8A77A-8301-4349-A1AE-402EFF51A098")]
+	static var servicesToScanFor: [CBUUID] = []// [CBUUID(string: "287E2E84-7B66-445E-8168-9811FB49B12E")]
+	static var servicesToRead: [CBUUID]? = nil//[CBUUID(string: "287E2E84-7B66-445E-8168-9811FB49B12E"), CBUUID(string: "D4D8A77A-8301-4349-A1AE-402EFF51A098")]
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) -> Bool {
 		// Override point for customization after application launch
