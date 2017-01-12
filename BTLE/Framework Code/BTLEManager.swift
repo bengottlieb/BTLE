@@ -1,5 +1,5 @@
 //
-//  BTLE.swift
+//  BTLEManager.swift
 //  BTLE
 //
 //  Created by Ben Gottlieb on 2/9/15.
@@ -12,8 +12,8 @@ import CoreBluetooth
 
 public enum DebugLevel: Int { case none, low, medium, high, superHigh }
 
-public class BTLE: NSObject {
-	public static var manager = BTLE()
+public class BTLEManager: NSObject {
+	public static var manager = BTLEManager()
 	public static var scanner = BTLECentralManager()
 	public static var advertiser = BTLEPeripheralManager()
 	
@@ -45,18 +45,18 @@ public class BTLE: NSObject {
 	
 	public var serviceIDsToScanFor: [CBUUID] = [] { didSet {
 		if oldValue != self.serviceIDsToScanFor {
-			BTLE.debugLog(.low, "Setting services to \(self.serviceIDsToScanFor)")
+			BTLEManager.debugLog(.low, "Setting services to \(self.serviceIDsToScanFor)")
 			self.cycleScanning()
 		}
 	}}
 	
 	public var servicesToVend: [BTLEMutableService] {
-		get { return BTLE.advertiser.services }
-		set { BTLE.advertiser.services = newValue }
+		get { return BTLEManager.advertiser.services }
+		set { BTLEManager.advertiser.services = newValue }
 	}
 	public var advertisingData: [String: Any] {
-		get { return BTLE.advertiser.advertisingData }
-		set { BTLE.advertiser.advertisingData = newValue }
+		get { return BTLEManager.advertiser.advertisingData }
+		set { BTLEManager.advertiser.advertisingData = newValue }
 	}
 	
 	public var serviceFilter = ServiceFilter.coreBluetooth { didSet { if oldValue != self.serviceFilter { self.cycleScanning() }}}
@@ -64,7 +64,7 @@ public class BTLE: NSObject {
 	public var disableRSSISmoothing = false
 	public var rssiSmoothingHistoryDepth = 10
 	public var deviceLifetime: TimeInterval = 0.0 { didSet {
-		Array(BTLE.scanner.peripherals).forEach { $0.updateVisibilityTimer(); }
+		Array(BTLEManager.scanner.peripherals).forEach { $0.updateVisibilityTimer(); }
 	}}
 	public var loadEncryptedCharacteristics = false
 	public var ignoreBeaconLikeDevices = true
@@ -109,11 +109,11 @@ public class BTLE: NSObject {
 	}
 	
 	public class func register(class serviceClass: BTLEService.Type, forServiceID serviceID: CBUUID) {
-		BTLE.registeredClasses.services[serviceID] = serviceClass
+		BTLEManager.registeredClasses.services[serviceID] = serviceClass
 	}
 	
 	public class func register(peripheralClass: BTLEPeripheral.Type?) {
-		BTLE.registeredClasses.peripheralClass = peripheralClass
+		BTLEManager.registeredClasses.peripheralClass = peripheralClass
 	}
 
 	public class var advertiseInBackground: Bool {
@@ -138,28 +138,28 @@ public class BTLE: NSObject {
 	var cyclingAdvertising = false
 	
 	public func cycleAdvertising() {
-		if self.cyclingAdvertising || BTLE.advertiser.state == .off { return }
+		if self.cyclingAdvertising || BTLEManager.advertiser.state == .off { return }
 		
-		BTLE.debugLog(.low, "Cycling Advertising")
+		BTLEManager.debugLog(.low, "Cycling Advertising")
 
-		switch BTLE.advertiser.state {
+		switch BTLEManager.advertiser.state {
 		case .active: fallthrough
 		case .startingUp: fallthrough
 		case .powerInterupted: fallthrough
 		case .idle:
 			self.cyclingAdvertising = true
-			BTLE.advertiser.turnOff()
+			BTLEManager.advertiser.turnOff()
 			
 		case .shuttingDown: break
 		case .cycling: break
 			
 		case .off:
-			BTLE.advertiser.startAdvertising()
+			BTLEManager.advertiser.startAdvertising()
 		}
 	}
 	
 	public func cycleScanning() {
-		BTLE.scanner.cycle()
+		BTLEManager.scanner.cycle()
 	}
 	
 	//BTLE Authorization status
@@ -171,19 +171,21 @@ public class BTLE: NSObject {
 			completion = comp
 			super.init()
 			self.manager = CBPeripheralManager(delegate: self, queue: nil, options: [CBPeripheralManagerOptionShowPowerAlertKey: true])
-			self.manager.startAdvertising(nil)
+			self.instance.startAdvertising(nil)
 		}
 		let completion: (Bool) -> Void
 		var manager: CBPeripheralManager!
 		func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
 			if CBPeripheralManager.authorizationStatus() == .denied {
 				self.completion(false)
-				self.manager.stopAdvertising()
-				BTLE.manager.authorizer = nil
+				self.instance.stopAdvertising()
+				BTLEManager.instance.authorizer = nil
 			} else if CBPeripheralManager.authorizationStatus() == .authorized {
 				self.completion(true)
-				self.manager.stopAdvertising()
-				BTLE.manager.authorizer = nil
+				if self.manager?.state == .poweredOn {
+					self.instance.stopAdvertising()
+				}
+				BTLEManager.instance.authorizer = nil
 			}
 		}
 	}
