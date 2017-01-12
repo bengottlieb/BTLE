@@ -14,10 +14,10 @@ public class BTLECharacteristic: NSObject {
 	public var cbCharacteristic: CBCharacteristic!
 	public var service: BTLEService!
 	public var descriptors: [BTLEDescriptor] = []
-	public var state = State.notListening { didSet { Notification.postOnMainThread(name: BTLE.notifications.characteristicListeningChanged, object: self) }}
+	public var state = State.notListening { didSet { Notification.postOnMainThread(name: BTLEManager.notifications.characteristicListeningChanged, object: self) }}
 	public override var description: String { return "\(self.cbCharacteristic)" }
 	public var writeBackInProgress: Bool { return self.writeBackCompletion != nil }
-	public var loadingState = BTLE.LoadingState.notLoaded { didSet {
+	public var loadingState = BTLEManager.LoadingState.notLoaded { didSet {
 		if self.loadingState == .loaded {
 			print("Loaded")
 		}
@@ -31,7 +31,7 @@ public class BTLECharacteristic: NSObject {
 		dataValue = chr.value
 		super.init()
 		
-		BTLE.debugLog(.high, "Characteristic: creating \(type(of: self)) from \((chr.description as NSString).substring(to: 50))")
+		BTLEManager.debugLog(.high, "Characteristic: creating \(type(of: self)) from \((chr.description as NSString).substring(to: 50))")
 		
 		if svc != nil && self.dataValue == nil && self.propertyEnabled(prop: .read) {
 			self.reload()
@@ -80,7 +80,7 @@ public class BTLECharacteristic: NSObject {
 			self.peripheral.cbPeripheral.writeValue(data as Data, for: self.cbCharacteristic, type: completion != nil ? .withResponse : .withoutResponse)
 			return true
 		} else {
-			BTLE.debugLog(.none, "Characteristic: Trying to write to a read-only characteristic: \(self)")
+			BTLEManager.debugLog(.none, "Characteristic: Trying to write to a read-only characteristic: \(self)")
 			completion?(self, NSError(type: .characteristicNotWritable))
 			return false
 		}
@@ -108,7 +108,7 @@ public class BTLECharacteristic: NSObject {
 	public var propertiesAsString: String { return BTLECharacteristic.characteristicPropertiesAsString(chr: self.cbCharacteristic.properties) }
 	
 	func resetLoadingState() {
-		BTLE.debugLog(.medium, "Reset load on \(self.cbCharacteristic)")
+		BTLEManager.debugLog(.medium, "Reset load on \(self.cbCharacteristic)")
 		switch self.loadingState {
 		case .loading: self.loadingState = .notLoaded
 		case .reloading: self.loadingState = .loaded
@@ -123,33 +123,33 @@ public class BTLECharacteristic: NSObject {
 		self.reloadTimeoutTimer?.invalidate()
 		
 		if error == nil {
-			BTLE.debugLog(.medium, "Finished \(self.loadingState == .reloading ? "reloading" : "loading") \(self.cbCharacteristic.uuid), value: \(String(data: self.dataValue ?? Data(), encoding: .utf8) ?? "no value")")
+			BTLEManager.debugLog(.medium, "Finished \(self.loadingState == .reloading ? "reloading" : "loading") \(self.cbCharacteristic.uuid), value: \(String(data: self.dataValue ?? Data(), encoding: .utf8) ?? "no value")")
 
 			self.dataValue = self.cbCharacteristic.value as Data?
 			self.loadingState = .loaded
 		} else {
-			BTLE.debugLog(.low, "Error \(self.loadingState == .reloading ? "reloading" : "loading") \(self.cbCharacteristic.uuid), \(error)")
+			BTLEManager.debugLog(.low, "Error \(self.loadingState == .reloading ? "reloading" : "loading") \(self.cbCharacteristic.uuid), \(error)")
 			self.resetLoadingState()
 		}
 		
-		BTLE.debugLog(.medium, "\(self.service.numberOfLoadingCharacteristics) characteristics remaining")
+		BTLEManager.debugLog(.medium, "\(self.service.numberOfLoadingCharacteristics) characteristics remaining")
 		if self.service.numberOfLoadingCharacteristics == 0 {
 			self.service.didFinishLoading()
 		}
 		self.updateListeners(newState: .updated)
-		Notification.postOnMainThread(name: BTLE.notifications.characteristicDidUpdate, object: self, userInfo: nil)
+		Notification.postOnMainThread(name: BTLEManager.notifications.characteristicDidUpdate, object: self, userInfo: nil)
 
 		self.sendReloadCompletions(error: error)
 	}
 
 	public func didWriteValue(error: Error?) {
 		if let error = error {
-			BTLE.debugLog(.none, "Characteristic: Error while writing to \(self): \(error)")
+			BTLEManager.debugLog(.none, "Characteristic: Error while writing to \(self): \(error)")
 		}
 		self.writeBackCompletion?(self, error)
 		self.writeBackCompletion = nil
 
-		Notification.postOnMainThread(name: BTLE.notifications.characteristicDidFinishWritingBack, object: self)
+		Notification.postOnMainThread(name: BTLEManager.notifications.characteristicDidFinishWritingBack, object: self)
 	}
 	
 	func didUpdateNotifyValue() {
@@ -161,7 +161,7 @@ public class BTLECharacteristic: NSObject {
 	var reloadCompletionBlocks: [(Error?, Data?) -> Void] = []
 	
 	func reloadTimedOut(timer: Timer) {
-		BTLE.debugLog(.low, "Characteristic: reload timed out")
+		BTLEManager.debugLog(.low, "Characteristic: reload timed out")
 		self.reloadTimeoutTimer?.invalidate()
 		self.sendReloadCompletions(error: NSError(domain: CBErrorDomain, code: CBError.connectionTimeout.rawValue, userInfo: nil))
 		self.resetLoadingState()
@@ -186,7 +186,7 @@ public class BTLECharacteristic: NSObject {
 		}
 		
 		self.loadingState = self.loadingState == .loaded ? .reloading : .loading
-		BTLE.debugLog(.medium, "Reloading \(self.cbCharacteristic.uuid)")
+		BTLEManager.debugLog(.medium, "Reloading \(self.cbCharacteristic.uuid)")
 
 		if let completion = completion {
 			self.reloadCompletionBlocks.append(completion)
@@ -203,7 +203,7 @@ public class BTLECharacteristic: NSObject {
 				if self.loadingState == .loaded || self.loadingState == .notLoaded  {
 					self.loadingState = (self.loadingState == .loaded) ? .reloading : .loading
 					let chr = self.cbCharacteristic
-					BTLE.debugLog(.high, "Connected, calling readValue on \(self.cbCharacteristic.uuid)")
+					BTLEManager.debugLog(.high, "Connected, calling readValue on \(self.cbCharacteristic.uuid)")
 					self.peripheral.cbPeripheral.readValue(for: chr!)
 				}
 			})
@@ -286,12 +286,12 @@ public class BTLEMutableCharacteristic : BTLECharacteristic {
 	public func updateDataValue(data: Data?) {
 		self.dataValue = data
 		
-		if let data = data, let mgr = BTLE.advertiser.cbPeripheralManager, let chr = self.cbCharacteristic as? CBMutableCharacteristic {
+		if let data = data, let mgr = BTLEManager.advertiser.cbPeripheralManager, let chr = self.cbCharacteristic as? CBMutableCharacteristic {
 			if !mgr.updateValue(data as Data, for: chr, onSubscribedCentrals: nil) {
-				BTLE.debugLog(.none, "Characteristic: Unable to update \(self)")
+				BTLEManager.debugLog(.none, "Characteristic: Unable to update \(self)")
 			}
 		} else {
-			BTLE.debugLog(.none, "Characteristic: No data to update \(self)")
+			BTLEManager.debugLog(.none, "Characteristic: No data to update \(self)")
 		}
 	}
 }

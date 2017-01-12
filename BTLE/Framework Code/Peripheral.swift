@@ -55,7 +55,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	deinit {
 		self.rssiTimer?.invalidate()
 		self.connectionTimeoutTimer?.invalidate()
-		BTLE.debugLog(.superHigh, "BTLE Peripheral: deiniting: \(self)")
+		BTLEManager.debugLog(.superHigh, "BTLE Peripheral: deiniting: \(self)")
 	}
 	
 	public var cbPeripheral: CBPeripheral!
@@ -66,15 +66,15 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	public var lastCommunicatedAt = Date() { didSet {
 		if self.state == .undiscovered {
 			self.state = .discovered
-			self.sendNotification(name: BTLE.notifications.peripheralDidRegainComms)
+			self.sendNotification(name: BTLEManager.notifications.peripheralDidRegainComms)
 		}
 		btle_delay(0.001) { self.updateVisibilityTimer() }
 	}}
-	public var loadingState = BTLE.LoadingState.notLoaded {
+	public var loadingState = BTLEManager.LoadingState.notLoaded {
 		didSet {
 			if self.loadingState == .loaded {
-				self.sendNotification(name: BTLE.notifications.peripheralDidFinishLoading)
-				BTLE.debugLog(.medium, "BTLE Peripheral: Loaded: \(self.fullDescription)")
+				self.sendNotification(name: BTLEManager.notifications.peripheralDidFinishLoading)
+				BTLEManager.debugLog(.medium, "BTLE Peripheral: Loaded: \(self.fullDescription)")
 				self.sendConnectionCompletions(error: nil)
 			}
 		}
@@ -82,14 +82,14 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	public var services: [BTLEService] = []
 	public var advertisementData: [String: Any] = [:] { didSet {
 		if self.advertisementData != oldValue {
-			self.sendNotification(name: BTLE.notifications.peripheralDidUpdateAdvertisementData)
+			self.sendNotification(name: BTLEManager.notifications.peripheralDidUpdateAdvertisementData)
 		}
 	}}
 	
 	public var state: State = .discovered { didSet {
 		if self.state == oldValue { return }
 	
-		BTLE.debugLog(.medium, "Changing state on \(self.name), \(oldValue.description) -> \(self.state.description)")
+		BTLEManager.debugLog(.medium, "Changing state on \(self.name), \(oldValue.description) -> \(self.state.description)")
 	
 		switch self.state {
 		case .connected:
@@ -118,7 +118,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	}}
 	public var rssi: RSSValue? { didSet {
 		self.lastCommunicatedAt = Date()
-		self.sendNotification(name: BTLE.notifications.peripheralDidUpdateRSSI)
+		self.sendNotification(name: BTLEManager.notifications.peripheralDidUpdateRSSI)
 	}}
 	public var rawRSSI: RSSValue?
 	
@@ -131,7 +131,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	}
 
 	func didFailToConnect(error: Error?) {
-		BTLE.debugLog(.medium, "Failed to connect \(self.name): \(error)")
+		BTLEManager.debugLog(.medium, "Failed to connect \(self.name): \(error)")
 		self.sendConnectionCompletions(error: error)
 	}
 	
@@ -139,7 +139,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		if self.sendCompletionsWhenFullyLoaded && (self.loadingState == .loading || self.loadingState == .reloading) { return }
 		
 		self.connectionTimeoutTimer?.invalidate()
-		BTLE.debugLog(.medium, "Sending \(self.connectionCompletionBlocks.count) completion messages (\(error))")
+		BTLEManager.debugLog(.medium, "Sending \(self.connectionCompletionBlocks.count) completion messages (\(error))")
 		let completions = self.connectionCompletionBlocks
 		self.connectionCompletionBlocks = []
 		
@@ -152,11 +152,11 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		if abs(newRSSI) == 127 { return }
 		
 		self.rawRSSI = newRSSI
-		if BTLE.manager.disableRSSISmoothing {
+		if BTLEManager.instance.disableRSSISmoothing {
 			self.rssi = newRSSI
 		} else {
 			self.rssiHistory.append((Date(), newRSSI))
-			if self.rssiHistory.count > BTLE.manager.rssiSmoothingHistoryDepth { self.rssiHistory.remove(at: 0) }
+			if self.rssiHistory.count > BTLEManager.instance.rssiSmoothingHistoryDepth { self.rssiHistory.remove(at: 0) }
 			
 			self.rssi = self.rssiHistory.reduce(0, { $0 + $1.1 }) / self.rssiHistory.count
 		}
@@ -168,7 +168,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	}
 	
 	public required init(peripheral: CBPeripheral, RSSI: RSSValue?, advertisementData adv: [String: Any]?) {
-		BTLE.debugLog(.high, "Peripheral: creating from \(peripheral)")
+		BTLEManager.debugLog(.high, "Peripheral: creating from \(peripheral)")
 		
 		cbPeripheral = peripheral
 		uuid = peripheral.identifier
@@ -183,41 +183,41 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		self.rssi = RSSI
 		self.updateVisibilityTimer()
 
-		if BTLE.scanner.ignoredPeripheralUUIDs.contains(peripheral.identifier.uuidString) {
+		if BTLEManager.scanner.ignoredPeripheralUUIDs.contains(peripheral.identifier.uuidString) {
 			ignored = .blackList
-			BTLE.debugLog(.medium, "Peripheral: Ignoring: \(name), \(uuid)")
-		} else if BTLE.manager.serviceIDsToScanFor.count > 0 {
-			if BTLE.manager.serviceFilter == .advertisingData {
+			BTLEManager.debugLog(.medium, "Peripheral: Ignoring: \(name), \(uuid)")
+		} else if BTLEManager.instance.serviceIDsToScanFor.count > 0 {
+			if BTLEManager.instance.serviceFilter == .advertisingData {
 				if let info = adv {
 					self.updateIgnoredWithAdvertisingData(info: info)
 				} else {
 					self.ignored = .missingServices
 				}
-			} else if BTLE.manager.serviceFilter == .actualServices {
+			} else if BTLEManager.instance.serviceFilter == .actualServices {
 				self.ignored = .checkingForServices
 				self.connect(services: self.pertinentServices)
 			}
 		}
 		
 		if self.ignored == .not {
-			BTLE.debugLog(.medium, "BTLE Peripheral: not ignored: \(self)")
+			BTLEManager.debugLog(.medium, "BTLE Peripheral: not ignored: \(self)")
 		}
 	}
 	
 	func updateIgnoredWithAdvertisingData(info: [String: Any]) {
-		BTLE.scanner.dispatchQueue.async {
-			if BTLE.manager.serviceFilter == .advertisingData && BTLE.manager.serviceIDsToScanFor.count > 0 {
+		BTLEManager.scanner.dispatchQueue.async {
+			if BTLEManager.instance.serviceFilter == .advertisingData && BTLEManager.instance.serviceIDsToScanFor.count > 0 {
 				var ignored = true
 				if let services = info[CBAdvertisementDataServiceUUIDsKey] as? NSArray {
 					for service in services {
 						if let cbid = service as? CBUUID {
-							if BTLE.manager.serviceIDsToScanFor.contains(cbid) { ignored = false; break }
+							if BTLEManager.instance.serviceIDsToScanFor.contains(cbid) { ignored = false; break }
 						}
 					}
 				}
 				if ignored {
 					self.ignored = .missingServices
-					BTLE.debugLog(.superHigh, "BTLE Peripheral: ignored \(self.cbPeripheral.name) with advertising info: \(info)")
+					BTLEManager.debugLog(.superHigh, "BTLE Peripheral: ignored \(self.cbPeripheral.name) with advertising info: \(info)")
 				} else {
 					self.ignored = .not
 				}
@@ -238,8 +238,8 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	}
 	
 	public func connect(reloadServices: Bool = false, services: [CBUUID]? = nil, timeout: TimeInterval? = nil, completion: ((Error?) -> ())? = nil) {
-		BTLE.scanner.dispatchQueue.async {
-			BTLE.debugLog(.high, "Peripheral: connecting for \(services?.description ?? "all services")")
+		BTLEManager.scanner.dispatchQueue.async {
+			BTLEManager.debugLog(.high, "Peripheral: connecting for \(services?.description ?? "all services")")
 			self.pertinentServices = services
 
 			if let completion = completion { self.connectionCompletionBlocks.append(completion) }
@@ -261,24 +261,24 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 					}
 				}
 				if (reloadServices) { self.loadingState = .reloading }
-				BTLE.debugLog(.medium, "Attempting to connect to \(self.name), current state: \(self.state.description)")
+				BTLEManager.debugLog(.medium, "Attempting to connect to \(self.name), current state: \(self.state.description)")
 				self.state = .connecting
-				BTLE.scanner.cbCentral.connect(self.cbPeripheral, options: [CBConnectPeripheralOptionNotifyOnConnectionKey: true])
+				BTLEManager.scanner.cbCentral.connect(self.cbPeripheral, options: [CBConnectPeripheralOptionNotifyOnConnectionKey: true])
 			}
 		}
 	}
 	
 	public func disconnect() {
-		BTLE.debugLog(.medium, "Disconnecting from \(self.name), current state: \(self.state.description)")
+		BTLEManager.debugLog(.medium, "Disconnecting from \(self.name), current state: \(self.state.description)")
 		if self.state == .connected { self.state = .disconnecting }
 		
-		BTLE.scanner.cbCentral?.cancelPeripheralConnection(self.cbPeripheral)
+		BTLEManager.scanner.cbCentral?.cancelPeripheralConnection(self.cbPeripheral)
 	}
 	
 	func cancelLoad() {
-		BTLE.scanner.dispatchQueue.async {
+		BTLEManager.scanner.dispatchQueue.async {
 			if self.loadingState == .loading {
-				BTLE.debugLog(.medium, "Aborting service load on \(self.name)")
+				BTLEManager.debugLog(.medium, "Aborting service load on \(self.name)")
 				self.loadingState = .loadingCancelled
 			}
 			
@@ -290,9 +290,9 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		didSet {
 			if oldValue != self.ignored {
 				if self.ignored == .blackList {
-					BTLE.scanner.addIgnored(peripheral: self)
+					BTLEManager.scanner.addIgnored(peripheral: self)
 				} else if self.ignored == .not {
-					BTLE.scanner.removeIgnored(peripheral: self)
+					BTLEManager.scanner.removeIgnored(peripheral: self)
 				}
 			}
 			
@@ -343,13 +343,13 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 				return chr
 			}
 		}
-		BTLE.debugLog(.high, "Unabled to find characteristic \(characteristic) \(self.name), current state: \(self.state.description)")
+		BTLEManager.debugLog(.high, "Unabled to find characteristic \(characteristic) \(self.name), current state: \(self.state.description)")
 		return nil
 	}
 	
 	public func reloadServices(completely: Bool = false) {
-		BTLE.scanner.dispatchQueue.async {
-			BTLE.debugLog(.high, "Loading services on \(self.name)")
+		BTLEManager.scanner.dispatchQueue.async {
+			BTLEManager.debugLog(.high, "Loading services on \(self.name)")
 			if completely { self.services = [] }
 			if self.ignored == .checkingForServices {
 				self.cbPeripheral.discoverServices(self.pertinentServices)
@@ -367,7 +367,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		if loadThese == nil {
 			loadThese = self.services.filter { self.pertinentServices == nil ? true : self.pertinentServices!.contains($0.uuid) }
 		}
-		self.sendNotification(name: BTLE.notifications.peripheralDidBeginLoading)
+		self.sendNotification(name: BTLEManager.notifications.peripheralDidBeginLoading)
 		self.loadingState = .loading
 		for service in loadThese! {
 			service.reload()
@@ -375,8 +375,8 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	}
 	
 	func didFinishLoadingService(service: BTLEService) {
-		BTLE.scanner.dispatchQueue.async {
-			BTLE.debugLog(.medium, "BTLE Peripheral: Finished loading \(service.uuid), \(self.numberOfLoadingServices) left")
+		BTLEManager.scanner.dispatchQueue.async {
+			BTLEManager.debugLog(.medium, "BTLE Peripheral: Finished loading \(service.uuid), \(self.numberOfLoadingServices) left")
 			if self.numberOfLoadingServices == 0 {
 				self.loadingState = .loaded
 			}
@@ -413,12 +413,12 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		self.visibilityTimer?.invalidate()
 		self.visibilityTimer = nil
 		
-		if self.state == .discovered && BTLE.manager.deviceLifetime > 0 {
+		if self.state == .discovered && BTLEManager.instance.deviceLifetime > 0 {
 			btle_dispatch_main { [weak self] in
 				if let me = self {
 					let timeSinceLastComms = abs(me.lastCommunicatedAt.timeIntervalSinceNow)
-					if BTLE.manager.deviceLifetime > timeSinceLastComms {
-						let timeoutInverval = (BTLE.manager.deviceLifetime - timeSinceLastComms)
+					if BTLEManager.instance.deviceLifetime > timeSinceLastComms {
+						let timeoutInverval = (BTLEManager.instance.deviceLifetime - timeSinceLastComms)
 						
 						// if timeoutInverval < 3 { println("BTLE Peripheral: short term timer: \(timeSinceLastComms) sec") }
 						
@@ -426,7 +426,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 						DispatchQueue.main.async {
 							me.visibilityTimer = Timer.scheduledTimer(timeInterval: timeoutInverval, target: me, selector: #selector(BTLEPeripheral.disconnectDueToTimeout), userInfo: nil, repeats: false)
 						}
-					} else if BTLE.manager.deviceLifetime > 0 {
+					} else if BTLEManager.instance.deviceLifetime > 0 {
 						me.disconnectDueToTimeout()
 					}
 				}
@@ -438,13 +438,13 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	}
 	
 	func disconnectDueToTimeout() {
-		BTLE.scanner.dispatchQueue.async {
+		BTLEManager.scanner.dispatchQueue.async {
 			self.visibilityTimer?.invalidate()
 			self.visibilityTimer = nil
 			
 			if self.state == .discovered {
 				self.state = .undiscovered
-				self.sendNotification(name: BTLE.notifications.peripheralDidLoseComms)
+				self.sendNotification(name: BTLEManager.notifications.peripheralDidLoseComms)
 			}
 		}
 	}
@@ -467,17 +467,17 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	}
 
 	public func peripheralDidUpdateName(_ peripheral: CBPeripheral) {
-		BTLE.scanner.dispatchQueue.async {
+		BTLEManager.scanner.dispatchQueue.async {
 			self.name = peripheral.name ?? "<unammed>"
-			self.sendNotification(name: BTLE.notifications.peripheralDidUpdateName)
-			BTLE.debugLog(.medium, "Peripheral: Updated name for: \(self.name)")
+			self.sendNotification(name: BTLEManager.notifications.peripheralDidUpdateName)
+			BTLEManager.debugLog(.medium, "Peripheral: Updated name for: \(self.name)")
 		}
 	}
 
 	//=============================================================================================
 	//MARK: Delegate - Service
 	public func peripheral(_ peripheral: CBPeripheral, didModifyServices invalidatedServices: [CBService]) {
-		BTLE.scanner.dispatchQueue.async {
+		BTLEManager.scanner.dispatchQueue.async {
 			for invalidated in invalidatedServices {
 				if self.shouldLoadService(service: invalidated) {
 					self.findOrCreateService(cbService: invalidated)?.reload()
@@ -487,16 +487,16 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	}
 	
 	public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-		BTLE.scanner.dispatchQueue.async {
-			BTLE.debugLog(.medium, "Discovered \(self.cbPeripheral.services?.count ?? 0) on \(self.name)")
+		BTLEManager.scanner.dispatchQueue.async {
+			BTLEManager.debugLog(.medium, "Discovered \(self.cbPeripheral.services?.count ?? 0) on \(self.name)")
 			
 			if let services = self.cbPeripheral.services {
 				if self.ignored == .checkingForServices {
 					for svc in services {
-						BTLE.debugLog(.medium, "\(self.name) loading \(svc.uuid)")
-						if BTLE.manager.serviceIDsToScanFor.contains(svc.uuid) {
+						BTLEManager.debugLog(.medium, "\(self.name) loading \(svc.uuid)")
+						if BTLEManager.instance.serviceIDsToScanFor.contains(svc.uuid) {
 							self.ignored = .not
-							BTLE.scanner.pendingPeripheralFinishLoadingServices(peripheral: self)
+							BTLEManager.scanner.pendingPeripheralFinishLoadingServices(peripheral: self)
 							break
 						}
 					}
@@ -511,7 +511,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 					self.loadingState = .loaded
 					if self.ignored == .checkingForServices {
 						self.ignored = .missingServices
-						BTLE.scanner.pendingPeripheralFinishLoadingServices(peripheral: self)
+						BTLEManager.scanner.pendingPeripheralFinishLoadingServices(peripheral: self)
 					}
 				}
 			}

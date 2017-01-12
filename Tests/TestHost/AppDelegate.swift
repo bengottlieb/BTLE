@@ -44,11 +44,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		application.registerUserNotificationSettings(settings)
 		application.registerForRemoteNotifications()
 	
-		//BTLE.manager.services = [CBUUID(string: "01EB2EF1-BF82-4516-81BE-57E119207437")]
+		//BTLEManager.instance.services = [CBUUID(string: "01EB2EF1-BF82-4516-81BE-57E119207437")]
 		
-		BTLE.manager.serviceFilter = .coreBluetooth
-		self.addAsObserver(for: BTLE.notifications.characteristicWasWrittenTo, selector: #selector(zapped))
-		self.addAsObserver(for: BTLE.notifications.peripheralWasDiscovered, selector: #selector(connected))
+		BTLEManager.instance.serviceFilter = .coreBluetooth
+		self.addAsObserver(for: BTLEManager.notifications.characteristicWasWrittenTo, selector: #selector(zapped))
+		self.addAsObserver(for: BTLEManager.notifications.peripheralWasDiscovered, selector: #selector(connected))
 		
 		self.setupBeacon()
 		return true
@@ -89,11 +89,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //			let data = self.beacon!.peripheralData(withMeasuredPower: nil)
 //			if data.count > 0 {
 //				print("Starting to advertise (\(uuid)) beacon: \(data)")
-//				BTLE.advertisingData = NSDictionary(dictionary: data) as? [String: Any] ?? [:]
+//				BTLEManager.advertisingData = NSDictionary(dictionary: data) as? [String: Any] ?? [:]
 //			}
-//			BTLE.advertiser.startAdvertising()
+//			BTLEManager.advertiser.startAdvertising()
 //		} else if self.beacon != nil {
-//			BTLE.advertiser.stopAdvertising()
+//			BTLEManager.advertiser.stopAdvertising()
 //			self.beacon = nil
 //		}
 	}

@@ -28,12 +28,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	var devices: [BTLEPeripheral] = []
 	
 	func reload() {
-		self.devices = Array(BTLE.scanner.peripherals).sorted { ($0.rssi ?? 0) > ($1.rssi ?? 0) }
+		self.devices = Array(BTLEManager.scanner.peripherals).sorted { ($0.rssi ?? 0) > ($1.rssi ?? 0) }
 		
 		DispatchQueue.main.async {
 			self.tableView.reloadData()
 			self.updateScanningLabel()
-			self.scanSwitch.isOn = BTLE.scanner.state == .active || BTLE.scanner.state == .startingUp
+			self.scanSwitch.isOn = BTLEManager.scanner.state == .active || BTLEManager.scanner.state == .startingUp
 		}
 	}
 		
@@ -41,7 +41,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	var writableCharacteristic: BTLEMutableCharacteristic?
 	
 	func updateScanningLabel() {
-		var text = BTLE.scanner.state.stringValue
+		var text = BTLEManager.scanner.state.stringValue
 		let count = self.devices.count
 		
 		text = "\(count) found"
@@ -65,21 +65,21 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		if self.tableView.tableHeaderView == nil { self.tableView.tableHeaderView = self.tableView.tableFooterView }
 		self.tableView.register(UINib(nibName: "PeripheralCellTableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
 		
-		BTLE.debugLevel = .high
-//		BTLE.registerServiceClass(LockService.self, forServiceID: CBUUID(string: "FFF4"))
-//		BTLE.registerPeripheralClass(LockPeripheral.self)
+		BTLEManager.debugLevel = .high
+//		BTLEManager.registerServiceClass(LockService.self, forServiceID: CBUUID(string: "FFF4"))
+//		BTLEManager.registerPeripheralClass(LockPeripheral.self)
 
 		//setup scanner
-		BTLE.manager.deviceLifetime = 20.0
-		BTLE.manager.ignoreBeaconLikeDevices = false
-		BTLE.manager.monitorRSSI = (UserDefaults.get(key: DefaultsKey<Bool>("monitorRSSI")))
-		BTLE.manager.serviceIDsToScanFor = (UserDefaults.get(key: DefaultsKey<Bool>("filterByServices"))) ? AppDelegate.servicesToScanFor : []
-		BTLE.manager.serviceFilter = .coreBluetooth
+		BTLEManager.instance.deviceLifetime = 20.0
+		BTLEManager.instance.ignoreBeaconLikeDevices = false
+		BTLEManager.instance.monitorRSSI = (UserDefaults.get(key: DefaultsKey<Bool>("monitorRSSI")))
+		BTLEManager.instance.serviceIDsToScanFor = (UserDefaults.get(key: DefaultsKey<Bool>("filterByServices"))) ? AppDelegate.servicesToScanFor : []
+		BTLEManager.instance.serviceFilter = .coreBluetooth
 		
 		if (UserDefaults.get(key: DefaultsKey<Bool>("scanning"))) {
-			BTLE.scanner.startScanning()
+			BTLEManager.scanner.startScanning()
 		} else {
-			BTLE.scanner.stopScanning()
+			BTLEManager.scanner.stopScanning()
 		}
 		
 		//setup advertiser
@@ -91,34 +91,34 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 //		let service = BTLEMutableService(uuid: testServiceID, isPrimary: true, characteristics: [ self.writableCharacteristic! ])
 //		service.advertised = true
 //		
-//		BTLE.advertiser.addService(service)
+//		BTLEManager.advertiser.addService(service)
 //		if (UserDefaults.get(DefaultsKey<Bool>("advertising")) ?? false) {
-//			BTLE.advertiser.startAdvertising()
+//			BTLEManager.advertiser.startAdvertising()
 //		}
 		
-		self.scanSwitch.isOn = BTLE.scanner.state == .active || BTLE.scanner.state == .startingUp
-		self.advertiseSwitch.isOn = BTLE.advertiser.state == .active || BTLE.advertiser.state == .startingUp
-		self.filterByServicesSwitch.isOn = BTLE.manager.serviceIDsToScanFor.count > 0
-		self.monitorRSSISwitch.isOn = BTLE.manager.monitorRSSI
+		self.scanSwitch.isOn = BTLEManager.scanner.state == .active || BTLEManager.scanner.state == .startingUp
+		self.advertiseSwitch.isOn = BTLEManager.advertiser.state == .active || BTLEManager.advertiser.state == .startingUp
+		self.filterByServicesSwitch.isOn = BTLEManager.instance.serviceIDsToScanFor.count > 0
+		self.monitorRSSISwitch.isOn = BTLEManager.instance.monitorRSSI
 
 		//self.filterByServicesSwitch.enabled = self.scanSwitch.on
 		//self.monitorRSSISwitch.enabled = self.scanSwitch.on
 
-		self.addAsObserver(for: BTLE.notifications.willStartScan, selector: #selector(updateStatus), object: nil)
-		self.addAsObserver(for: BTLE.notifications.didStartScan, selector: #selector(updateStatus), object: nil)
-		self.addAsObserver(for: BTLE.notifications.didFinishScan, selector: #selector(updateStatus), object: nil)
+		self.addAsObserver(for: BTLEManager.notifications.willStartScan, selector: #selector(updateStatus), object: nil)
+		self.addAsObserver(for: BTLEManager.notifications.didStartScan, selector: #selector(updateStatus), object: nil)
+		self.addAsObserver(for: BTLEManager.notifications.didFinishScan, selector: #selector(updateStatus), object: nil)
 
-		self.addAsObserver(for: BTLE.notifications.willStartAdvertising, selector: #selector(updateStatus), object: nil)
-		self.addAsObserver(for: BTLE.notifications.didFinishAdvertising, selector: #selector(updateStatus), object: nil)
+		self.addAsObserver(for: BTLEManager.notifications.willStartAdvertising, selector: #selector(updateStatus), object: nil)
+		self.addAsObserver(for: BTLEManager.notifications.didFinishAdvertising, selector: #selector(updateStatus), object: nil)
 
 	
-		self.addAsObserver(for: BTLE.notifications.peripheralWasDiscovered, selector: #selector(reload), object: nil)
+		self.addAsObserver(for: BTLEManager.notifications.peripheralWasDiscovered, selector: #selector(reload), object: nil)
 		
 		self.updateStatus()
 	}
 	
 	func updateStatus() {
-		if BTLE.scanner.state == .active {
+		if BTLEManager.scanner.state == .active {
 			DispatchQueue.main.async {
 				self.timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(ViewController.reload), userInfo: nil, repeats: true)
 			}
@@ -128,7 +128,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		}
 		
 		self.reload()
-		UIApplication.shared.isIdleTimerDisabled = (BTLE.scanner.state == .active || BTLE.advertiser.state == .active)
+		UIApplication.shared.isIdleTimerDisabled = (BTLEManager.scanner.state == .active || BTLEManager.advertiser.state == .active)
 	}
 	
 	var timer: Timer?
@@ -139,9 +139,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	
 	@IBAction func toggleScanning() {
 		if (self.scanSwitch.isOn) {
-			BTLE.scanner.startScanning()
+			BTLEManager.scanner.startScanning()
 		} else {
-			BTLE.scanner.stopScanning()
+			BTLEManager.scanner.stopScanning()
 		}
 
 		UserDefaults.set(self.scanSwitch.isOn, forKey: DefaultsKey<Bool>("scanning"))
@@ -151,7 +151,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 	}
 
 	@IBAction func toggleRSSIMonitoring() {
-		BTLE.manager.monitorRSSI = self.monitorRSSISwitch.isOn
+		BTLEManager.instance.monitorRSSI = self.monitorRSSISwitch.isOn
 		UserDefaults.set(self.monitorRSSISwitch.isOn, forKey: DefaultsKey<Bool>("monitorRSSI"))
 	}
 	
@@ -162,17 +162,17 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
 			let service = BTLEMutableService(uuid: testServiceID, isPrimary: true, characteristics: [ self.writableCharacteristic! ])
 			service.advertised = true
-			BTLE.advertiser.add(service: service)
-			BTLE.advertiser.startAdvertising()
+			BTLEManager.advertiser.add(service: service)
+			BTLEManager.advertiser.startAdvertising()
 		} else {
-			BTLE.advertiser.stopAdvertising()
+			BTLEManager.advertiser.stopAdvertising()
 		}
 		UserDefaults.set(self.advertiseSwitch.isOn, forKey: DefaultsKey<Bool>("advertising"))
 	}
 	
 	@IBAction func toggleFilterByServices() {
 		UserDefaults.set(self.filterByServicesSwitch.isOn, forKey: DefaultsKey<Bool>("filterByServices"))
-		BTLE.manager.serviceIDsToScanFor = self.filterByServicesSwitch.isOn ? AppDelegate.servicesToScanFor : []
+		BTLEManager.instance.serviceIDsToScanFor = self.filterByServicesSwitch.isOn ? AppDelegate.servicesToScanFor : []
 	}
 	
 	@IBAction func configureServices() {
@@ -230,7 +230,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		let device = self.devices[indexPath.row]
 		
 		device.ignore()
-		self.devices = Array(BTLE.scanner.peripherals)
+		self.devices = Array(BTLEManager.scanner.peripherals)
 		
 		tableView.endUpdates()
 	}

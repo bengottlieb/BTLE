@@ -1,5 +1,5 @@
 //
-//  BTLE.h
+//  BTLEManager.h
 //  BTLE
 //
 //  Created by Ben Gottlieb on 2/9/15.
@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-//! Project version number for BTLE.
+//! Project version number for BTLEManager.
 FOUNDATION_EXPORT double BTLEVersionNumber;
 
-//! Project version string for BTLE.
+//! Project version string for BTLEManager.
 FOUNDATION_EXPORT const unsigned char BTLEVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <BTLE/PublicHeader.h>

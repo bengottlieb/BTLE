@@ -41,10 +41,10 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 		
 		super.init(nibName: "DeviceDetailsViewController", bundle: nil)
 		
-		self.addAsObserver(for: BTLE.notifications.peripheralDidBeginLoading, selector: #selector(startLoading))
-		self.addAsObserver(for: BTLE.notifications.peripheralDidFinishLoading, selector: #selector(finishLoading))
-		self.addAsObserver(for: BTLE.notifications.peripheralDidConnect, selector: #selector(updateConnectedState))
-		self.addAsObserver(for: BTLE.notifications.peripheralDidDisconnect, selector: #selector(updateConnectedState))
+		self.addAsObserver(for: BTLEManager.notifications.peripheralDidBeginLoading, selector: #selector(startLoading))
+		self.addAsObserver(for: BTLEManager.notifications.peripheralDidFinishLoading, selector: #selector(finishLoading))
+		self.addAsObserver(for: BTLEManager.notifications.peripheralDidConnect, selector: #selector(updateConnectedState))
+		self.addAsObserver(for: BTLEManager.notifications.peripheralDidDisconnect, selector: #selector(updateConnectedState))
 		self.updateSections()
 		
 		self.updateConnectedState()

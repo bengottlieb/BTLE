@@ -30,8 +30,8 @@ class CharacteristicTableViewCell: UITableViewCell {
 	
     override func awakeFromNib() {
         super.awakeFromNib()
-		self.addAsObserver(for: BTLE.notifications.characteristicDidUpdate, selector: #selector(updateUI), object: nil)
-		self.addAsObserver(for: BTLE.notifications.characteristicListeningChanged, selector: #selector(updateUI), object: nil)
+		self.addAsObserver(for: BTLEManager.notifications.characteristicDidUpdate, selector: #selector(updateUI), object: nil)
+		self.addAsObserver(for: BTLEManager.notifications.characteristicListeningChanged, selector: #selector(updateUI), object: nil)
 		
 		self.updateUI()
         // Initialization code

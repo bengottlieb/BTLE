@@ -17,7 +17,7 @@ protocol BTLEServiceProtocol {
 open class BTLEService: NSObject {
 	public var cbService: CBService!
 	var peripheral: BTLEPeripheral!
-	var loadingState = BTLE.LoadingState.notLoaded { didSet {
+	var loadingState = BTLEManager.LoadingState.notLoaded { didSet {
 		if self.loadingState == .loaded {
 			self.peripheral.didFinishLoadingService(service: self)
 		}
@@ -27,7 +27,7 @@ open class BTLEService: NSObject {
 	public var uuid: CBUUID { return self.cbService.uuid }
 	
 	class func create(service: CBService, onPeriperhal: BTLEPeripheral) -> BTLEService {
-		if let serviceClass: BTLEService.Type = BTLE.registeredClasses.services[service.uuid] {
+		if let serviceClass: BTLEService.Type = BTLEManager.registeredClasses.services[service.uuid] {
 			return serviceClass.init(service: service, onPeriperhal: onPeriperhal)
 		} else {
 			return BTLEService(service: service, onPeriperhal: onPeriperhal)
@@ -43,7 +43,7 @@ open class BTLEService: NSObject {
 		super.init()
 		
 		self.reload()
-		BTLE.debugLog(.medium, "Service: creating \(type(of: self)) from \(service)")
+		BTLEManager.debugLog(.medium, "Service: creating \(type(of: self)) from \(service)")
 	}
 	
 	func cancelLoad() {

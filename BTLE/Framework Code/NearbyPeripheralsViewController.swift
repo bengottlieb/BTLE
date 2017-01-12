@@ -18,7 +18,7 @@ public class NearbyPeripheralsViewController: UIViewController {
 		self.navigationItem.title = "Nearby Peripherals"
 		self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissNearbyPeripherals))
 		
-		if BTLE.manager.serviceIDsToScanFor.count > 0 {
+		if BTLEManager.instance.serviceIDsToScanFor.count > 0 {
 			self.navigationItem.titleView = self.filterToggle
 			self.filterToggle.addTarget(self, action: #selector(toggleFilter), for: .valueChanged)
 		}
@@ -27,25 +27,25 @@ public class NearbyPeripheralsViewController: UIViewController {
 	public override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 		if self.appFilters.count > 0 {
-			BTLE.scanner.turnOff()
-			BTLE.manager.serviceIDsToScanFor = self.appFilters
+			BTLEManager.scanner.turnOff()
+			BTLEManager.instance.serviceIDsToScanFor = self.appFilters
 			self.appFilters = []
-			BTLE.scanner.startScanning()
+			BTLEManager.scanner.startScanning()
 		}
 	}
 	
 	var appFilters: [CBUUID] = []
 	func toggleFilter(toggle: UISwitch) {
-		if BTLE.manager.serviceIDsToScanFor.count > 0 {
-			BTLE.scanner.stopScanning()
-			self.appFilters = BTLE.manager.serviceIDsToScanFor
-			BTLE.manager.serviceIDsToScanFor = []
-			BTLE.scanner.startScanning()
+		if BTLEManager.instance.serviceIDsToScanFor.count > 0 {
+			BTLEManager.scanner.stopScanning()
+			self.appFilters = BTLEManager.instance.serviceIDsToScanFor
+			BTLEManager.instance.serviceIDsToScanFor = []
+			BTLEManager.scanner.startScanning()
 		} else {
-			BTLE.scanner.stopScanning()
-			BTLE.manager.serviceIDsToScanFor = self.appFilters
+			BTLEManager.scanner.stopScanning()
+			BTLEManager.instance.serviceIDsToScanFor = self.appFilters
 			self.appFilters = []
-			BTLE.scanner.startScanning()
+			BTLEManager.scanner.startScanning()
 		}
 	}
 	

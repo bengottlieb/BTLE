@@ -30,11 +30,11 @@ public class NearbyPeripheralsTableView: UITableView, UITableViewDelegate, UITab
 	var nearbyPeripherals: [BTLEPeripheral] = []
 	
 	func setup() {
-		self.nearbyPeripherals = Array(BTLE.scanner.peripherals)
+		self.nearbyPeripherals = Array(BTLEManager.scanner.peripherals)
 		self.delegate = self
 		self.dataSource = self
 		
-		self.addAsObserver(for: BTLE.notifications.peripheralWasDiscovered, selector: #selector(NearbyPeripheralsTableView.reloadNearbyPeripherals), object: nil)
+		self.addAsObserver(for: BTLEManager.notifications.peripheralWasDiscovered, selector: #selector(NearbyPeripheralsTableView.reloadNearbyPeripherals), object: nil)
 		
 		self.register(UINib(nibName: "NearbyPeripheralsTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: NearbyPeripheralsTableViewCell.identifier)
 	}
@@ -42,7 +42,7 @@ public class NearbyPeripheralsTableView: UITableView, UITableViewDelegate, UITab
 	//=============================================================================================
 	//MARK: Notifications
 	public func reloadNearbyPeripherals() {
-		self.nearbyPeripherals = Array(BTLE.scanner.peripherals)
+		self.nearbyPeripherals = Array(BTLEManager.scanner.peripherals)
 		self.reload()
 	}
 

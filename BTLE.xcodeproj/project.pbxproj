@@ -56,8 +56,8 @@
 		B57CA3C41AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B57CA3C21AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift */; };
 		B57CA3C51AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B57CA3C31AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib */; };
 		B58D64791A898F89005A0002 /* BTLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B58D64681A898F81005A0002 /* BTLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B58D647F1A898FBD005A0002 /* BTLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D64751A898F81005A0002 /* BTLE.swift */; };
-		B58D64831A898FBE005A0002 /* BTLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D64751A898F81005A0002 /* BTLE.swift */; };
+		B58D647F1A898FBD005A0002 /* BTLEManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D64751A898F81005A0002 /* BTLEManager.swift */; };
+		B58D64831A898FBE005A0002 /* BTLEManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D64751A898F81005A0002 /* BTLEManager.swift */; };
 		B58D64961A899285005A0002 /* BTLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B58D646B1A898F81005A0002 /* BTLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B5BCEC091AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BCEC081AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift */; };
 		B5D6083E1ADBF4F6004DC9AC /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */; };
@@ -125,7 +125,7 @@
 		B58D64681A898F81005A0002 /* BTLE.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BTLE.h; sourceTree = "<group>"; };
 		B58D646A1A898F81005A0002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B58D646B1A898F81005A0002 /* BTLE.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BTLE.h; sourceTree = "<group>"; };
-		B58D64751A898F81005A0002 /* BTLE.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTLE.swift; sourceTree = "<group>"; };
+		B58D64751A898F81005A0002 /* BTLEManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTLEManager.swift; sourceTree = "<group>"; };
 		B58D64881A899094005A0002 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B58D648A1A899094005A0002 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		B58D648C1A899094005A0002 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -257,7 +257,7 @@
 		B58D64741A898F81005A0002 /* Framework Code */ = {
 			isa = PBXGroup;
 			children = (
-				B58D64751A898F81005A0002 /* BTLE.swift */,
+				B58D64751A898F81005A0002 /* BTLEManager.swift */,
 				B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */,
 				B501432F1BCBF17C00FA3A79 /* Beacon.swift */,
 				B5345B3E1AE1F20F0074F337 /* PeripheralManager.swift */,
@@ -534,7 +534,7 @@
 				B57CA3C11AEAD51700B0125F /* NearbyPeripheralsTableView.swift in Sources */,
 				B57CA3C41AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift in Sources */,
 				B5BCEC091AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift in Sources */,
-				B58D647F1A898FBD005A0002 /* BTLE.swift in Sources */,
+				B58D647F1A898FBD005A0002 /* BTLEManager.swift in Sources */,
 				B5DAB3361AE418FE00D49D44 /* Array+SA_Additions.swift in Sources */,
 				B5D6084A1ADC4486004DC9AC /* Service.swift in Sources */,
 				B50143301BCBF17C00FA3A79 /* Beacon.swift in Sources */,
@@ -553,7 +553,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B58D64831A898FBE005A0002 /* BTLE.swift in Sources */,
+				B58D64831A898FBE005A0002 /* BTLEManager.swift in Sources */,
 				B5037E751AE72B18000D2A64 /* Descriptor.swift in Sources */,
 				B5DAB3371AE418FE00D49D44 /* Array+SA_Additions.swift in Sources */,
 				B5D6084B1ADC4486004DC9AC /* Service.swift in Sources */,

@@ -10,7 +10,7 @@ import Foundation
 import CoreBluetooth
 
 public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
-	public var dispatchQueue = DispatchQueue(label: "BTLE.PeripheralManager queue")
+	public var dispatchQueue = DispatchQueue(label: "BTLEManager.PeripheralManager queue")
 	public var cbPeripheralManager: CBPeripheralManager?
 	public var advertisingData: [String: Any] = [CBAdvertisementDataLocalNameKey: UIDevice.current.name]
 	
@@ -22,30 +22,30 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	//=============================================================================================
 	//MARK: Actions
 	
-	public var state: BTLE.State { get { return self.internalState }}
-	var internalState: BTLE.State = .off { didSet {
+	public var state: BTLEManager.State { get { return self.internalState }}
+	var internalState: BTLEManager.State = .off { didSet {
 		if oldValue == self.internalState { return }
 		
 		self.stateChangeCounter += 1
 		
 		switch self.internalState {
 		case .off:
-			if oldValue != .idle { Notification.postOnMainThread(name: BTLE.notifications.didFinishAdvertising, object: self) }
-			if BTLE.manager.cyclingAdvertising {
+			if oldValue != .idle { Notification.postOnMainThread(name: BTLEManager.notifications.didFinishAdvertising, object: self) }
+			if BTLEManager.instance.cyclingAdvertising {
 				btle_delay(0.5) {
-					BTLE.manager.cyclingAdvertising = false
+					BTLEManager.instance.cyclingAdvertising = false
 					self.internalState = .active
 				}
 			}
 		case .startingUp:
-			Notification.postOnMainThread(name: BTLE.notifications.willStartAdvertising, object: self)
+			Notification.postOnMainThread(name: BTLEManager.notifications.willStartAdvertising, object: self)
 			break
 			
 		case .active:
 			break
 			
 		case .idle:
-			Notification.postOnMainThread(name: BTLE.notifications.didFinishAdvertising, object: self)
+			Notification.postOnMainThread(name: BTLEManager.notifications.didFinishAdvertising, object: self)
 			self.stopAdvertising()
 			
 		case .powerInterupted: break
@@ -151,10 +151,10 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	public func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveWrite requests: [CBATTRequest]) {
 		if requests.count == 0 { return }
 		for request in requests {
-			let info: NSMutableDictionary = [ BTLE.keys.deviceID: request.central.identifier.uuidString ]
+			let info: NSMutableDictionary = [ BTLEManager.keys.deviceID: request.central.identifier.uuidString ]
 			
-			if let peripheral = BTLE.scanner.existingPeripheral(with: request.central.identifier) { info[BTLE.keys.peripheral] = peripheral }
-			Notification.postOnMainThread(name: BTLE.notifications.characteristicWasWrittenTo, object: self.existingCharacteristic(with: request.characteristic), userInfo: info)
+			if let peripheral = BTLEManager.scanner.existingPeripheral(with: request.central.identifier) { info[BTLEManager.keys.peripheral] = peripheral }
+			Notification.postOnMainThread(name: BTLEManager.notifications.characteristicWasWrittenTo, object: self.existingCharacteristic(with: request.characteristic), userInfo: info)
 		}
 		self.cbPeripheralManager?.respond(to: requests[0], withResult: .success)
 	}
@@ -165,7 +165,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	
 	public func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
 		if let error = error {
-			BTLE.debugLog(.low, "advertising started with error: \(error)")
+			BTLEManager.debugLog(.low, "advertising started with error: \(error)")
 			self.internalState = .idle
 		}
 	}
@@ -210,7 +210,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 			
 			var options: [String: Any] = [:]
 			
-			if BTLE.advertiseInBackground { options[CBPeripheralManagerOptionRestoreIdentifierKey] = BTLEPeripheralManager.restoreIdentifier }
+			if BTLEManager.advertiseInBackground { options[CBPeripheralManagerOptionRestoreIdentifierKey] = BTLEPeripheralManager.restoreIdentifier }
 			
 			self.cbPeripheralManager = CBPeripheralManager(delegate: self, queue: self.dispatchQueue, options: options)
 		}
@@ -223,7 +223,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 			if !mgr.isAdvertising && mgr.state == .poweredOn && self.internalState != .active {
 				mgr.startAdvertising(self.combinedAdvertisementData)
 				
-				BTLE.debugLog(.medium, "Starting to advertise: \(self.combinedAdvertisementData)") 
+				BTLEManager.debugLog(.medium, "Starting to advertise: \(self.combinedAdvertisementData)") 
 			}
 		}
 	}
@@ -262,7 +262,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 			}
 			
 			if self.state == .active && restartAdvertising {
-				BTLE.manager.cycleAdvertising()
+				BTLEManager.instance.cycleAdvertising()
 			}
 		}
 	}
