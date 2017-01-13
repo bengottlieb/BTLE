@@ -19,7 +19,6 @@ public class BTLECharacteristic: NSObject {
 	public var writeBackInProgress: Bool { return self.writeBackCompletion != nil }
 	public var loadingState = BTLEManager.LoadingState.notLoaded { didSet {
 		if self.loadingState == .loaded {
-			print("Loaded")
 		}
 		
 	}}
