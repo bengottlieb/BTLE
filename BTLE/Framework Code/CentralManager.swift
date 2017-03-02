@@ -322,10 +322,8 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	}
 	
 	public func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
+		BTLEManager.debugLog(.medium, "Failed to connect to peripheral: \(peripheral): \(error)")
 		self.serialize {
-			if BTLEManager.debugLevel.rawValue > DebugLevel.none.rawValue {
-				BTLEManager.debugLog(.medium, "Failed to connect to peripheral: \(peripheral): \(error)")
-			}
 			if let existing = self.existingPeripheral(matching: peripheral) {
 				existing.didFailToConnect(error: error)
 			}
@@ -333,6 +331,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	}
 	
 	public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+		BTLEManager.debugLog(.high, "Connected to peripheral: \(peripheral)")
 		self.serialize {
 			if let per = self.add(peripheral: peripheral), per.state != .connected {
 				per.state = .connected

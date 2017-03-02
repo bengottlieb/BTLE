@@ -263,7 +263,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 				if (reloadServices) { self.loadingState = .reloading }
 				BTLEManager.debugLog(.medium, "Attempting to connect to \(self.name), current state: \(self.state.description)")
 				self.state = .connecting
-				BTLEManager.scanner.cbCentral.connect(self.cbPeripheral, options: [CBConnectPeripheralOptionNotifyOnConnectionKey: true])
+				BTLEManager.scanner.cbCentral.connect(self.cbPeripheral, options: [:])
 			}
 		}
 	}
