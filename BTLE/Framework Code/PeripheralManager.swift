@@ -106,34 +106,6 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		}
 	}
 	
-	public func peripheralManager(_ peripheral: CBPeripheralManager, willRestoreState dict: [String : Any])
- {
-		let advertised = ((dict["kCBRestoredAdvertisement"] as? [String: Any])?["kCBAdvDataServiceUUIDs"] as? [Data]) ?? []
-		var advertisedIDs: [CBUUID] = []
-		for data in advertised {
-			advertisedIDs.append(CBUUID(data: data as Data))
-		}
-		
-		
-		if let existingServices = dict["kCBRestoredServices"] as? [CBMutableService] {
-			var servicesToAdd = existingServices
-			
-			for service in self.services {
-				for existingService in existingServices {
-					if service.uuid == existingService.uuid	{
-						service.replaceCBService(with: existingService)
-						_ = servicesToAdd.remove(object: existingService)
-					}
-				}
-			}
-			
-			for service in servicesToAdd {
-				let ourService = BTLEMutableService(service: service, isAdvertised: advertisedIDs.contains(service.uuid))
-				self.services.append(ourService)
-			}
-		}
-	}
-	
 	public func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
 		if let characteristic = self.existingCharacteristic(with : request.characteristic) {
 			if let data = characteristic.dataValue {
@@ -283,4 +255,33 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		_ = self.services.remove(object: service)
 	}
 
+}
+
+class BTLEBackgroundablePeripheralManager: BTLEPeripheralManager {
+	public func peripheralManager(_ peripheral: CBPeripheralManager, willRestoreState dict: [String : Any]) {
+		let advertised = ((dict["kCBRestoredAdvertisement"] as? [String: Any])?["kCBAdvDataServiceUUIDs"] as? [Data]) ?? []
+		var advertisedIDs: [CBUUID] = []
+		for data in advertised {
+			advertisedIDs.append(CBUUID(data: data as Data))
+		}
+		
+		
+		if let existingServices = dict["kCBRestoredServices"] as? [CBMutableService] {
+			var servicesToAdd = existingServices
+			
+			for service in self.services {
+				for existingService in existingServices {
+					if service.uuid == existingService.uuid	{
+						service.replaceCBService(with: existingService)
+						_ = servicesToAdd.remove(object: existingService)
+					}
+				}
+			}
+			
+			for service in servicesToAdd {
+				let ourService = BTLEMutableService(service: service, isAdvertised: advertisedIDs.contains(service.uuid))
+				self.services.append(ourService)
+			}
+		}
+	}
 }

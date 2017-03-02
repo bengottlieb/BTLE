@@ -14,8 +14,8 @@ public enum DebugLevel: Int { case none, low, medium, high, superHigh }
 
 public class BTLEManager: NSObject {
 	public static var instance = BTLEManager()
-	public static var scanner = BTLECentralManager()
-	public static var advertiser = BTLEPeripheralManager()
+	public static var scanner = BTLEManager.browseInBackground ? BTLEBackgroundableCentralManager() : BTLECentralManager()
+	public static var advertiser = BTLEManager.advertiseInBackground ? BTLEBackgroundablePeripheralManager() : BTLEPeripheralManager()
 	
 	public enum LoadingState { case notLoaded, loading, loaded, loadingCancelled, reloading }
 	public enum ServiceFilter { case coreBluetooth, advertisingData, actualServices }

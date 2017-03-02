@@ -29,7 +29,6 @@
 		B504E6A51A897087001B414B /* BTLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B504E6461A8968DC001B414B /* BTLE.framework */; };
 		B5345B3F1AE1F20F0074F337 /* PeripheralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5345B3E1AE1F20F0074F337 /* PeripheralManager.swift */; };
 		B53E20031DD3B8990019BD3F /* Gulliver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20011DD3B8990019BD3F /* Gulliver.framework */; };
-		B53E20041DD3B8990019BD3F /* GulliverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20021DD3B8990019BD3F /* GulliverUI.framework */; };
 		B53EADE71C651C1D00A3203E /* BTLE+Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B53EADE51C651AD400A3203E /* BTLE+Errors.swift */; };
 		B53EADE81C651C1D00A3203E /* BTLE+Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B53EADE51C651AD400A3203E /* BTLE+Errors.swift */; };
 		B54473401DD4BD5C00590803 /* Gulliver.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20011DD3B8990019BD3F /* Gulliver.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -149,7 +148,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B53E20041DD3B8990019BD3F /* GulliverUI.framework in Frameworks */,
 				B53E20031DD3B8990019BD3F /* Gulliver.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

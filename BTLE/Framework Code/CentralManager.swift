@@ -321,14 +321,6 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	//	}
 	}
 	
-	public func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
-		self.serialize {
-			self.cbCentral = central
-			central.delegate = self
-			if self.cbCentral.state == .poweredOn { self.fetchConnectedPeripherals() }
-		}
-	}
-
 	public func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
 		self.serialize {
 			if BTLEManager.debugLevel.rawValue > DebugLevel.none.rawValue {
@@ -407,4 +399,14 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		return self.ignoredPeripherals.contains(peripheral) || self.ignoredPeripheralUUIDs.contains(peripheral.uuid.uuidString)
 	}
 
+}
+
+class BTLEBackgroundableCentralManager: BTLECentralManager {
+	public func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
+		self.serialize {
+			self.cbCentral = central
+			central.delegate = self
+			if self.cbCentral.state == .poweredOn { self.fetchConnectedPeripherals() }
+		}
+	}
 }
