@@ -1,0 +1,7 @@
+{
+  "disabled" : false,
+  "ios-frameworks" : [
+    "../Frameworks/Gulliver.framework",
+    "../Frameworks/GulliverUI.framework",
+  ],
+}
