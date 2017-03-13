@@ -117,9 +117,11 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 #if defined(__has_feature) && __has_feature(modules)
 @import UIKit;
 @import Foundation;
+@import CloudKit;
 @import ObjectiveC;
 @import CoreGraphics;
 @import CoreData;
+@import QuartzCore;
 @import MessageUI;
 #endif
 
@@ -144,7 +146,28 @@ SWIFT_CLASS("_TtC8Gulliver23AttributedTableViewCell")
 - (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
 @end
 
-@class NSBundle;
+@class UITraitCollection;
+@class UIImage;
+
+@interface NSBundle (SWIFT_EXTENSION(Gulliver))
+- (UIImage * _Nullable)imageWithNamed:(NSString * _Nonnull)named compatibleWith:(UITraitCollection * _Nullable)compatibleWith;
+@end
+
+
+@interface NSBundle (SWIFT_EXTENSION(Gulliver))
+@property (nonatomic, readonly, copy) NSString * _Nonnull version;
+@property (nonatomic, readonly, copy) NSString * _Nonnull buildNumber;
+@end
+
+@class CKDatabase;
+@class CKQueryOperation;
+@class NSMutableArray;
+
+@interface CKRecord (SWIFT_EXTENSION(Gulliver))
++ (void)removeAllRecordsWithType:(NSString * _Nonnull)type inDatabase:(CKDatabase * _Nonnull)database completion:(void (^ _Nonnull)(NSInteger, NSError * _Nullable))completion;
++ (void)removeRecordsFor:(CKQueryOperation * _Nonnull)operation inDatabase:(CKDatabase * _Nonnull)database includingFoundIDs:(NSMutableArray * _Nonnull)recordIDs completion:(void (^ _Nonnull)(NSInteger, NSError * _Nullable))completion;
+@end
+
 
 SWIFT_CLASS("_TtC8Gulliver23ContainerViewController")
 @interface ContainerViewController : UIViewController
@@ -245,6 +268,7 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, copy) NSURL * _Nulla
 - (void)contextDidSaveWithNote:(NSNotification * _Nonnull)note;
 - (NSManagedObjectContext * _Nonnull)createWorkerContextWithName:(NSString * _Nonnull)name;
 - (void)importWith:(void (^ _Nonnull)(NSManagedObjectContext * _Nonnull))block;
+- (void)importAndWaitWith:(void (^ _Nonnull)(NSManagedObjectContext * _Nonnull))block;
 - (id _Nullable)objectForKeyedSubscript:(NSString * _Nonnull)key;
 - (void)setObject:(id _Nullable)newValue forKeyedSubscript:(NSString * _Nonnull)key;
 - (void)deleteAllDataWithEntitiesToClear:(NSArray<NSEntityDescription *> * _Nullable)entitiesToClear completion:(void (^ _Nonnull)(void))completion;
@@ -303,12 +327,21 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, copy) NSDictionary<NSString *,
 
 
 @interface NSManagedObject (SWIFT_EXTENSION(Gulliver))
+@property (nonatomic, readonly) NSNotificationName _Nonnull didInsertNotificationName;
+@property (nonatomic, readonly) NSNotificationName _Nonnull didSaveAfterInsertionNotificationName;
+@property (nonatomic, readonly) NSNotificationName _Nonnull willDeleteNotificationName;
+@property (nonatomic, readonly) NSNotificationName _Nonnull didDeleteNotificationName;
+@end
+
+
+@interface NSManagedObject (SWIFT_EXTENSION(Gulliver))
 - (id _Nullable)objectForKeyedSubscript:(NSString * _Nonnull)key;
 - (void)setObject:(id _Nullable)newValue forKeyedSubscript:(NSString * _Nonnull)key;
 @property (nonatomic, readonly, strong) NSManagedObjectContext * _Nullable moc;
 - (NSManagedObject * _Nullable)instantiateIn:(NSManagedObjectContext * _Nonnull)moc;
 - (void)logObject;
 - (void)refreshInContextWithMerge:(BOOL)merge;
+- (void)saveWithWait:(BOOL)wait toDisk:(BOOL)toDisk completion:(void (^ _Nullable)(NSError * _Nullable))completion;
 - (void)deleteFromContextWithAndSave:(BOOL)andSave;
 - (BOOL)hasPropertyWithKey:(NSString * _Nonnull)key;
 @end
@@ -323,7 +356,7 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, copy) NSDictionary<NSString *,
 @interface NSManagedObjectContext (SWIFT_EXTENSION(Gulliver))
 - (NSManagedObject * _Nonnull)insertEntityWithNamed:(NSString * _Nonnull)name;
 - (NSInteger)countOf:(NSString * _Nonnull)entityName matching:(NSPredicate * _Nullable)predicate;
-- (void)saveContextWithWait:(BOOL)wait toDisk:(BOOL)toDisk completion:(void (^ _Nullable)(NSError * _Nullable))completion;
+- (void)saveContextWithWait:(BOOL)wait toDisk:(BOOL)toDisk suppressInsertedNotifications:(BOOL)suppressInsertedNotifications completion:(void (^ _Nullable)(NSError * _Nullable))completion;
 - (void)refreshAllFaults;
 - (NSFetchRequest<id <NSFetchRequestResult>> * _Nonnull)generateFetchRequestFor:(NSString * _Nonnull)name;
 - (NSManagedObject * _Nullable)insertObjectWithNamed:(NSString * _Nonnull)entityName;
@@ -366,6 +399,13 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, copy) NSDictionary<NSString *,
 - (void)removeAsObserverFor:(NSNotificationName _Nullable)notificationName;
 @end
 
+
+@interface NSObject (SWIFT_EXTENSION(Gulliver))
+@property (nonatomic, readonly, strong) NSBundle * _Nullable bundle;
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) NSBundle * _Nullable bundle;)
++ (NSBundle * _Nullable)bundle;
+@end
+
 @class NSMutableParagraphStyle;
 
 @interface NSParagraphStyle (SWIFT_EXTENSION(Gulliver))
@@ -376,6 +416,113 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, copy) NSDictionary<NSString *,
 @interface NSOperationQueue (SWIFT_EXTENSION(Gulliver))
 - (nonnull instancetype)initWithSerial:(BOOL)serial;
 - (void)addOperationAndWaitWithBlock:(void (^ _Nonnull)(void))block;
+@end
+
+
+@interface NSProgress (SWIFT_EXTENSION(Gulliver))
+@property (nonatomic) BOOL isDisplayedProgress;
+@end
+
+
+SWIFT_PROTOCOL("_TtP8Gulliver19ProgressDisplayable_")
+@protocol ProgressDisplayable
+@property (nonatomic) double fractionCompleted;
+@property (nonatomic) BOOL indeterminate;
+- (void)progressDisplayBegan;
+- (void)progressDisplayCompleted;
+@end
+
+@protocol ProgressDisplayableView;
+@class UIButton;
+@class UIColor;
+@class UIWindow;
+
+SWIFT_CLASS("_TtC8Gulliver15ProgressDisplay")
+@interface ProgressDisplay : UIView <ProgressDisplayable>
+@property (nonatomic, copy) NSString * _Nonnull title;
+@property (nonatomic, copy) NSString * _Nonnull detailText;
+@property (nonatomic, strong) id <ProgressDisplayableView> _Nullable determinateView;
+@property (nonatomic, strong) id <ProgressDisplayableView> _Nullable indeterminateView;
+@property (nonatomic, strong) UILabel * _Null_unspecified titleLabel;
+@property (nonatomic, strong) UILabel * _Null_unspecified detailLabel;
+@property (nonatomic, strong) UIButton * _Nullable button;
+@property (nonatomic, strong) UIColor * _Nonnull textColor;
+@property (nonatomic) BOOL closeWhenComplete;
+@property (nonatomic, strong) UIViewController * _Nullable presentingController;
+@property (nonatomic, strong) UIView * _Nullable blockerView;
+- (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
+@property (nonatomic) double fractionCompleted;
+@property (nonatomic) BOOL indeterminate;
+- (ProgressDisplay * _Nonnull)close:(BOOL)animated completion:(void (^ _Nullable)(void))completion;
+- (void)progressDisplayBegan;
+- (void)progressDisplayCompleted;
+- (ProgressDisplay * _Nonnull)showIn:(UIViewController * _Nonnull)parent animated:(BOOL)animated;
+- (ProgressDisplay * _Nonnull)showWithAnimated:(BOOL)animated;
+- (ProgressDisplay * _Nonnull)hideWithAnimated:(BOOL)animated completion:(void (^ _Nullable)(void))completion;
+- (void)update;
+- (void)layoutSubviews;
+@property (nonatomic, strong) UIWindow * _Nonnull backingWindow;
+- (UILabel * _Nonnull)labelWithFontOfSize:(CGFloat)size text:(NSString * _Nonnull)text;
+- (void)buttonTouchedWithSender:(id _Nullable)sender;
+@property (nonatomic) NSInteger visibleAlertCount;
+- (void)alertWillShowWithNote:(NSNotification * _Nonnull)note;
+- (void)alertDidHideWithNote:(NSNotification * _Nonnull)note;
+- (void)orientationChanged:(NSNotification * _Nonnull)note;
+- (nonnull instancetype)initWithFrame:(CGRect)frame SWIFT_UNAVAILABLE;
+@end
+
+
+SWIFT_CLASS("_TtC8Gulliver35ProgressDisplayBackingGradientLayer")
+@interface ProgressDisplayBackingGradientLayer : CALayer
+- (void)drawInContext:(CGContextRef _Nonnull)ctx;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)initWithLayer:(id _Nonnull)layer OBJC_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
+@end
+
+
+SWIFT_CLASS("_TtC8Gulliver26ProgressDisplayBackingView")
+@interface ProgressDisplayBackingView : UIView
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly) Class _Nonnull layerClass;)
++ (Class _Nonnull)layerClass;
+- (nonnull instancetype)initWithFrame:(CGRect)frame OBJC_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
+@end
+
+
+SWIFT_CLASS("_TtC8Gulliver22ProgressDisplayManager")
+@interface ProgressDisplayManager : NSObject
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) ProgressDisplayManager * _Nonnull defaultManager;)
++ (ProgressDisplayManager * _Nonnull)defaultManager;
+@property (nonatomic, strong) NSProgress * _Nullable progress;
+- (void)observeValueForKeyPath:(NSString * _Nullable)keyPath ofObject:(id _Nullable)object change:(NSDictionary<NSKeyValueChangeKey, id> * _Nullable)change context:(void * _Nullable)context;
+@property (nonatomic, strong) id <ProgressDisplayable> _Nullable currentDisplay;
+@property (nonatomic, copy) NSArray<id <ProgressDisplayable>> * _Nonnull displayStack;
+- (void)removeDisplay:(id <ProgressDisplayable> _Nonnull)display;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
+
+
+SWIFT_PROTOCOL("_TtP8Gulliver23ProgressDisplayableView_")
+@protocol ProgressDisplayableView
+@property (nonatomic) double fractionCompleted;
+@property (nonatomic, readonly, strong) UIView * _Nonnull view;
+@property (nonatomic, readonly) BOOL isIndeterminateDisplay;
+@end
+
+
+SWIFT_CLASS("_TtC8Gulliver18SA_AlertController")
+@interface SA_AlertController : UIAlertController
++ (void)showNextPendingIn:(UIViewController * _Nonnull)presenter;
+- (void)presentIn:(UIViewController * _Nullable)presenter;
+- (void)viewWillAppear:(BOOL)animated;
+- (void)viewDidDisappear:(BOOL)animated;
+- (void)cancelWithAnimated:(BOOL)animated completion:(void (^ _Nullable)(void))completion;
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly) NSInteger numberOfPendingAlerts;)
++ (NSInteger)numberOfPendingAlerts;
+- (nonnull instancetype)initWithNibName:(NSString * _Nullable)nibNameOrNil bundle:(NSBundle * _Nullable)nibBundleOrNil OBJC_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
 @end
 
 @class UIEvent;
@@ -408,10 +555,17 @@ SWIFT_CLASS("_TtC8Gulliver16SA_ManagedObject")
 @interface SA_ManagedObject : NSManagedObject
 SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, copy) NSString * _Nonnull entityName;)
 + (NSString * _Nonnull)entityName;
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly) NSNotificationName _Nonnull didInsertNotificationName;)
++ (NSNotificationName _Nonnull)didInsertNotificationName;
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly) NSNotificationName _Nonnull willDeleteNotificationName;)
++ (NSNotificationName _Nonnull)willDeleteNotificationName;
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly) NSNotificationName _Nonnull didDeleteNotificationName;)
++ (NSNotificationName _Nonnull)didDeleteNotificationName;
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly) NSNotificationName _Nonnull didSaveAfterInsertionNotificationName;)
++ (NSNotificationName _Nonnull)didSaveAfterInsertionNotificationName;
 - (nonnull instancetype)initWithEntity:(NSEntityDescription * _Nonnull)entity insertIntoManagedObjectContext:(NSManagedObjectContext * _Nullable)context OBJC_DESIGNATED_INITIALIZER;
 @end
 
-@class UIColor;
 
 SWIFT_CLASS("_TtC8Gulliver16SA_TableViewCell")
 @interface SA_TableViewCell : UITableViewCell
@@ -446,6 +600,14 @@ SWIFT_CLASS("_TtC8Gulliver18ShowErrorLogButton")
 @end
 
 
+@interface UIActivityIndicatorView (SWIFT_EXTENSION(Gulliver)) <ProgressDisplayableView>
+@property (nonatomic) double fractionCompleted;
+@property (nonatomic, readonly, strong) UIView * _Nonnull view;
+@property (nonatomic, readonly) BOOL isIndeterminateDisplay;
++ (UIActivityIndicatorView * _Nonnull)progressDisplay;
+@end
+
+
 @interface UIAlertController (SWIFT_EXTENSION(Gulliver))
 - (nonnull instancetype)initWithTitle:(NSString * _Nonnull)title message:(NSString * _Nullable)message buttons:(NSArray<NSString *> * _Nonnull)buttons block:(void (^ _Nullable)(NSInteger))block;
 @end
@@ -454,6 +616,10 @@ SWIFT_CLASS("_TtC8Gulliver18ShowErrorLogButton")
 @interface UIBarButtonItem (SWIFT_EXTENSION(Gulliver))
 - (nonnull instancetype)initWithSpacerWith:(CGFloat)spacerWith;
 + (UIBarButtonItem * _Nonnull)flexibleSpacer;
+- (nonnull instancetype)initWithImage:(UIImage * _Nullable)image block:(void (^ _Nonnull)(UIBarButtonItem * _Nonnull))block;
+- (nonnull instancetype)initWithTitle:(NSString * _Nullable)title block:(void (^ _Nonnull)(UIBarButtonItem * _Nonnull))block;
+- (nonnull instancetype)initWithBarButtonSystemItem:(UIBarButtonSystemItem)systemItem block:(void (^ _Nonnull)(UIBarButtonItem * _Nonnull))block;
+- (void)callBlock;
 @end
 
 
@@ -461,7 +627,6 @@ SWIFT_CLASS("_TtC8Gulliver18ShowErrorLogButton")
 - (void)appendStringWithString:(NSAttributedString * _Nonnull)string atPoint:(CGPoint)pt withTransform:(CGAffineTransform)withTransform;
 @end
 
-@class UIImage;
 @class UIFont;
 
 @interface UIButton (SWIFT_EXTENSION(Gulliver))
@@ -524,6 +689,13 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) UINib * _Non
 
 
 @interface UIImage (SWIFT_EXTENSION(Gulliver))
+@property (nonatomic, readonly, copy) NSString * _Nonnull md5;
+@end
+
+
+@interface UIImage (SWIFT_EXTENSION(Gulliver))
+- (BOOL)storeIn:(NSURL * _Nonnull)url error:(NSError * _Nullable * _Nullable)error;
+- (nullable instancetype)initWithContentsOf:(NSURL * _Nonnull)url;
 + (UIImage * _Nullable)createWithSize:(CGSize)size closure:(SWIFT_NOESCAPE void (^ _Nonnull)(CGContextRef _Nonnull))closure;
 - (UIImage * _Nullable)tintedImageWithTint:(UIColor * _Nonnull)tint;
 - (UIImage * _Nonnull)scaledImageWithScale:(CGFloat)scale;
@@ -540,6 +712,19 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) UINib * _Non
 
 @interface UILabel (SWIFT_EXTENSION(Gulliver))
 @property (nonatomic, readonly, strong) UIFont * _Nullable actualFontInUse;
+@end
+
+
+@interface UINavigationController (SWIFT_EXTENSION(Gulliver))
+@property (nonatomic, readonly, strong) UIViewController * _Nullable childViewControllerForStatusBarStyle;
+@end
+
+
+@interface UIProgressView (SWIFT_EXTENSION(Gulliver)) <ProgressDisplayableView>
+@property (nonatomic) double fractionCompleted;
+@property (nonatomic, readonly, strong) UIView * _Nonnull view;
+@property (nonatomic, readonly) BOOL isIndeterminateDisplay;
++ (UIProgressView * _Nonnull)progressDisplay;
 @end
 
 
@@ -627,12 +812,11 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) UINib * _Non
 
 
 @interface UIViewController (SWIFT_EXTENSION(Gulliver))
-- (void)slideInFromTheBottomFrom:(UIViewController * _Nonnull)parent completion:(void (^ _Nullable)(void))completion;
+- (void)slideInFromTheBottomFrom:(UIViewController * _Nonnull)parent offsetFromBottom:(CGFloat)offsetFromBottom dismissOnOutsideTap:(BOOL)dismissOnOutsideTap completion:(void (^ _Nullable)(void))completion;
 - (void)dismissFromBarButtonItem;
 - (void)dismissFromBottomSlideWithDuration:(NSTimeInterval)duration completion:(void (^ _Nullable)(void))completion;
 @end
 
-@class UINavigationController;
 @class UITextField;
 
 @interface UIViewController (SWIFT_EXTENSION(Gulliver))
@@ -670,6 +854,19 @@ SWIFT_CLASS("_TtC8Gulliver24UIViewControllerTabOrder")
 @interface NSUserDefaults (SWIFT_EXTENSION(Gulliver))
 - (BOOL)hasValueForKeyWithKey:(NSString * _Nonnull)key;
 - (void)removeValueForKey:(NSString * _Nonnull)key;
+@end
+
+
+SWIFT_CLASS("_TtC8Gulliver13XibHostedView")
+@interface XibHostedView : UIView <UITextFieldDelegate>
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, copy) NSSet<NSString *> * _Nonnull loading;)
++ (NSSet<NSString *> * _Nonnull)loading;
++ (void)setLoading:(NSSet<NSString *> * _Nonnull)value;
++ (XibHostedView * _Nullable)fromXIB;
+- (UIView * _Nullable)replaceFromXib;
+- (id _Nullable)awakeAfterUsingCoder:(NSCoder * _Nonnull)aDecoder;
+- (nonnull instancetype)initWithFrame:(CGRect)frame OBJC_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
 @end
 
 #pragma clang diagnostic pop

@@ -118,7 +118,7 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 @import UIKit;
 @import CoreGraphics;
 @import ObjectiveC;
-@import Foundation;
+@import Gulliver;
 #endif
 
 #pragma clang diagnostic ignored "-Wproperty-attribute-mismatch"
@@ -151,86 +151,11 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly) BOOL isVisible;)
 + (BOOL)isVisible;
 @end
 
-
-@interface NSProgress (SWIFT_EXTENSION(GulliverUI))
-@property (nonatomic) BOOL isDisplayedProgress;
-@end
-
-
-SWIFT_PROTOCOL("_TtP10GulliverUI19ProgressDisplayable_")
-@protocol ProgressDisplayable
-@property (nonatomic) double fractionCompleted;
-@property (nonatomic) BOOL indeterminate;
-- (void)progressDisplayBegan;
-- (void)progressDisplayCompleted;
-@end
-
-@protocol ProgressDisplayableView;
-@class UILabel;
-@class UIButton;
-@class UIColor;
-
-SWIFT_CLASS("_TtC10GulliverUI15ProgressDisplay")
-@interface ProgressDisplay : UIView <ProgressDisplayable>
-@property (nonatomic, copy) NSString * _Nonnull title;
-@property (nonatomic, copy) NSString * _Nonnull detailText;
-@property (nonatomic, strong) id <ProgressDisplayableView> _Nullable determinateView;
-@property (nonatomic, strong) id <ProgressDisplayableView> _Nullable indeterminateView;
-@property (nonatomic, strong) UILabel * _Null_unspecified titleLabel;
-@property (nonatomic, strong) UILabel * _Null_unspecified detailLabel;
-@property (nonatomic, strong) UIButton * _Nullable button;
-@property (nonatomic, strong) UIColor * _Nonnull textColor;
-@property (nonatomic) BOOL closeWhenComplete;
-- (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
-@property (nonatomic) double fractionCompleted;
-@property (nonatomic) BOOL indeterminate;
-- (ProgressDisplay * _Nonnull)close:(BOOL)animated completion:(void (^ _Nullable)(void))completion;
-- (void)progressDisplayBegan;
-- (void)progressDisplayCompleted;
-- (ProgressDisplay * _Nonnull)show:(BOOL)animated;
-- (ProgressDisplay * _Nonnull)hide:(BOOL)animated completion:(void (^ _Nullable)(void))completion;
-- (void)layoutSubviews;
-- (nonnull instancetype)initWithFrame:(CGRect)frame SWIFT_UNAVAILABLE;
-@end
-
-
-
-SWIFT_PROTOCOL("_TtP10GulliverUI23ProgressDisplayableView_")
-@protocol ProgressDisplayableView
-@property (nonatomic) double fractionCompleted;
-@property (nonatomic, readonly, strong) UIView * _Nonnull view;
-@property (nonatomic, readonly) BOOL isIndeterminateDisplay;
-@end
-
 @class NSError;
-@class NSBundle;
 
-SWIFT_CLASS("_TtC10GulliverUI18SA_AlertController")
-@interface SA_AlertController : UIAlertController
-+ (SA_AlertController * _Nonnull)showAlertWithTitle:(NSString * _Nonnull)title message:(NSString * _Nullable)message buttons:(NSArray<NSString *> * _Nonnull)buttons block:(void (^ _Nonnull)(NSInteger))block;
-+ (SA_AlertController * _Nonnull)showAlert:(NSError * _Nonnull)error title:(NSString * _Nonnull)title;
-- (void)presentController;
-- (void)viewWillAppear:(BOOL)animated;
-- (void)viewDidDisappear:(BOOL)animated;
-- (void)cancelWithAnimated:(BOOL)animated completion:(void (^ _Nullable)(void))completion;
-- (nonnull instancetype)initWithNibName:(NSString * _Nullable)nibNameOrNil bundle:(NSBundle * _Nullable)nibBundleOrNil OBJC_DESIGNATED_INITIALIZER;
-- (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
-@end
-
-
-@interface UIActivityIndicatorView (SWIFT_EXTENSION(GulliverUI)) <ProgressDisplayableView>
-@property (nonatomic) double fractionCompleted;
-@property (nonatomic, readonly, strong) UIView * _Nonnull view;
-@property (nonatomic, readonly) BOOL isIndeterminateDisplay;
-+ (UIActivityIndicatorView * _Nonnull)progressDisplay;
-@end
-
-
-@interface UIProgressView (SWIFT_EXTENSION(GulliverUI)) <ProgressDisplayableView>
-@property (nonatomic) double fractionCompleted;
-@property (nonatomic, readonly, strong) UIView * _Nonnull view;
-@property (nonatomic, readonly) BOOL isIndeterminateDisplay;
-+ (UIProgressView * _Nonnull)progressDisplay;
+@interface SA_AlertController (SWIFT_EXTENSION(GulliverUI))
++ (SA_AlertController * _Nonnull)showWithTitle:(NSString * _Nonnull)title message:(NSString * _Nullable)message buttons:(NSArray<NSString *> * _Nonnull)buttons block:(void (^ _Nonnull)(NSInteger))block;
++ (SA_AlertController * _Nonnull)showWithError:(NSError * _Nonnull)error title:(NSString * _Nonnull)title;
 @end
 
 
