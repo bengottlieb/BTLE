@@ -1,12 +1,12 @@
 {
-  "ios-output" : [
-    "..\/iOS Framework\/BTLE.framework"
-  ],
-  "name" : "BTLE",
-  "working-directory" : "..\/",
   "mac-output" : [
     "..\/Mac Framework\/BTLE.framework"
   ],
+  "name" : "BTLE",
+  "working-directory" : "..\/",
+  "disabled" : true,
   "scriptpath" : "..\/BTLE\/BuildFramework.sh",
-  "disabled" : false
+  "ios-output" : [
+    "..\/iOS Framework\/BTLE.framework"
+  ]
 }

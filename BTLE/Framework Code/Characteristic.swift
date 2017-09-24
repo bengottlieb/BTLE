@@ -127,7 +127,7 @@ public class BTLECharacteristic: NSObject {
 			self.dataValue = self.cbCharacteristic.value as Data?
 			self.loadingState = .loaded
 		} else {
-			BTLEManager.debugLog(.low, "Error \(self.loadingState == .reloading ? "reloading" : "loading") \(self.cbCharacteristic.uuid), \(error)")
+			BTLEManager.debugLog(.low, "Error \(self.loadingState == .reloading ? "reloading" : "loading") \(self.cbCharacteristic.uuid), \(error?.localizedDescription ?? "")")
 			self.resetLoadingState()
 		}
 		

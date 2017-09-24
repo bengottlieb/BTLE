@@ -322,7 +322,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	}
 	
 	public func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-		BTLEManager.debugLog(.medium, "Failed to connect to peripheral: \(peripheral): \(error)")
+		BTLEManager.debugLog(.medium, "Failed to connect to peripheral: \(peripheral): \(error?.localizedDescription ?? "")")
 		self.serialize {
 			if let existing = self.existingPeripheral(matching: peripheral) {
 				existing.didFailToConnect(error: error)
@@ -343,7 +343,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	public func centralManager(_ centralManager: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
 		self.serialize {
 			if let per = self.add(peripheral: peripheral), per.state != .discovered {
-				BTLEManager.debugLog(.medium, "Disconnected from: \(peripheral): \(error)")
+				BTLEManager.debugLog(.medium, "Disconnected from: \(peripheral): \(error?.localizedDescription ?? "")")
 				per.state = .discovered
 				per.sendNotification(name: BTLEManager.notifications.peripheralDidDisconnect)
 			}

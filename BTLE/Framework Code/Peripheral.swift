@@ -131,7 +131,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	}
 
 	func didFailToConnect(error: Error?) {
-		BTLEManager.debugLog(.medium, "Failed to connect \(self.name): \(error)")
+		BTLEManager.debugLog(.medium, "Failed to connect \(self.name): \(error?.localizedDescription ?? "")")
 		self.sendConnectionCompletions(error: error)
 	}
 	
@@ -139,7 +139,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		if self.sendCompletionsWhenFullyLoaded && (self.loadingState == .loading || self.loadingState == .reloading) { return }
 		
 		self.connectionTimeoutTimer?.invalidate()
-		BTLEManager.debugLog(.medium, "Sending \(self.connectionCompletionBlocks.count) completion messages (\(error))")
+		BTLEManager.debugLog(.medium, "Sending \(self.connectionCompletionBlocks.count) completion messages (\(error?.localizedDescription ?? ""))")
 		let completions = self.connectionCompletionBlocks
 		self.connectionCompletionBlocks = []
 		
@@ -217,7 +217,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 				}
 				if ignored {
 					self.ignored = .missingServices
-					BTLEManager.debugLog(.superHigh, "BTLE Peripheral: ignored \(self.cbPeripheral.name) with advertising info: \(info)")
+					BTLEManager.debugLog(.superHigh, "BTLE Peripheral: ignored \(self.cbPeripheral.name ?? "") with advertising info: \(info)")
 				} else {
 					self.ignored = .not
 				}
@@ -562,7 +562,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	
 	public func shouldLoadService(service: CBService) -> Bool {
 		if let pertinent = self.pertinentServices {
-			return pertinent.contains(obj: service.uuid)
+			return pertinent.contains(service.uuid)
 		}
 		return true
 	}

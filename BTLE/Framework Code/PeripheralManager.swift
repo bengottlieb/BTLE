@@ -252,7 +252,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 	
 	public func remove(service: BTLEMutableService) {
 		service.remove(from: self.cbPeripheralManager)
-		_ = self.services.remove(object: service)
+		_ = self.services.remove(service)
 	}
 
 }
@@ -273,7 +273,7 @@ class BTLEBackgroundablePeripheralManager: BTLEPeripheralManager {
 				for existingService in existingServices {
 					if service.uuid == existingService.uuid	{
 						service.replaceCBService(with: existingService)
-						_ = servicesToAdd.remove(object: existingService)
+						_ = servicesToAdd.remove(existingService)
 					}
 				}
 			}
