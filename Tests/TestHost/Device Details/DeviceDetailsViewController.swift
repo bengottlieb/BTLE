@@ -8,8 +8,7 @@
 
 import UIKit
 import BTLE
-import Gulliver
-import GulliverUI
+import Studio
 
 class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 	deinit {
@@ -23,13 +22,13 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 	var refreshControl: UIRefreshControl?
 	
 	
-	func startLoading() {
+	@objc func startLoading() {
 		DispatchQueue.main.async {
 			self.refreshControl?.beginRefreshing()
 		}
 	}
 
-	func finishLoading() {
+	@objc func finishLoading() {
 		DispatchQueue.main.async {
 			self.refreshControl?.endRefreshing()
 		}
@@ -41,16 +40,16 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 		
 		super.init(nibName: "DeviceDetailsViewController", bundle: nil)
 		
-		self.addAsObserver(for: BTLEManager.notifications.peripheralDidBeginLoading, selector: #selector(startLoading))
-		self.addAsObserver(for: BTLEManager.notifications.peripheralDidFinishLoading, selector: #selector(finishLoading))
-		self.addAsObserver(for: BTLEManager.notifications.peripheralDidConnect, selector: #selector(updateConnectedState))
-		self.addAsObserver(for: BTLEManager.notifications.peripheralDidDisconnect, selector: #selector(updateConnectedState))
+		self.addAsObserver(of: BTLEManager.notifications.peripheralDidBeginLoading, selector: #selector(startLoading))
+		self.addAsObserver(of: BTLEManager.notifications.peripheralDidFinishLoading, selector: #selector(finishLoading))
+		self.addAsObserver(of: BTLEManager.notifications.peripheralDidConnect, selector: #selector(updateConnectedState))
+		self.addAsObserver(of: BTLEManager.notifications.peripheralDidDisconnect, selector: #selector(updateConnectedState))
 		self.updateSections()
 		
 		self.updateConnectedState()
 	}
 	
-	func updateConnectedState() {
+	@objc func updateConnectedState() {
 		DispatchQueue.main.async {
 			self.tableView?.alpha = (self.peripheral.state == .connected) ? 1.0 : 0.5
 			self.title = self.peripheral.name + ((self.peripheral.state == .connected) ? " Connected" : " Disconnected")
@@ -79,7 +78,7 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
         // Do any additional setup after loading the view.
     }
 	
-	func reloadDevice() {
+	@objc func reloadDevice() {
 		self.peripheral.reloadServices()
 	}
 	
@@ -179,12 +178,12 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 			chr.reload()
 			print("\(chr)")
 		} else {
-			var info = self.peripheral.advertisementData
-			var keys = ((info as NSDictionary).allKeys as! [String]).sorted { $0 < $1 }
+			let info = self.peripheral.advertisementData
+			let keys = ((info as NSDictionary).allKeys as! [String]).sorted { $0 < $1 }
 			let key = keys[indexPath.row]
 			let value = info[key] as? CustomStringConvertible
 			
-			print("\(value)")
+			print("\(value?.description ?? "")")
 		}
 	}
 }

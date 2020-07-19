@@ -3,22 +3,8 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
-
-/* Begin PBXAggregateTarget section */
-		B504E6661A89690C001B414B /* Combined Framework */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = B504E6671A89690C001B414B /* Build configuration list for PBXAggregateTarget "Combined Framework" */;
-			buildPhases = (
-				B504E66B1A89698A001B414B /* ShellScript */,
-			);
-			dependencies = (
-			);
-			name = "Combined Framework";
-			productName = "Combined Framework";
-		};
-/* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
 		B50143301BCBF17C00FA3A79 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B501432F1BCBF17C00FA3A79 /* Beacon.swift */; };
@@ -28,11 +14,8 @@
 		B504E69D1A896E82001B414B /* BTLE_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B504E69C1A896E82001B414B /* BTLE_Tests.swift */; };
 		B504E6A51A897087001B414B /* BTLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B504E6461A8968DC001B414B /* BTLE.framework */; };
 		B5345B3F1AE1F20F0074F337 /* PeripheralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5345B3E1AE1F20F0074F337 /* PeripheralManager.swift */; };
-		B53E20031DD3B8990019BD3F /* Gulliver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20011DD3B8990019BD3F /* Gulliver.framework */; };
 		B53EADE71C651C1D00A3203E /* BTLE+Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B53EADE51C651AD400A3203E /* BTLE+Errors.swift */; };
 		B53EADE81C651C1D00A3203E /* BTLE+Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B53EADE51C651AD400A3203E /* BTLE+Errors.swift */; };
-		B54473401DD4BD5C00590803 /* Gulliver.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20011DD3B8990019BD3F /* Gulliver.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B54473411DD4BD5C00590803 /* GulliverUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20021DD3B8990019BD3F /* GulliverUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B54473421DD4BD6300590803 /* BTLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B504E6461A8968DC001B414B /* BTLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B54473451DD4BD9300590803 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D64881A899094005A0002 /* AppDelegate.swift */; };
 		B54473461DD4BDA100590803 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B58D648D1A899094005A0002 /* Images.xcassets */; };
@@ -48,17 +31,17 @@
 		B54473501DD4BDB500590803 /* CharacteristicTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5037E6F1AE6F9BF000D2A64 /* CharacteristicTableViewCell.swift */; };
 		B54473511DD4BDB500590803 /* CharacteristicTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5037E701AE6F9BF000D2A64 /* CharacteristicTableViewCell.xib */; };
 		B54473521DD4BDB900590803 /* zap.caf in Resources */ = {isa = PBXBuildFile; fileRef = B5037E761AE875FC000D2A64 /* zap.caf */; };
-		B54473531DD4BFCC00590803 /* Gulliver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20011DD3B8990019BD3F /* Gulliver.framework */; };
-		B54473541DD4BFCC00590803 /* GulliverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B53E20021DD3B8990019BD3F /* GulliverUI.framework */; };
 		B54473551DD4BFD600590803 /* BTLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B504E6461A8968DC001B414B /* BTLE.framework */; };
+		B55C377C24C4B24A00FE6401 /* Studio in Frameworks */ = {isa = PBXBuildFile; productRef = B55C377B24C4B24A00FE6401 /* Studio */; };
+		B55C377E24C4B25100FE6401 /* Studio in Frameworks */ = {isa = PBXBuildFile; productRef = B55C377D24C4B25100FE6401 /* Studio */; };
 		B57CA3C11AEAD51700B0125F /* NearbyPeripheralsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B57CA3C01AEAD51700B0125F /* NearbyPeripheralsTableView.swift */; };
 		B57CA3C41AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B57CA3C21AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift */; };
-		B57CA3C51AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B57CA3C31AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib */; };
 		B58D64791A898F89005A0002 /* BTLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B58D64681A898F81005A0002 /* BTLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B58D647F1A898FBD005A0002 /* BTLEManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D64751A898F81005A0002 /* BTLEManager.swift */; };
 		B58D64831A898FBE005A0002 /* BTLEManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D64751A898F81005A0002 /* BTLEManager.swift */; };
 		B58D64961A899285005A0002 /* BTLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B58D646B1A898F81005A0002 /* BTLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B5BCEC091AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BCEC081AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift */; };
+		B5D14CF424C4C6A400D6E991 /* PeripheralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5345B3E1AE1F20F0074F337 /* PeripheralManager.swift */; };
 		B5D6083E1ADBF4F6004DC9AC /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */; };
 		B5D6083F1ADBF4F6004DC9AC /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */; };
 		B5D608411ADBFD4C004DC9AC /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D608401ADBFD4C004DC9AC /* Peripheral.swift */; };
@@ -88,8 +71,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B54473401DD4BD5C00590803 /* Gulliver.framework in Embed Frameworks */,
-				B54473411DD4BD5C00590803 /* GulliverUI.framework in Embed Frameworks */,
 				B54473421DD4BD6300590803 /* BTLE.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -106,20 +87,16 @@
 		B5037E731AE72B18000D2A64 /* Descriptor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Descriptor.swift; sourceTree = "<group>"; };
 		B5037E761AE875FC000D2A64 /* zap.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = zap.caf; sourceTree = "<group>"; };
 		B504E6461A8968DC001B414B /* BTLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BTLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B504E66A1A896980001B414B /* BuildFramework.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = BuildFramework.sh; path = BTLE/BuildFramework.sh; sourceTree = "<group>"; };
 		B504E6981A896E82001B414B /* BTLE Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BTLE Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B504E69B1A896E82001B414B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B504E69C1A896E82001B414B /* BTLE_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTLE_Tests.swift; sourceTree = "<group>"; };
 		B504E6AF1A898110001B414B /* BTLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BTLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5345B3E1AE1F20F0074F337 /* PeripheralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManager.swift; sourceTree = "<group>"; };
-		B53E20011DD3B8990019BD3F /* Gulliver.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Gulliver.framework; sourceTree = "<group>"; };
-		B53E20021DD3B8990019BD3F /* GulliverUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GulliverUI.framework; sourceTree = "<group>"; };
 		B53EADE51C651AD400A3203E /* BTLE+Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "BTLE+Errors.swift"; sourceTree = "<group>"; };
 		B544732D1DD4BD2000590803 /* TestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B57CA3C01AEAD51700B0125F /* NearbyPeripheralsTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPeripheralsTableView.swift; sourceTree = "<group>"; };
 		B57CA3C21AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPeripheralsTableViewCell.swift; sourceTree = "<group>"; };
-		B57CA3C31AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NearbyPeripheralsTableViewCell.xib; sourceTree = "<group>"; };
-		B57CA3C71AEB2B9A00B0125F /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = MyPlayground.playground; path = BTLE/MyPlayground.playground; sourceTree = SOURCE_ROOT; };
+		B57CA3C71AEB2B9A00B0125F /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = MyPlayground.playground; path = Misc/MyPlayground.playground; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		B58D64671A898F81005A0002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B58D64681A898F81005A0002 /* BTLE.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BTLE.h; sourceTree = "<group>"; };
 		B58D646A1A898F81005A0002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -134,6 +111,7 @@
 		B5A4823C1AE3F1E8001636BE /* DeviceDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DeviceDetailsViewController.swift; path = "Device Details/DeviceDetailsViewController.swift"; sourceTree = "<group>"; };
 		B5A4823D1AE3F1E8001636BE /* DeviceDetailsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DeviceDetailsViewController.xib; path = "Device Details/DeviceDetailsViewController.xib"; sourceTree = "<group>"; };
 		B5BCEC081AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPeripheralsViewController.swift; sourceTree = "<group>"; };
+		B5D14CF724C4D64E00D6E991 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		B5D6083D1ADBF4F6004DC9AC /* CentralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManager.swift; sourceTree = "<group>"; };
 		B5D608401ADBFD4C004DC9AC /* Peripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
 		B5D608491ADC4486004DC9AC /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
@@ -148,7 +126,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B53E20031DD3B8990019BD3F /* Gulliver.framework in Frameworks */,
+				B55C377C24C4B24A00FE6401 /* Studio in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -164,6 +142,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B55C377E24C4B25100FE6401 /* Studio in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -171,9 +150,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B54473531DD4BFCC00590803 /* Gulliver.framework in Frameworks */,
 				B54473551DD4BFD600590803 /* BTLE.framework in Frameworks */,
-				B54473541DD4BFCC00590803 /* GulliverUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -183,15 +160,11 @@
 		B504E60A1A89230F001B414B = {
 			isa = PBXGroup;
 			children = (
-				B504E66A1A896980001B414B /* BuildFramework.sh */,
-				B57CA3C71AEB2B9A00B0125F /* MyPlayground.playground */,
-				B58D64741A898F81005A0002 /* Framework Code */,
-				B58D64661A898F81005A0002 /* BTLE_Mac */,
-				B58D64691A898F81005A0002 /* BTLE_iOS */,
+				B5D14CF724C4D64E00D6E991 /* Package.swift */,
+				B5D14CF624C4D62400D6E991 /* Misc */,
+				B5D14CF524C4D53700D6E991 /* Sources */,
 				B504E6991A896E82001B414B /* BTLE Tests */,
 				B504E6141A89230F001B414B /* Products */,
-				B582A2B91ADDB1FB00736517 /* Mac Frameworks */,
-				B5D608431ADC097E004DC9AC /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -225,13 +198,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		B582A2B91ADDB1FB00736517 /* Mac Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "Mac Frameworks";
-			sourceTree = "<group>";
-		};
 		B58D64661A898F81005A0002 /* BTLE_Mac */ = {
 			isa = PBXGroup;
 			children = (
@@ -239,7 +205,7 @@
 				B58D64681A898F81005A0002 /* BTLE.h */,
 			);
 			name = BTLE_Mac;
-			path = BTLE/Mac;
+			path = Mac;
 			sourceTree = "<group>";
 		};
 		B58D64691A898F81005A0002 /* BTLE_iOS */ = {
@@ -249,10 +215,10 @@
 				B58D646B1A898F81005A0002 /* BTLE.h */,
 			);
 			name = BTLE_iOS;
-			path = BTLE/iOS;
+			path = iOS;
 			sourceTree = "<group>";
 		};
-		B58D64741A898F81005A0002 /* Framework Code */ = {
+		B58D64741A898F81005A0002 /* BTLE */ = {
 			isa = PBXGroup;
 			children = (
 				B58D64751A898F81005A0002 /* BTLEManager.swift */,
@@ -267,8 +233,7 @@
 				B5DAB3351AE418FE00D49D44 /* Array+SA_Additions.swift */,
 				B5BCEC0A1AEDCD500089C3DC /* Nearby */,
 			);
-			name = "Framework Code";
-			path = "BTLE/Framework Code";
+			path = BTLE;
 			sourceTree = "<group>";
 		};
 		B58D64871A899094005A0002 /* TestHost */ = {
@@ -299,18 +264,26 @@
 				B57CA3C01AEAD51700B0125F /* NearbyPeripheralsTableView.swift */,
 				B5BCEC081AEDC9DD0089C3DC /* NearbyPeripheralsViewController.swift */,
 				B57CA3C21AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.swift */,
-				B57CA3C31AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib */,
 			);
 			name = Nearby;
 			sourceTree = "<group>";
 		};
-		B5D608431ADC097E004DC9AC /* Frameworks */ = {
+		B5D14CF524C4D53700D6E991 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				B53E20011DD3B8990019BD3F /* Gulliver.framework */,
-				B53E20021DD3B8990019BD3F /* GulliverUI.framework */,
+				B58D64741A898F81005A0002 /* BTLE */,
 			);
-			path = Frameworks;
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		B5D14CF624C4D62400D6E991 /* Misc */ = {
+			isa = PBXGroup;
+			children = (
+				B57CA3C71AEB2B9A00B0125F /* MyPlayground.playground */,
+				B58D64661A898F81005A0002 /* BTLE_Mac */,
+				B58D64691A898F81005A0002 /* BTLE_iOS */,
+			);
+			path = Misc;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -349,6 +322,9 @@
 			dependencies = (
 			);
 			name = BTLE_iOS;
+			packageProductDependencies = (
+				B55C377B24C4B24A00FE6401 /* Studio */,
+			);
 			productName = BTLE;
 			productReference = B504E6461A8968DC001B414B /* BTLE.framework */;
 			productType = "com.apple.product-type.framework";
@@ -384,6 +360,9 @@
 			dependencies = (
 			);
 			name = BTLE_Mac;
+			packageProductDependencies = (
+				B55C377D24C4B25100FE6401 /* Studio */,
+			);
 			productName = BTLE_Mac;
 			productReference = B504E6AF1A898110001B414B /* BTLE.framework */;
 			productType = "com.apple.product-type.framework";
@@ -415,15 +394,13 @@
 			attributes = {
 				LastSwiftMigration = 0700;
 				LastSwiftUpdateCheck = 0810;
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = "Stand Alone, inc.";
 				TargetAttributes = {
 					B504E6451A8968DC001B414B = {
 						CreatedOnToolsVersion = 6.1.1;
 						DevelopmentTeam = YY6CWUX533;
-					};
-					B504E6661A89690C001B414B = {
-						CreatedOnToolsVersion = 6.1.1;
+						LastSwiftMigration = 1000;
 					};
 					B504E6971A896E82001B414B = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -442,20 +419,22 @@
 			};
 			buildConfigurationList = B504E60E1A89230F001B414B /* Build configuration list for PBXProject "BTLE" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
 			mainGroup = B504E60A1A89230F001B414B;
+			packageReferences = (
+				B55C377A24C4B23500FE6401 /* XCRemoteSwiftPackageReference "Suite" */,
+			);
 			productRefGroup = B504E6141A89230F001B414B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				B504E6451A8968DC001B414B /* BTLE_iOS */,
 				B504E6AE1A898110001B414B /* BTLE_Mac */,
-				B504E6661A89690C001B414B /* Combined Framework */,
 				B504E6971A896E82001B414B /* BTLE Tests */,
 				B544732C1DD4BD2000590803 /* TestHost */,
 			);
@@ -467,7 +446,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B57CA3C51AEAD77D00B0125F /* NearbyPeripheralsTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -501,22 +479,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		B504E66B1A89698A001B414B /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = ./BTLE/BuildFramework.sh;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B504E6411A8968DC001B414B /* Sources */ = {
@@ -556,6 +518,7 @@
 				B5DAB3371AE418FE00D49D44 /* Array+SA_Additions.swift in Sources */,
 				B5D6084B1ADC4486004DC9AC /* Service.swift in Sources */,
 				B5D6084E1ADC44A5004DC9AC /* Characteristic.swift in Sources */,
+				B5D14CF424C4C6A400D6E991 /* PeripheralManager.swift in Sources */,
 				B5D608421ADBFD4C004DC9AC /* Peripheral.swift in Sources */,
 				B5D6083F1ADBF4F6004DC9AC /* CentralManager.swift in Sources */,
 				B53EADE81C651C1D00A3203E /* BTLE+Errors.swift in Sources */,
@@ -618,14 +581,17 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -657,7 +623,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0.1;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -673,14 +639,17 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -703,8 +672,9 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 3.0.1;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -730,11 +700,16 @@
 				);
 				INFOPLIST_FILE = BTLE/iOS/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = BTLE;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0.1;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -758,29 +733,21 @@
 				);
 				INFOPLIST_FILE = BTLE/iOS/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = BTLE;
 				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 3.0.1;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		B504E6681A89690C001B414B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		B504E6691A89690C001B414B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -798,7 +765,11 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestHost.app/TestHost";
@@ -815,7 +786,11 @@
 					"$(PROJECT_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestHost.app/TestHost";
@@ -837,6 +812,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Mac",
 					Frameworks,
+					"$(PROJECT_DIR)/Mac\\ Frameworks",
 				);
 				FRAMEWORK_VERSION = A;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -845,8 +821,12 @@
 				);
 				INFOPLIST_FILE = BTLE/Mac/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = BTLE;
 				SDKROOT = macosx;
@@ -872,12 +852,17 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Mac",
 					Frameworks,
+					"$(PROJECT_DIR)/Mac\\ Frameworks",
 				);
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = BTLE/Mac/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.standalone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = BTLE;
 				SDKROOT = macosx;
@@ -901,12 +886,14 @@
 					"$(PROJECT_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/TestHost/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.standalone.TestHost2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -926,11 +913,13 @@
 					"$(PROJECT_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/TestHost/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.standalone.TestHost2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -952,15 +941,6 @@
 			buildConfigurations = (
 				B504E6601A8968DC001B414B /* Debug */,
 				B504E6611A8968DC001B414B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B504E6671A89690C001B414B /* Build configuration list for PBXAggregateTarget "Combined Framework" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B504E6681A89690C001B414B /* Debug */,
-				B504E6691A89690C001B414B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -993,6 +973,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B55C377A24C4B23500FE6401 /* XCRemoteSwiftPackageReference "Suite" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/bengottlieb/Suite.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.55;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B55C377B24C4B24A00FE6401 /* Studio */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B55C377A24C4B23500FE6401 /* XCRemoteSwiftPackageReference "Suite" */;
+			productName = Studio;
+		};
+		B55C377D24C4B25100FE6401 /* Studio */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B55C377A24C4B23500FE6401 /* XCRemoteSwiftPackageReference "Suite" */;
+			productName = Studio;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B504E60B1A89230F001B414B /* Project object */;
 }

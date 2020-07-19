@@ -7,9 +7,8 @@
 //
 
 import UIKit
-import Gulliver
 import CoreImage
-import Gulliver
+import Studio
 
 class BeaconSettingsViewController: UIViewController {
 	
@@ -26,11 +25,11 @@ class BeaconSettingsViewController: UIViewController {
 		parent.present(nav, animated: true, completion: nil)
 	}
 	
-	func done() {
-		UserDefaults.set(self.uuidField.text, forKey: AppDelegate.beaconProximityIDKey)
-		UserDefaults.set(self.majorField.text, forKey: AppDelegate.beaconMajorIDKey)
-		UserDefaults.set(self.minorField.text, forKey: AppDelegate.beaconMinorIDKey)
-		UserDefaults.set(self.enabledSwitch.isOn, forKey: AppDelegate.beaconEnabledKey)
+	@objc func done() {
+		UserDefaults.standard.set(self.uuidField.text, forKey: AppDelegate.beaconProximityIDKey)
+		UserDefaults.standard.set(self.majorField.text, forKey: AppDelegate.beaconMajorIDKey)
+		UserDefaults.standard.set(self.minorField.text, forKey: AppDelegate.beaconMinorIDKey)
+		UserDefaults.standard.set(self.enabledSwitch.isOn, forKey: AppDelegate.beaconEnabledKey)
 		
 		AppDelegate.instance.setupBeacon()
 		self.dismiss()
@@ -42,7 +41,7 @@ class BeaconSettingsViewController: UIViewController {
 		self.updateQRCodeImage()
 	}
 	
-	func updateQRCodeImage() {
+	@objc func updateQRCodeImage() {
 		if let data = self.uuidField.text?.data(using: .isoLatin1, allowLossyConversion: false), let filter = CIFilter(name: "CIQRCodeGenerator") {
 			filter.setValue(data, forKey: "inputMessage")
 			filter.setValue("Q", forKey: "inputCorrectionLevel")
@@ -53,7 +52,7 @@ class BeaconSettingsViewController: UIViewController {
 	}
 	
 	weak var timer: Timer?
-	override func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+	func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
 		self.timer?.invalidate()
 		DispatchQueue.main.async {
 			self.timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(BeaconSettingsViewController.updateQRCodeImage), userInfo: nil, repeats: false)
@@ -61,13 +60,13 @@ class BeaconSettingsViewController: UIViewController {
 		return true
 	}
 	
-	override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		textField.resignFirstResponder()
 		return false
 	}
 	
 	
-	func cancel() {
+	@objc func cancel() {
 		self.dismiss()
 	}
 	
@@ -87,13 +86,13 @@ class BeaconSettingsViewController: UIViewController {
 		self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(BeaconSettingsViewController.cancel))
 		self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(BeaconSettingsViewController.done))
 
-		var label = UserDefaults.get(key: AppDelegate.beaconProximityIDKey) 
-		if label.length == 0 { label = UUID().uuidString }
+		var label = UserDefaults.standard.string(forKey: AppDelegate.beaconProximityIDKey)
+		if label.isEmpty { label = UUID().uuidString }
 		
 		self.uuidField.text = label
-		self.majorField.text = UserDefaults.get(key: AppDelegate.beaconMajorIDKey)
-		self.minorField.text = UserDefaults.get(key: AppDelegate.beaconMinorIDKey)
-		self.enabledSwitch.isOn = UserDefaults.get(key: AppDelegate.beaconEnabledKey)
+		self.majorField.text = UserDefaults.standard.string(forKey: AppDelegate.beaconMajorIDKey)
+		self.minorField.text = UserDefaults.standard.string(forKey: AppDelegate.beaconMinorIDKey)
+		self.enabledSwitch.isOn = UserDefaults.standard.bool(forKey: AppDelegate.beaconEnabledKey)
 		
         // Do any additional setup after loading the view.
     }

@@ -1,21 +1,22 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17132" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17105.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" indentationWidth="10" rowHeight="71" id="KGk-i7-Jjw" customClass="PeripheralCellTableViewCell" customModule="BTLESniffer" customModuleProvider="target">
+        <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" indentationWidth="10" rowHeight="71" id="KGk-i7-Jjw" customClass="PeripheralCellTableViewCell" customModule="TestHost" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="518" height="71"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="485" height="70"/>
+                <rect key="frame" x="0.0" y="0.0" width="487" height="71"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="Info" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Eep-zG-AJ2">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" misplaced="YES" text="Info" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Eep-zG-AJ2">
                         <rect key="frame" x="8" y="23" width="420" height="47"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="420" id="bO4-y1-hcg"/>
@@ -29,28 +30,28 @@
                         </variation>
                     </label>
                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3em-jK-jrJ">
-                        <rect key="frame" x="436" y="31" width="51" height="31"/>
+                        <rect key="frame" x="430" y="29" width="51" height="31"/>
                         <connections>
                             <action selector="connect" destination="KGk-i7-Jjw" eventType="valueChanged" id="IEK-Z6-NPo"/>
                         </connections>
                     </switch>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pPY-nG-KYs">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pPY-nG-KYs">
                         <rect key="frame" x="443" y="2" width="42" height="21"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="21" id="NKm-vZ-niU"/>
                             <constraint firstAttribute="width" constant="42" id="QdZ-gK-Lce"/>
                         </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <color key="textColor" systemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w9A-tM-WQa">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w9A-tM-WQa">
                         <rect key="frame" x="8" y="2" width="420" height="20"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="420" id="oIt-RC-zfL"/>
                         </constraints>
                         <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
-                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <color key="textColor" systemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                         <variation key="default">
                             <mask key="constraints">
@@ -62,7 +63,7 @@
                 <constraints>
                     <constraint firstItem="Eep-zG-AJ2" firstAttribute="top" secondItem="w9A-tM-WQa" secondAttribute="bottom" constant="1" id="1YJ-r8-bPJ"/>
                     <constraint firstItem="pPY-nG-KYs" firstAttribute="leading" secondItem="w9A-tM-WQa" secondAttribute="trailing" constant="15" id="91l-ju-AX5"/>
-                    <constraint firstAttribute="trailingMargin" secondItem="3em-jK-jrJ" secondAttribute="trailing" constant="-8" id="KVS-Pb-WIr"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="3em-jK-jrJ" secondAttribute="trailing" id="KVS-Pb-WIr"/>
                     <constraint firstItem="3em-jK-jrJ" firstAttribute="leading" secondItem="Eep-zG-AJ2" secondAttribute="trailing" constant="8" id="RSW-6m-Fbt"/>
                     <constraint firstItem="Eep-zG-AJ2" firstAttribute="top" secondItem="w9A-tM-WQa" secondAttribute="bottom" constant="1" id="SQZ-Rv-7FA"/>
                     <constraint firstItem="Eep-zG-AJ2" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="UiV-a1-NyI"/>
@@ -90,4 +91,12 @@
             <point key="canvasLocation" x="524" y="412.5"/>
         </tableViewCell>
     </objects>
+    <resources>
+        <systemColor name="darkTextColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="darkTextColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>

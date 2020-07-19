@@ -8,9 +8,8 @@
 
 import UIKit
 import BTLE
-import Gulliver
 import CoreBluetooth
-import GulliverUI
+import Studio
 
 class CharacteristicTableViewCell: UITableViewCell {
 	@IBOutlet var nameAndPropertiesLabel: UILabel!
@@ -30,14 +29,14 @@ class CharacteristicTableViewCell: UITableViewCell {
 	
     override func awakeFromNib() {
         super.awakeFromNib()
-		self.addAsObserver(for: BTLEManager.notifications.characteristicDidUpdate, selector: #selector(updateUI), object: nil)
-		self.addAsObserver(for: BTLEManager.notifications.characteristicListeningChanged, selector: #selector(updateUI), object: nil)
+		self.addAsObserver(of: BTLEManager.notifications.characteristicDidUpdate, selector: #selector(updateUI), object: nil)
+		self.addAsObserver(of: BTLEManager.notifications.characteristicListeningChanged, selector: #selector(updateUI), object: nil)
 		
 		self.updateUI()
         // Initialization code
     }
 	
-	func updateUI() {
+	@objc func updateUI() {
 		btle_dispatch_main	{
 			if let chr = self.characteristic {
 				self.notifySwitch.isOn = (chr.state == .listening || chr.state == .startingToListen)
@@ -72,7 +71,7 @@ class CharacteristicTableViewCell: UITableViewCell {
 	}
 	
 	@IBAction func writeTo() {
-		let data = Data(hexString: "935343717a627a743074565a7849435876724867")!
+		guard let data = Data(hexString: "935343717a627a743074565a7849435876724867") else { return }
 
 		NSLog("%@", self.characteristic!.service!.fullDescription)
 		

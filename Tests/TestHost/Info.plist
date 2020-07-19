@@ -14,8 +14,6 @@
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Sniff</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleSignature</key>
@@ -24,6 +22,10 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>See nearby devices</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Sniff</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>

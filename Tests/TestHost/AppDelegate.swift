@@ -9,18 +9,17 @@
 import UIKit
 import CoreBluetooth
 import BTLE
-import Gulliver
+import Studio
 import CoreLocation
-import GulliverUI
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 	static var instance: AppDelegate!
 	
-	static let beaconProximityIDKey = DefaultsKey<String>("bcn-proximityID")
-	static let beaconMajorIDKey = DefaultsKey<String>("bcn-majorID")
-	static let beaconMinorIDKey = DefaultsKey<String>("bcn-minorID")
-	static let beaconEnabledKey = DefaultsKey<Bool>("bcn-enabled")
+	static let beaconProximityIDKey = "bcn-proximityID"
+	static let beaconMajorIDKey = "bcn-majorID"
+	static let beaconMinorIDKey = "bcn-minorID"
+	static let beaconEnabledKey = "bcn-enabled"
 	
 	var window: UIWindow?
 
@@ -35,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	static var servicesToScanFor: [CBUUID] = []// [CBUUID(string: "287E2E84-7B66-445E-8168-9811FB49B12E")]
 	static var servicesToRead: [CBUUID]? = nil//[CBUUID(string: "287E2E84-7B66-445E-8168-9811FB49B12E"), CBUUID(string: "D4D8A77A-8301-4349-A1AE-402EFF51A098")]
 
-	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) -> Bool {
+	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]?) -> Bool {
 		// Override point for customization after application launch
 		
 		AppDelegate.instance = self
@@ -47,14 +46,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		//BTLEManager.instance.services = [CBUUID(string: "01EB2EF1-BF82-4516-81BE-57E119207437")]
 		
 		BTLEManager.instance.serviceFilter = .coreBluetooth
-		self.addAsObserver(for: BTLEManager.notifications.characteristicWasWrittenTo, selector: #selector(zapped))
-		self.addAsObserver(for: BTLEManager.notifications.peripheralWasDiscovered, selector: #selector(connected))
+		self.addAsObserver(of: BTLEManager.notifications.characteristicWasWrittenTo, selector: #selector(zapped))
+		self.addAsObserver(of: BTLEManager.notifications.peripheralWasDiscovered, selector: #selector(connected))
 		
 		self.setupBeacon()
 		return true
 	}
 	
-	func connected(note: Notification) {
+	@objc func connected(note: Notification) {
 		if let per = note.object as? BTLEPeripheral {
 			per.connect(services: AppDelegate.servicesToRead) { error in
 				per.rssiUpdateInterval = 1.0
@@ -113,7 +112,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	func applicationWillTerminate(_ application: UIApplication) {
 	}
 
-	func zapped(note: NSNotification) {
+	@objc func zapped(note: NSNotification) {
 		print("received write requests: \(note.object)")
 		
 //		SoundEffect.playSound("zap.caf")

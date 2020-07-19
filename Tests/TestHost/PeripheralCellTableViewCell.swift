@@ -8,8 +8,7 @@
 
 import UIKit
 import BTLE
-import Gulliver
-import GulliverUI
+import Studio
 
 class PeripheralCellTableViewCell: UITableViewCell {
 	var peripheral: BTLEPeripheral? { didSet { self.setupNotificationsForPeripheral(peripheral: self.peripheral); self.updateUI() }}
@@ -31,7 +30,7 @@ class PeripheralCellTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
 	
-	func updateUI() {
+	@objc func updateUI() {
 		DispatchQueue.main.async {
 			if let per = self.peripheral {
 				self.nameLabel.text = per.name + ", " + per.uuid.uuidString
@@ -50,8 +49,8 @@ class PeripheralCellTableViewCell: UITableViewCell {
 					
 				}
 				
-				let string = NSMutableAttributedString(string: "\(seconds) sec since last ping, \(per.services.count) services", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12)])
-				string.append(NSAttributedString(string: text, attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 12)]))
+				let string = NSMutableAttributedString(string: "\(seconds) sec since last ping, \(per.services.count) services", attributes: [.font: UIFont.boldSystemFont(ofSize: 12)])
+				string.append(NSAttributedString(string: text, attributes: [.font: UIFont.systemFont(ofSize: 12)]))
 				self.detailsLabel?.attributedText = string
 
 				
@@ -83,7 +82,7 @@ class PeripheralCellTableViewCell: UITableViewCell {
 	}
 	
 	weak var updateTimer: Timer?
-	func queueUIUpdate() {
+	@objc func queueUIUpdate() {
 		self.updateTimer?.invalidate()
 		DispatchQueue.main.async {
 			self.updateTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(PeripheralCellTableViewCell.updateUI), userInfo: nil, repeats: false)
@@ -93,14 +92,14 @@ class PeripheralCellTableViewCell: UITableViewCell {
 	func setupNotificationsForPeripheral(peripheral: BTLEPeripheral?) {
 		self.removeAsObserver()
 		if let per = peripheral {
-			self.addAsObserver(for: BTLEManager.notifications.peripheralDidDisconnect, selector: #selector(queueUIUpdate), object: per)
-			self.addAsObserver(for: BTLEManager.notifications.peripheralDidConnect, selector: #selector(queueUIUpdate), object: per)
-			self.addAsObserver(for: BTLEManager.notifications.peripheralDidUpdateRSSI, selector: #selector(queueUIUpdate), object: per)
-			self.addAsObserver(for: BTLEManager.notifications.peripheralDidBeginLoading, selector: #selector(queueUIUpdate), object: per)
-			self.addAsObserver(for: BTLEManager.notifications.peripheralDidFinishLoading, selector: #selector(queueUIUpdate), object: per)
-			self.addAsObserver(for: BTLEManager.notifications.peripheralDidUpdateName, selector: #selector(queueUIUpdate), object: per)
-			self.addAsObserver(for: BTLEManager.notifications.peripheralDidLoseComms, selector: #selector(queueUIUpdate), object: per)
-			self.addAsObserver(for: BTLEManager.notifications.peripheralDidRegainComms, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(of: BTLEManager.notifications.peripheralDidDisconnect, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(of: BTLEManager.notifications.peripheralDidConnect, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(of: BTLEManager.notifications.peripheralDidUpdateRSSI, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(of: BTLEManager.notifications.peripheralDidBeginLoading, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(of: BTLEManager.notifications.peripheralDidFinishLoading, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(of: BTLEManager.notifications.peripheralDidUpdateName, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(of: BTLEManager.notifications.peripheralDidLoseComms, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(of: BTLEManager.notifications.peripheralDidRegainComms, selector: #selector(queueUIUpdate), object: per)
 		}
 	}
 }

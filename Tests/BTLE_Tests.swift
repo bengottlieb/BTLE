@@ -8,9 +8,8 @@
 
 import UIKit
 import XCTest
-import Gulliver
 import BTLE
-import GulliverUI
+import Studio
 
 class BTLE_Tests: XCTestCase {
     

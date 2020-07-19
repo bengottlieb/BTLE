@@ -1,4 +1,0 @@
-framework module GulliverUI {
-    header "GulliverUI-Swift.h"
-    requires objc
-}
