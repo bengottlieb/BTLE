@@ -33,7 +33,8 @@ class PeripheralCellTableViewCell: UITableViewCell {
 	@objc func updateUI() {
 		DispatchQueue.main.async {
 			if let per = self.peripheral {
-				self.nameLabel.text = per.name + ", " + per.uuid.uuidString
+                let name = per.iPhoneModelName ?? per.visibleName
+				self.nameLabel.text = name + ", " + per.uuid.uuidString
 				self.detailsLabel.text = per.summaryDescription
 				self.rssiLabel.text = "\(per.rssi ?? 0)"
 				

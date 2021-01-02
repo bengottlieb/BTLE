@@ -214,20 +214,20 @@ public class BTLECharacteristic: NSObject {
 	var peripheral: BTLEPeripheral { return self.service.peripheral }
 
 	class func characteristicPropertiesAsString(chr: CBCharacteristicProperties) -> String {
-		var string = ""
+        var props: [String] = []
 	
-		if chr.rawValue & CBCharacteristicProperties.broadcast.rawValue > 0 { string += "Broadcast, " }
-		if chr.rawValue & CBCharacteristicProperties.read.rawValue > 0 { string += "Read, " }
-		if chr.rawValue & CBCharacteristicProperties.writeWithoutResponse.rawValue > 0 { string += "WriteWithoutResponse, " }
-		if chr.rawValue & CBCharacteristicProperties.write.rawValue > 0 { string += "Write, " }
-		if chr.rawValue & CBCharacteristicProperties.notify.rawValue > 0 { string += "Notify, " }
-		if chr.rawValue & CBCharacteristicProperties.indicate.rawValue > 0 { string += "Indicate, " }
-		if chr.rawValue & CBCharacteristicProperties.authenticatedSignedWrites.rawValue > 0 { string += "AuthenticatedSignedWrites, " }
-		if chr.rawValue & CBCharacteristicProperties.extendedProperties.rawValue > 0 { string += "ExtendedProperties, " }
-		if chr.rawValue & CBCharacteristicProperties.notifyEncryptionRequired.rawValue > 0 { string += "NotifyEncryptionRequired, " }
-		if chr.rawValue & CBCharacteristicProperties.indicateEncryptionRequired.rawValue > 0 { string += "IndicateEncryptionRequired, " }
+        if chr.rawValue & CBCharacteristicProperties.broadcast.rawValue > 0 { props.append("Broadcast") }
+		if chr.rawValue & CBCharacteristicProperties.read.rawValue > 0 { props.append("Read") }
+		if chr.rawValue & CBCharacteristicProperties.writeWithoutResponse.rawValue > 0 { props.append("WriteWithoutResponse") }
+		if chr.rawValue & CBCharacteristicProperties.write.rawValue > 0 { props.append("Write") }
+		if chr.rawValue & CBCharacteristicProperties.notify.rawValue > 0 { props.append("Notify") }
+		if chr.rawValue & CBCharacteristicProperties.indicate.rawValue > 0 { props.append("Indicate") }
+		if chr.rawValue & CBCharacteristicProperties.authenticatedSignedWrites.rawValue > 0 { props.append("AuthenticatedSignedWrites") }
+		if chr.rawValue & CBCharacteristicProperties.extendedProperties.rawValue > 0 { props.append("ExtendedProperties") }
+		if chr.rawValue & CBCharacteristicProperties.notifyEncryptionRequired.rawValue > 0 { props.append("NotifyEncryptionRequired") }
+		if chr.rawValue & CBCharacteristicProperties.indicateEncryptionRequired.rawValue > 0 { props.append("IndicateEncryptionRequired") }
 		
-		return string
+        return props.joined(separator: ", ")
 	}
 
 	

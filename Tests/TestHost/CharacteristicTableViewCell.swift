@@ -48,8 +48,8 @@ class CharacteristicTableViewCell: UITableViewCell {
 				self.writeButton.isHidden = !chr.centralCanWriteTo
 				
 				if let data = chr.dataValue {
-					self.stringValueLabel?.text = String(data: data as Data, encoding: .utf8) ?? ""
-					self.dataValueLabel?.text = (data as Data).hexString
+                    self.stringValueLabel?.text = chr.stringValue ?? ""
+					self.dataValueLabel?.text = (data as Data).hexString + " - data"
 				} else {
 					self.dataValueLabel?.text = ""
 					self.stringValueLabel?.text = ""

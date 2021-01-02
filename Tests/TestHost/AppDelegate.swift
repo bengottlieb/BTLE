@@ -113,8 +113,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	}
 
 	@objc func zapped(note: NSNotification) {
-		print("received write requests: \(note.object)")
-		
+        if let obj = note.object {
+            logg("received write requests: \(obj)")
+        }
+        
 //		SoundEffect.playSound("zap.caf")
 //		UILocalNotification.playSound("zap.caf")
 		

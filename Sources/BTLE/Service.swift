@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreBluetooth
+import Studio
 
 protocol BTLEServiceProtocol {
 	init();
@@ -26,6 +27,15 @@ open class BTLEService: NSObject {
 	var pendingCharacteristics: [BTLECharacteristic] = []
 	public var uuid: CBUUID { return self.cbService.uuid }
 	
+    public var modelNumberCharacteristic: BTLECharacteristic? { characteristic(with: BTLECharacteristicUUIDs.modelNumber) }
+    public var manufacturersNameCharacteristic: BTLECharacteristic? { characteristic(with: BTLECharacteristicUUIDs.manufacturersName) }
+
+    public var iPhoneModelName: String? {
+        guard let mfr = manufacturersNameCharacteristic, mfr.stringValue.lowercased().contains("apple"), let model = modelNumberCharacteristic?.stringValue else { return nil }
+        
+        return Gestalt.convertRawDeviceTypeToModelName(model)
+    }
+    
 	class func create(service: CBService, onPeriperhal: BTLEPeripheral) -> BTLEService {
 		if let serviceClass: BTLEService.Type = BTLEManager.registeredClasses.services[service.uuid] {
 			return serviceClass.init(service: service, onPeriperhal: onPeriperhal)

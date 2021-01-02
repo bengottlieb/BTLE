@@ -58,9 +58,10 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		BTLEManager.debugLog(.superHigh, "BTLE Peripheral: deiniting: \(self)")
 	}
 	
+    public static var unknownDeviceName = "Unknown Name"
 	public var cbPeripheral: CBPeripheral!
 	public var uuid: UUID!
-	public var name: String = ""
+	public var name: String?
 	public var pertinentServices: [CBUUID]?
 	public var sendCompletionsWhenFullyLoaded = true
 	public var lastCommunicatedAt = Date() { didSet {
@@ -85,11 +86,20 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 			self.sendNotification(name: BTLEManager.notifications.peripheralDidUpdateAdvertisementData)
 		}
 	}}
+    public var visibleName: String {
+        name ?? iPhoneModelName ?? Self.unknownDeviceName
+    }
+    
+    public var iPhoneModelName: String? {
+        guard let service = self.service(with: BTLEServiceUUIDs.deviceInfo) else { return nil }
+        
+        return service.iPhoneModelName
+    }
 	
 	public var state: State = .discovered { didSet {
 		if self.state == oldValue { return }
 	
-		BTLEManager.debugLog(.medium, "Changing state on \(self.name), \(oldValue.description) -> \(self.state.description)")
+		BTLEManager.debugLog(.medium, "Changing state on \(self.visibleName), \(oldValue.description) -> \(self.state.description)")
 	
 		switch self.state {
 		case .connected:
@@ -127,11 +137,11 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	public var rssiHistory: [(Date, RSSValue)] = []
 	
 	open override var description: String {
-		return "Peripheral: \(self.name) (\(self.uuid.uuidString)), \(self.state), \(self.rssi ?? -1)"
+		return "Peripheral: \(self.visibleName) (\(self.uuid.uuidString)), \(self.state), \(self.rssi ?? -1)"
 	}
 
 	func didFailToConnect(error: Error?) {
-		BTLEManager.debugLog(.medium, "Failed to connect \(self.name): \(error?.localizedDescription ?? "")")
+		BTLEManager.debugLog(.medium, "Failed to connect \(self.visibleName): \(error?.localizedDescription ?? "")")
 		self.sendConnectionCompletions(error: error)
 	}
 	
@@ -172,7 +182,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		
 		cbPeripheral = peripheral
 		uuid = peripheral.identifier
-		name = peripheral.name ?? "unknown"
+        name = peripheral.name
 		if let adv = adv {
 			advertisementData = adv
 		}
@@ -185,7 +195,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 
 		if BTLEManager.scanner.ignoredPeripheralUUIDs.contains(peripheral.identifier.uuidString) {
 			ignored = .blackList
-			BTLEManager.debugLog(.medium, "Peripheral: Ignoring: \(name), \(uuid?.uuidString ?? "")")
+			BTLEManager.debugLog(.medium, "Peripheral: Ignoring: \(visibleName), \(uuid?.uuidString ?? "")")
 		} else if BTLEManager.instance.serviceIDsToScanFor.count > 0 {
 			if BTLEManager.instance.serviceFilter == .advertisingData {
 				if let info = adv {
@@ -261,7 +271,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 					}
 				}
 				if (reloadServices) { self.loadingState = .reloading }
-				BTLEManager.debugLog(.medium, "Attempting to connect to \(self.name), current state: \(self.state.description)")
+				BTLEManager.debugLog(.medium, "Attempting to connect to \(self.visibleName), current state: \(self.state.description)")
 				self.state = .connecting
 				BTLEManager.scanner.cbCentral.connect(self.cbPeripheral, options: [:])
 			}
@@ -269,7 +279,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	}
 	
 	public func disconnect() {
-		BTLEManager.debugLog(.medium, "Disconnecting from \(self.name), current state: \(self.state.description)")
+		BTLEManager.debugLog(.medium, "Disconnecting from \(self.visibleName), current state: \(self.state.description)")
 		if self.state == .connected { self.state = .disconnecting }
 		
 		BTLEManager.scanner.cbCentral?.cancelPeripheralConnection(self.cbPeripheral)
@@ -278,7 +288,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	func cancelLoad() {
 		BTLEManager.scanner.dispatchQueue.async {
 			if self.loadingState == .loading {
-				BTLEManager.debugLog(.medium, "Aborting service load on \(self.name)")
+				BTLEManager.debugLog(.medium, "Aborting service load on \(self.visibleName)")
 				self.loadingState = .loadingCancelled
 			}
 			
@@ -343,13 +353,13 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 				return chr
 			}
 		}
-		BTLEManager.debugLog(.high, "Unabled to find characteristic \(characteristic) \(self.name), current state: \(self.state.description)")
+		BTLEManager.debugLog(.high, "Unabled to find characteristic \(characteristic) \(self.visibleName), current state: \(self.state.description)")
 		return nil
 	}
 	
 	public func reloadServices(completely: Bool = false) {
 		BTLEManager.scanner.dispatchQueue.async {
-			BTLEManager.debugLog(.high, "Loading services on \(self.name)")
+			BTLEManager.debugLog(.high, "Loading services on \(self.visibleName)")
 			if completely { self.services = [] }
 			if self.ignored == .checkingForServices {
 				self.cbPeripheral.discoverServices(self.pertinentServices)
@@ -468,9 +478,9 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 
 	public func peripheralDidUpdateName(_ peripheral: CBPeripheral) {
 		BTLEManager.scanner.dispatchQueue.async {
-			self.name = peripheral.name ?? "<unammed>"
+			self.name = peripheral.name
 			self.sendNotification(name: BTLEManager.notifications.peripheralDidUpdateName)
-			BTLEManager.debugLog(.medium, "Peripheral: Updated name for: \(self.name)")
+			BTLEManager.debugLog(.medium, "Peripheral: Updated name for: \(self.visibleName)")
 		}
 	}
 
@@ -488,12 +498,12 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	
 	public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
 		BTLEManager.scanner.dispatchQueue.async {
-			BTLEManager.debugLog(.medium, "Discovered \(self.cbPeripheral.services?.count ?? 0) on \(self.name)")
+			BTLEManager.debugLog(.medium, "Discovered \(self.cbPeripheral.services?.count ?? 0) on \(self.visibleName)")
 			
 			if let services = self.cbPeripheral.services {
 				if self.ignored == .checkingForServices {
 					for svc in services {
-						BTLEManager.debugLog(.medium, "\(self.name) loading \(svc.uuid)")
+						BTLEManager.debugLog(.medium, "\(self.visibleName) loading \(svc.uuid)")
 						if BTLEManager.instance.serviceIDsToScanFor.contains(svc.uuid) {
 							self.ignored = .not
 							BTLEManager.scanner.pendingPeripheralFinishLoadingServices(peripheral: self)
@@ -594,7 +604,7 @@ extension BTLEPeripheral {
 			case .sameRoom: return "same room"
 			case .around: return "around"
 			case .far: return "far"
-			case .unknown: return "unknown"
+			case .unknown: return "unknown distance"
 			}
 		}
 		

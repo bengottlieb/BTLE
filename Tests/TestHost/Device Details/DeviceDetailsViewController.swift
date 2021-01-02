@@ -136,8 +136,8 @@ class DeviceDetailsViewController: UIViewController, UITableViewDataSource, UITa
 			return cell
  		} else {
 			let cell = UITableViewCell(style: .value1, reuseIdentifier: "cell")
-			var info = self.peripheral.advertisementData
-			var keys = ((info as NSDictionary).allKeys as! [String]).sorted { $0 < $1 }
+			let info = self.peripheral.advertisementData
+			let keys = ((info as NSDictionary).allKeys as! [String]).sorted { $0 < $1 }
 			let key = keys[indexPath.row]
 			let value = info[key] as? CustomStringConvertible
 			
