@@ -35,7 +35,7 @@ public class NearbyPeripheralsTableView: UITableView, UITableViewDelegate, UITab
 		self.delegate = self
 		self.dataSource = self
 		
-		self.addAsObserver(of: BTLEManager.notifications.peripheralWasDiscovered, selector: #selector(NearbyPeripheralsTableView.reloadNearbyPeripherals), object: nil)
+		self.addAsObserver(of: BTLEManager.Notifications.peripheralWasDiscovered, selector: #selector(NearbyPeripheralsTableView.reloadNearbyPeripherals), object: nil)
 		
 		self.register(NearbyPeripheralsTableViewCell.self, forCellReuseIdentifier: NearbyPeripheralsTableViewCell.identifier)
 	}

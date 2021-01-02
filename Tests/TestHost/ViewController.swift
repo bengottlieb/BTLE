@@ -103,15 +103,15 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 		//self.filterByServicesSwitch.enabled = self.scanSwitch.on
 		//self.monitorRSSISwitch.enabled = self.scanSwitch.on
 
-		self.addAsObserver(of: BTLEManager.notifications.willStartScan, selector: #selector(updateStatus), object: nil)
-		self.addAsObserver(of: BTLEManager.notifications.didStartScan, selector: #selector(updateStatus), object: nil)
-		self.addAsObserver(of: BTLEManager.notifications.didFinishScan, selector: #selector(updateStatus), object: nil)
+		self.addAsObserver(of: BTLEManager.Notifications.willStartScan, selector: #selector(updateStatus), object: nil)
+		self.addAsObserver(of: BTLEManager.Notifications.didStartScan, selector: #selector(updateStatus), object: nil)
+		self.addAsObserver(of: BTLEManager.Notifications.didFinishScan, selector: #selector(updateStatus), object: nil)
 
-		self.addAsObserver(of: BTLEManager.notifications.willStartAdvertising, selector: #selector(updateStatus), object: nil)
-		self.addAsObserver(of: BTLEManager.notifications.didFinishAdvertising, selector: #selector(updateStatus), object: nil)
+		self.addAsObserver(of: BTLEManager.Notifications.willStartAdvertising, selector: #selector(updateStatus), object: nil)
+		self.addAsObserver(of: BTLEManager.Notifications.didFinishAdvertising, selector: #selector(updateStatus), object: nil)
 
 	
-		self.addAsObserver(of: BTLEManager.notifications.peripheralWasDiscovered, selector: #selector(reload), object: nil)
+		self.addAsObserver(of: BTLEManager.Notifications.peripheralWasDiscovered, selector: #selector(reload), object: nil)
 		
 		self.updateStatus()
 	}

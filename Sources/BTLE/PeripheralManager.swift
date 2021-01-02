@@ -31,7 +31,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		
 		switch self.internalState {
 		case .off:
-			if oldValue != .idle { Notification.postOnMainThread(name: BTLEManager.notifications.didFinishAdvertising, object: self) }
+			if oldValue != .idle { Notification.postOnMainThread(name: BTLEManager.Notifications.didFinishAdvertising, object: self) }
 			if BTLEManager.instance.cyclingAdvertising {
 				btle_delay(0.5) {
 					BTLEManager.instance.cyclingAdvertising = false
@@ -39,14 +39,14 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 				}
 			}
 		case .startingUp:
-			Notification.postOnMainThread(name: BTLEManager.notifications.willStartAdvertising, object: self)
+			Notification.postOnMainThread(name: BTLEManager.Notifications.willStartAdvertising, object: self)
 			break
 			
 		case .active:
 			break
 			
 		case .idle:
-			Notification.postOnMainThread(name: BTLEManager.notifications.didFinishAdvertising, object: self)
+			Notification.postOnMainThread(name: BTLEManager.Notifications.didFinishAdvertising, object: self)
 			self.stopAdvertising()
 			
 		case .powerInterupted: break
@@ -127,7 +127,7 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 			var info: [String: Any] = [ BTLEManager.keys.deviceID: request.central.identifier.uuidString ]
 			
 			if let peripheral = BTLEManager.scanner.existingPeripheral(with: request.central.identifier) { info[BTLEManager.keys.peripheral] = peripheral }
-			Notification.postOnMainThread(name: BTLEManager.notifications.characteristicWasWrittenTo, object: self.existingCharacteristic(with: request.characteristic), userInfo: info)
+			Notification.postOnMainThread(name: BTLEManager.Notifications.characteristicWasWrittenTo, object: self.existingCharacteristic(with: request.characteristic), userInfo: info)
 		}
 		self.cbPeripheralManager?.respond(to: requests[0], withResult: .success)
 	}

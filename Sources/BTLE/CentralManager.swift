@@ -27,11 +27,11 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		
 		switch self.state {
 		case .off:
-			Notification.postOnMainThread(name: BTLEManager.notifications.didFinishScan, object: self)
+			Notification.postOnMainThread(name: BTLEManager.Notifications.didFinishScan, object: self)
 			break
 			
 		case .startingUp:
-			Notification.postOnMainThread(name: BTLEManager.notifications.willStartScan, object: self)
+			Notification.postOnMainThread(name: BTLEManager.Notifications.willStartScan, object: self)
 			if self.cbCentral?.state == .poweredOn {
 				self.state = .active
 			}
@@ -39,10 +39,10 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 			
 		case .active:
 			self.startCentralScanning()
-			Notification.postOnMainThread(name: BTLEManager.notifications.didStartScan, object: self)
+			Notification.postOnMainThread(name: BTLEManager.Notifications.didStartScan, object: self)
 			
 		case .idle:
-			Notification.postOnMainThread(name: BTLEManager.notifications.didFinishScan, object: self)
+			Notification.postOnMainThread(name: BTLEManager.Notifications.didFinishScan, object: self)
 			self.stopScanning()
 			
 		case .shuttingDown: break
@@ -221,7 +221,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 					if ignoredPer.ignored == .not {
 						self.peripherals.insert(ignoredPer)
 						self.ignoredPeripherals.remove(ignoredPer)
-						ignoredPer.sendNotification(name: BTLEManager.notifications.peripheralWasDiscovered)
+						ignoredPer.sendNotification(name: BTLEManager.Notifications.peripheralWasDiscovered)
 						return ignoredPer
 					}
 				}
@@ -269,7 +269,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 			self.peripherals.insert(per)
 		}
 		
-		per.sendNotification(name: BTLEManager.notifications.peripheralWasDiscovered)
+		per.sendNotification(name: BTLEManager.Notifications.peripheralWasDiscovered)
 		return per
 	}
 
@@ -277,11 +277,11 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		self.serialize {
 			if peripheral.ignored == .missingServices {
 				self.ignoredPeripherals.insert(peripheral)
-				peripheral.sendNotification(name: BTLEManager.notifications.peripheralWasDiscovered)
+				peripheral.sendNotification(name: BTLEManager.Notifications.peripheralWasDiscovered)
 				self.pendingPeripherals.remove(peripheral)
 			} else if peripheral.ignored == .not {
 				self.peripherals.insert(peripheral)
-				peripheral.sendNotification(name: BTLEManager.notifications.peripheralWasDiscovered)
+				peripheral.sendNotification(name: BTLEManager.Notifications.peripheralWasDiscovered)
 				self.pendingPeripherals.remove(peripheral)
 			}
 		}
@@ -334,7 +334,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		self.serialize {
 			if let per = self.add(peripheral: peripheral), per.state != .connected {
 				per.state = .connected
-				per.sendNotification(name: BTLEManager.notifications.peripheralDidConnect)
+				per.sendNotification(name: BTLEManager.Notifications.peripheralDidConnect)
 			}
 		}
 	}
@@ -344,7 +344,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 			if let per = self.add(peripheral: peripheral), per.state != .discovered {
 				BTLEManager.debugLog(.medium, "Disconnected from: \(peripheral): \(error?.localizedDescription ?? "")")
 				per.state = .discovered
-				per.sendNotification(name: BTLEManager.notifications.peripheralDidDisconnect)
+				per.sendNotification(name: BTLEManager.Notifications.peripheralDidDisconnect)
 			}
 		}
 	}

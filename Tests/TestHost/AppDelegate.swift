@@ -46,8 +46,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		//BTLEManager.instance.services = [CBUUID(string: "01EB2EF1-BF82-4516-81BE-57E119207437")]
 		
 		BTLEManager.instance.serviceFilter = .coreBluetooth
-		self.addAsObserver(of: BTLEManager.notifications.characteristicWasWrittenTo, selector: #selector(zapped))
-		self.addAsObserver(of: BTLEManager.notifications.peripheralWasDiscovered, selector: #selector(connected))
+		self.addAsObserver(of: BTLEManager.Notifications.characteristicWasWrittenTo, selector: #selector(zapped))
+		self.addAsObserver(of: BTLEManager.Notifications.peripheralWasDiscovered, selector: #selector(connected))
 		
 		self.setupBeacon()
 		return true

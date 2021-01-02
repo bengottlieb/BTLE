@@ -67,14 +67,14 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	public var lastCommunicatedAt = Date() { didSet {
 		if self.state == .undiscovered {
 			self.state = .discovered
-			self.sendNotification(name: BTLEManager.notifications.peripheralDidRegainComms)
+			self.sendNotification(name: BTLEManager.Notifications.peripheralDidRegainComms)
 		}
 		btle_delay(0.001) { self.updateVisibilityTimer() }
 	}}
 	public var loadingState = BTLEManager.LoadingState.notLoaded {
 		didSet {
 			if self.loadingState == .loaded {
-				self.sendNotification(name: BTLEManager.notifications.peripheralDidFinishLoading)
+				self.sendNotification(name: BTLEManager.Notifications.peripheralDidFinishLoading)
 				BTLEManager.debugLog(.medium, "BTLE Peripheral: Loaded: \(self.fullDescription)")
 				self.sendConnectionCompletions(error: nil)
 			}
@@ -83,7 +83,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	public var services: [BTLEService] = []
 	public var advertisementData: [String: Any] = [:] { didSet {
 		if self.advertisementData != oldValue {
-			self.sendNotification(name: BTLEManager.notifications.peripheralDidUpdateAdvertisementData)
+			self.sendNotification(name: BTLEManager.Notifications.peripheralDidUpdateAdvertisementData)
 		}
 	}}
     public var visibleName: String {
@@ -128,7 +128,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	}}
 	public var rssi: RSSValue? { didSet {
 		self.lastCommunicatedAt = Date()
-		self.sendNotification(name: BTLEManager.notifications.peripheralDidUpdateRSSI)
+		self.sendNotification(name: BTLEManager.Notifications.peripheralDidUpdateRSSI)
 	}}
 	public var rawRSSI: RSSValue?
 	
@@ -377,7 +377,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		if loadThese == nil {
 			loadThese = self.services.filter { self.pertinentServices == nil ? true : self.pertinentServices!.contains($0.uuid) }
 		}
-		self.sendNotification(name: BTLEManager.notifications.peripheralDidBeginLoading)
+		self.sendNotification(name: BTLEManager.Notifications.peripheralDidBeginLoading)
 		self.loadingState = .loading
 		for service in loadThese! {
 			service.reload()
@@ -454,7 +454,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 			
 			if self.state == .discovered {
 				self.state = .undiscovered
-				self.sendNotification(name: BTLEManager.notifications.peripheralDidLoseComms)
+				self.sendNotification(name: BTLEManager.Notifications.peripheralDidLoseComms)
 			}
 		}
 	}
@@ -479,7 +479,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	public func peripheralDidUpdateName(_ peripheral: CBPeripheral) {
 		BTLEManager.scanner.dispatchQueue.async {
 			self.name = peripheral.name
-			self.sendNotification(name: BTLEManager.notifications.peripheralDidUpdateName)
+			self.sendNotification(name: BTLEManager.Notifications.peripheralDidUpdateName)
 			BTLEManager.debugLog(.medium, "Peripheral: Updated name for: \(self.visibleName)")
 		}
 	}

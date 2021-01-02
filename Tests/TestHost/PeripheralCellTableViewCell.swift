@@ -93,14 +93,14 @@ class PeripheralCellTableViewCell: UITableViewCell {
 	func setupNotificationsForPeripheral(peripheral: BTLEPeripheral?) {
 		self.removeAsObserver()
 		if let per = peripheral {
-			self.addAsObserver(of: BTLEManager.notifications.peripheralDidDisconnect, selector: #selector(queueUIUpdate), object: per)
-			self.addAsObserver(of: BTLEManager.notifications.peripheralDidConnect, selector: #selector(queueUIUpdate), object: per)
-			self.addAsObserver(of: BTLEManager.notifications.peripheralDidUpdateRSSI, selector: #selector(queueUIUpdate), object: per)
-			self.addAsObserver(of: BTLEManager.notifications.peripheralDidBeginLoading, selector: #selector(queueUIUpdate), object: per)
-			self.addAsObserver(of: BTLEManager.notifications.peripheralDidFinishLoading, selector: #selector(queueUIUpdate), object: per)
-			self.addAsObserver(of: BTLEManager.notifications.peripheralDidUpdateName, selector: #selector(queueUIUpdate), object: per)
-			self.addAsObserver(of: BTLEManager.notifications.peripheralDidLoseComms, selector: #selector(queueUIUpdate), object: per)
-			self.addAsObserver(of: BTLEManager.notifications.peripheralDidRegainComms, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(of: BTLEManager.Notifications.peripheralDidDisconnect, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(of: BTLEManager.Notifications.peripheralDidConnect, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(of: BTLEManager.Notifications.peripheralDidUpdateRSSI, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(of: BTLEManager.Notifications.peripheralDidBeginLoading, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(of: BTLEManager.Notifications.peripheralDidFinishLoading, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(of: BTLEManager.Notifications.peripheralDidUpdateName, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(of: BTLEManager.Notifications.peripheralDidLoseComms, selector: #selector(queueUIUpdate), object: per)
+			self.addAsObserver(of: BTLEManager.Notifications.peripheralDidRegainComms, selector: #selector(queueUIUpdate), object: per)
 		}
 	}
 }

@@ -75,7 +75,7 @@ public class BTLEManager: NSObject {
 		}
 	}
 	
-	public struct notifications {
+	public struct Notifications {
 		public static let willStartScan = Notification.Name("com.standalone.btle.willStartScan")
 		public static let didStartScan = Notification.Name("com.standalone.btle.didStartScan")
 		public static let didFinishScan = Notification.Name("com.standalone.btle.didFinishScan")

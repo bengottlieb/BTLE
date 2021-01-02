@@ -43,7 +43,7 @@ public class NearbyPeripheralsTableViewCell: UITableViewCell {
 		self.removeAsObserver()
 		self.updateUI()
 		if let per = self.peripheral {
-			self.addAsObserver(of: BTLEManager.notifications.peripheralDidUpdateRSSI, selector: #selector(pinged), object: per)
+			self.addAsObserver(of: BTLEManager.Notifications.peripheralDidUpdateRSSI, selector: #selector(pinged), object: per)
 		}
 	}}
 	

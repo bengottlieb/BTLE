@@ -14,7 +14,7 @@ public class BTLECharacteristic: NSObject {
 	public var cbCharacteristic: CBCharacteristic!
 	public var service: BTLEService!
 	public var descriptors: [BTLEDescriptor] = []
-	public var state = State.notListening { didSet { Notification.postOnMainThread(name: BTLEManager.notifications.characteristicListeningChanged, object: self) }}
+	public var state = State.notListening { didSet { Notification.postOnMainThread(name: BTLEManager.Notifications.characteristicListeningChanged, object: self) }}
 	public override var description: String { return "\(self.cbCharacteristic?.description ?? "")" }
 	public var writeBackInProgress: Bool { return self.writeBackCompletion != nil }
 	public var loadingState = BTLEManager.LoadingState.notLoaded { didSet {
@@ -136,7 +136,7 @@ public class BTLECharacteristic: NSObject {
 			self.service.didFinishLoading()
 		}
 		self.updateListeners(newState: .updated)
-		Notification.postOnMainThread(name: BTLEManager.notifications.characteristicDidUpdate, object: self, userInfo: nil)
+		Notification.postOnMainThread(name: BTLEManager.Notifications.characteristicDidUpdate, object: self, userInfo: nil)
 
 		self.sendReloadCompletions(error: error)
 	}
@@ -148,7 +148,7 @@ public class BTLECharacteristic: NSObject {
 		self.writeBackCompletion?(self, error)
 		self.writeBackCompletion = nil
 
-		Notification.postOnMainThread(name: BTLEManager.notifications.characteristicDidFinishWritingBack, object: self)
+		Notification.postOnMainThread(name: BTLEManager.Notifications.characteristicDidFinishWritingBack, object: self)
 	}
 	
 	func didUpdateNotifyValue() {
