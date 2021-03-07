@@ -22,35 +22,6 @@ protocol BTLEPeripheralProtocol {
 	init(peripheral: CBPeripheral, RSSI: BTLEPeripheral.RSSValue?, advertisementData adv: [String: Any]?);
 }
 
-public struct BTLEServiceUUIDs {
-	public static let deviceInfo = CBUUID(string: "0x180A")
-	
-	public static let iOSContinuity = CBUUID(string: "D0611E78-BBB4-4591-A5F8-487910AE4366")
-
-	public static let battery = CBUUID(string: "180F")
-	public static let currentTime = CBUUID(string: "1805")
-	public static let alert = CBUUID(string: "1811")
-	public static let running = CBUUID(string: "1814")
-	public static let userData = CBUUID(string: "181C")
-	public static let generic = CBUUID(string: "1801")
-	public static let genericAccess = CBUUID(string: "1800")
-
-
-}
-
-public struct BTLECharacteristicUUIDs {
-	public static let serialNumber = CBUUID(string: "0x2A25")
-	public static let modelNumber = CBUUID(string: "0x2A24")
-	public static let firmwareVersion = CBUUID(string: "0x2A26")
-	public static let hardwareRevision = CBUUID(string: "0x2A27")
-	public static let softwareRevision = CBUUID(string: "0x2A28")
-	public static let manufacturersName = CBUUID(string: "0x2A29")
-	public static let regulatoryCertificationData = CBUUID(string: "0x2A2A")
-	public static let pnpID = CBUUID(string: "0x2A50")
-}
-
-
-
 open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	deinit {
 		self.rssiTimer?.invalidate()
@@ -58,7 +29,17 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		BTLEManager.debugLog(.superHigh, "BTLE Peripheral: deiniting: \(self)")
 	}
 	
-    public static var unknownDeviceName = "Unknown Name"
+	public enum PeripheralError: LocalizedError { case serviceNotFound, characteristicNotFound, noCharacteristicData
+		public var errorDescription: String? {
+			switch self {
+			case .serviceNotFound: return "Service not found"
+			case .characteristicNotFound: return "Characteristic not found"
+			case .noCharacteristicData: return "Characteristic returned no data"
+			}
+		}
+	}
+	
+	public static var unknownDeviceName = "Unknown Name"
 	public var cbPeripheral: CBPeripheral!
 	public var uuid: UUID!
 	public var name: String?
@@ -91,7 +72,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
     }
     
     public var iPhoneModelName: String? {
-        guard let service = self.service(with: BTLEServiceUUIDs.deviceInfo) else { return nil }
+        guard let service = self.service(with: .deviceInfo) else { return nil }
         
         return service.iPhoneModelName
     }
@@ -277,7 +258,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 			}
 		}
 	}
-	
+		
 	public func disconnect() {
 		BTLEManager.debugLog(.medium, "Disconnecting from \(self.visibleName), current state: \(self.state.description)")
 		if self.state == .connected { self.state = .disconnecting }
@@ -576,54 +557,5 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 		}
 		return true
 	}
-}
-
-extension BTLEPeripheral {
-	public enum Ignored: Int { case not, blackList, missingServices, checkingForServices }
-	public enum State: String { case discovered, connecting, connected, disconnecting, undiscovered, unknown
-		var description: String { return self.rawValue }
-	}
-	public typealias RSSValue = Int
-	public enum Distance: Int { case touching, veryClose, close, nearby, sameRoom, around, far, unknown
-		init(raw: RSSValue) {
-			if raw > rssi_range_touching { self = .touching }
-			else if raw > rssi_range_very_close { self = .veryClose }
-			else if raw > rssi_range_close { self = .close }
-			else if raw > rssi_range_nearby { self = .nearby }
-			else if raw > rssi_range_same_room { self = .sameRoom }
-			else if raw > rssi_range_around { self = .around }
-			else { self = .far }
-		}
-		
-		public var toString: String {
-			switch self {
-			case .touching: return "touching"
-			case .veryClose: return "very close"
-			case .close: return "close"
-			case .nearby: return "nearby"
-			case .sameRoom: return "same room"
-			case .around: return "around"
-			case .far: return "far"
-			case .unknown: return "unknown distance"
-			}
-		}
-		
-		public var toFloat: Float {
-			switch self {
-			case .touching: return 0.0
-			case .veryClose: return 0.1
-			case .close: return 0.25
-			case .nearby: return 0.4
-			case .sameRoom: return 0.5
-			case .around: return 0.75
-			case .far: return 0.9
-			case .unknown: return 1.0
-			}
-		}
-	}
-}
-
-func !=(lhs: [String: Any], rhs: [String: Any]) -> Bool {
-	return false
 }
 

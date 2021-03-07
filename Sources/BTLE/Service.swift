@@ -27,8 +27,8 @@ open class BTLEService: NSObject {
 	var pendingCharacteristics: [BTLECharacteristic] = []
 	public var uuid: CBUUID { return self.cbService.uuid }
 	
-    public var modelNumberCharacteristic: BTLECharacteristic? { characteristic(with: BTLECharacteristicUUIDs.modelNumber) }
-    public var manufacturersNameCharacteristic: BTLECharacteristic? { characteristic(with: BTLECharacteristicUUIDs.manufacturersName) }
+    public var modelNumberCharacteristic: BTLECharacteristic? { characteristic(with: .modelNumber) }
+    public var manufacturersNameCharacteristic: BTLECharacteristic? { characteristic(with: .manufacturersName) }
 
     public var iPhoneModelName: String? {
         guard let mfr = manufacturersNameCharacteristic, mfr.stringValue.lowercased().contains("apple"), let model = modelNumberCharacteristic?.stringValue else { return nil }
