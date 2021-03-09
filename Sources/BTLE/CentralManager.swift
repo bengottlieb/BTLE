@@ -18,6 +18,16 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	public var ignoredPeripherals = Set<BTLEPeripheral>()
 	public var oldPeripherals = Set<BTLEPeripheral>()
 	var pendingPeripherals = Set<BTLEPeripheral>()
+	var connectionEventUUIDs: [CBUUID] = []
+	
+	public func registerForConnectionEvents(for uid: CBUUID) {
+		if connectionEventUUIDs.contains(uid) { return }
+		
+		connectionEventUUIDs.append(uid)
+		if #available(iOS 13.0, *) {
+			cbCentral.registerForConnectionEvents(options: [.peripheralUUIDs: connectionEventUUIDs])
+		}
+	}
 	
 	public private (set) var state: BTLEManager.State = .off { didSet {
 		if oldValue == self.state { return }
@@ -208,8 +218,10 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	
 	@discardableResult func add(peripheral: CBPeripheral, RSSI: Int? = nil, advertisementData: [String: Any]? = nil) -> BTLEPeripheral? {
 		if let existing = self.existingPeripheral(matching: peripheral) {
+			let rediscovered = existing.state == .undiscovered
 			if let rssi = RSSI { existing.setCurrentRSSI(newRSSI: rssi) }
 			if let advertisementData = advertisementData { existing.advertisementData = advertisementData }
+			if rediscovered { existing.sendNotification(name: BTLEManager.Notifications.peripheralDidRegainComms) }
 			return existing
 		}
 		
@@ -316,7 +328,9 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	
 	public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
 	//	self.serialize {
-			self.add(peripheral: peripheral, RSSI: RSSI.intValue as BTLEPeripheral.RSSValue, advertisementData: advertisementData)
+		if let filter = BTLEManager.instance.nameFilter, !filter(peripheral.name) { return }
+		BTLEManager.debugLog(.high, "Central manager discovered \(peripheral)")
+		self.add(peripheral: peripheral, RSSI: RSSI.intValue as BTLEPeripheral.RSSValue, advertisementData: advertisementData)
 	//	}
 	}
 	
@@ -330,6 +344,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	}
 	
 	public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+		if let filter = BTLEManager.instance.nameFilter, !filter(peripheral.name) { return }
 		BTLEManager.debugLog(.high, "Connected to peripheral: \(peripheral)")
 		self.serialize {
 			if let per = self.add(peripheral: peripheral), per.state != .connected {
@@ -339,11 +354,24 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 		}
 	}
 	
+	public func centralManager(_ central: CBCentralManager, connectionEventDidOccur event: CBConnectionEvent, for peripheral: CBPeripheral) {
+		if let filter = BTLEManager.instance.nameFilter, !filter(peripheral.name) { return }
+		BTLEManager.debugLog(.high, "connectionEventDidOccur to peripheral: \(peripheral), \(event)")
+		self.serialize {
+			if let per = self.add(peripheral: peripheral) {
+				per.state = event == .peerConnected ? .connected : .discovered
+				per.sendNotification(name: BTLEManager.Notifications.peripheralDidConnect)
+			}
+		}
+	}
+
+	
 	public func centralManager(_ centralManager: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+		if let filter = BTLEManager.instance.nameFilter, !filter(peripheral.name) { return }
 		self.serialize {
 			if let per = self.add(peripheral: peripheral), per.state != .discovered {
 				BTLEManager.debugLog(.medium, "Disconnected from: \(peripheral): \(error?.localizedDescription ?? "")")
-				per.state = .discovered
+				per.state = .undiscovered
 				per.sendNotification(name: BTLEManager.Notifications.peripheralDidDisconnect)
 			}
 		}
@@ -385,23 +413,23 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 	}
 	
 	func removeIgnored(peripheral: BTLEPeripheral) {
-		self.ignoredPeripherals.remove(peripheral)
-		self.peripherals.insert(peripheral)
+		ignoredPeripherals.remove(peripheral)
+		peripherals.insert(peripheral)
 		
-		self.ignoredPeripheralUUIDs.remove(peripheral.uuid.uuidString)
-		let list = Array(self.ignoredPeripheralUUIDs).joined(separator: ",")
-		UserDefaults.standard.set(list, forKey: self.ignoredPeripheralUUIDsKey)
+		ignoredPeripheralUUIDs.remove(peripheral.uuid.uuidString)
+		let list = Array(ignoredPeripheralUUIDs).joined(separator: ",")
+		UserDefaults.standard.set(list, forKey: ignoredPeripheralUUIDsKey)
 	}
 	
 	func isIgnored(peripheral: BTLEPeripheral) -> Bool {
-		return self.ignoredPeripherals.contains(peripheral) || self.ignoredPeripheralUUIDs.contains(peripheral.uuid.uuidString)
+		ignoredPeripherals.contains(peripheral) || ignoredPeripheralUUIDs.contains(peripheral.uuid.uuidString)
 	}
 
 }
 
 class BTLEBackgroundableCentralManager: BTLECentralManager {
 	public func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
-		self.serialize {
+		serialize {
 			self.cbCentral = central
 			central.delegate = self
 			if self.cbCentral.state == .poweredOn { self.fetchConnectedPeripherals() }

@@ -16,7 +16,8 @@ public class BTLEManager: NSObject {
 	public static var instance = BTLEManager()
 	public static var scanner = BTLEManager.browseInBackground ? BTLEBackgroundableCentralManager() : BTLECentralManager()
 	public static var advertiser = BTLEManager.advertiseInBackground ? BTLEBackgroundablePeripheralManager() : BTLEPeripheralManager()
-	
+	public var nameFilter: ((String?) -> Bool)?
+
 	public enum LoadingState { case notLoaded, loading, loaded, loadingCancelled, reloading }
 	public enum ServiceFilter { case coreBluetooth, advertisingData, actualServices }
 
@@ -163,7 +164,7 @@ public class BTLEManager: NSObject {
 	}
 	
 	//BTLE Authorization status
-	public var isAuthorized: Bool { return CBPeripheralManager.authorizationStatus() == .authorized }
+	public var isAuthorized: Bool { return CBManager.authorization == .allowedAlways }
 	public func authorizeWithCompletion(_ completion: @escaping (Bool) -> Void) { self.authorizer = BTLEAuthorizer(completion: completion) }
 
 	class BTLEAuthorizer: NSObject, CBPeripheralManagerDelegate {
@@ -182,12 +183,12 @@ public class BTLEManager: NSObject {
 		let completion: (Bool) -> Void
 		var manager: CBPeripheralManager!
 		func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
-			print("BTLE Authorization Status: \(CBPeripheralManager.authorizationStatus().rawValue)")
-			if CBPeripheralManager.authorizationStatus() == .denied {
+			print("BTLE Authorization Status: \(CBManager.authorization)")
+			if CBManager.authorization == .denied {
 				self.completion(false)
 				self.manager.stopAdvertising()
 				BTLEManager.instance.authorizer = nil
-			} else if CBPeripheralManager.authorizationStatus() == .authorized {
+			} else if CBManager.authorization == .allowedAlways {
 				self.completion(true)
 				if self.manager?.state == .poweredOn {
 					self.manager.stopAdvertising()

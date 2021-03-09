@@ -8,6 +8,8 @@
 
 import Foundation
 import CoreBluetooth
+import Combine
+import Suite
 
 let rssi_range_touching = -25
 let rssi_range_very_close = -30
@@ -22,7 +24,7 @@ protocol BTLEPeripheralProtocol {
 	init(peripheral: CBPeripheral, RSSI: BTLEPeripheral.RSSValue?, advertisementData adv: [String: Any]?);
 }
 
-open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
+open class BTLEPeripheral: NSObject, ObservableObject, CBPeripheralDelegate {
 	deinit {
 		self.rssiTimer?.invalidate()
 		self.connectionTimeoutTimer?.invalidate()
@@ -97,6 +99,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 			
 		default: break
 		}
+		self.objectWillChange.sendOnMain()
 	}}
 	
 	public var rssiUpdateInterval: TimeInterval? { didSet {
@@ -142,6 +145,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	func setCurrentRSSI(newRSSI: RSSValue) {
 		if abs(newRSSI) == 127 { return }
 		
+		if state == .undiscovered { state = .discovered }
 		self.rawRSSI = newRSSI
 		if BTLEManager.instance.disableRSSISmoothing {
 			self.rssi = newRSSI
@@ -152,6 +156,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 			self.rssi = self.rssiHistory.reduce(0, { $0 + $1.1 }) / self.rssiHistory.count
 		}
 		self.lastCommunicatedAt = Date()
+		self.objectWillChange.sendOnMain()
 	}
 	
 	public override required init() {
@@ -186,7 +191,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 				}
 			} else if BTLEManager.instance.serviceFilter == .actualServices {
 				self.ignored = .checkingForServices
-				self.connect(services: self.pertinentServices)
+				_ = self.connect(services: self.pertinentServices)
 			}
 		}
 		
@@ -450,6 +455,7 @@ open class BTLEPeripheral: NSObject, CBPeripheralDelegate {
 	weak var rssiTimer: Timer?
 	public func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
 		self.rssi = RSSI.intValue
+		self.objectWillChange.sendOnMain()
 		if let interval = self.rssiUpdateInterval {
 			DispatchQueue.main.async {
 				self.rssiTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(self.updateRSSI), userInfo: nil, repeats: false)
