@@ -222,6 +222,7 @@ public class BTLECentralManager: NSObject, CBCentralManagerDelegate {
 			if let rssi = RSSI { existing.setCurrentRSSI(newRSSI: rssi) }
 			if let advertisementData = advertisementData { existing.advertisementData = advertisementData }
 			if rediscovered { existing.sendNotification(name: BTLEManager.Notifications.peripheralDidRegainComms) }
+			existing.reloadServices(completely: true)
 			return existing
 		}
 		
