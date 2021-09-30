@@ -212,9 +212,9 @@ public class BTLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 		
 	}
 	
-	func existingService(with service: CBService) -> BTLEMutableService? {
+	func existingService(with service: CBService?) -> BTLEMutableService? {
 		for svc in self.services {
-			if svc.cbService.uuid == service.uuid { return svc }
+			if svc.cbService.uuid == service?.uuid { return svc }
 		}
 		return nil
 	}

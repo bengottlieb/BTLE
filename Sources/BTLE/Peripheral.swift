@@ -326,15 +326,17 @@ open class BTLEPeripheral: NSObject, ObservableObject, CBPeripheralDelegate {
 		self.cbPeripheral.readRSSI()
 	}
 	
-	public func service(with uuid: CBUUID) -> BTLEService? { return self.services.filter({ $0.cbService.uuid == uuid }).last }
+	public func service(with uuid: CBUUID?) -> BTLEService? { return self.services.filter({ $0.cbService.uuid == uuid }).last }
 	public func characteristic(with uuid: CBUUID) -> BTLECharacteristic? {
 		for service in self.services {
 			if let chr = service.characteristic(with: uuid) { return chr }
 		}
 		return nil
 	}
-	public func characteristicFromCBCharacteristic(characteristic: CBCharacteristic) -> BTLECharacteristic? {
-		if let service = self.service(with: characteristic.service.uuid) {
+	public func characteristicFromCBCharacteristic(characteristic: CBCharacteristic?) -> BTLECharacteristic? {
+		guard let characteristic = characteristic else { return nil }
+		
+		if let service = self.service(with: characteristic.service?.uuid) {
 			if let chr = service.characteristic(with: characteristic.uuid) {
 				return chr
 			}
@@ -388,8 +390,8 @@ open class BTLEPeripheral: NSObject, ObservableObject, CBPeripheralDelegate {
 		return count
 	}
 
-	@discardableResult func findOrCreateService(cbService: CBService) -> BTLEService? {
-		if !self.shouldLoadService(service: cbService) { return nil }
+	@discardableResult func findOrCreateService(cbService: CBService?) -> BTLEService? {
+		guard let cbService = cbService, self.shouldLoadService(service: cbService) else { return nil }
 		
 		if let service = self.service(with: cbService.uuid) {
 			return service
@@ -557,9 +559,10 @@ open class BTLEPeripheral: NSObject, ObservableObject, CBPeripheralDelegate {
 	//MARK: For overriding
 
 	
-	public func shouldLoadService(service: CBService) -> Bool {
+	public func shouldLoadService(service: CBService?) -> Bool {
+		guard let uuid = service?.uuid else { return false }
 		if let pertinent = self.pertinentServices {
-			return pertinent.contains(service.uuid)
+			return pertinent.contains(uuid)
 		}
 		return true
 	}

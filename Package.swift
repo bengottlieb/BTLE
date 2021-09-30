@@ -17,7 +17,7 @@ let package = Package(
             targets: ["BTLE"]),
     ],
     dependencies: [
-		.package(url: "https://github.com/bengottlieb/Suite.git", from: "0.9.55"),
+		.package(url: "https://github.com/bengottlieb/Suite.git", from: "1.0.1"),
 
     ],
     targets: [
